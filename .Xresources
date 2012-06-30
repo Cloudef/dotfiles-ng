@@ -1,0 +1,53 @@
+!
+! .Xresources
+!
+
+! Color scheme
+#include "/arch/xcolors/colorshot"
+
+! XFT
+Xft.autohint:1
+Xft.lcdfilter:lcddefault
+Xft.hintstyle:hintslight
+Xft.hinting:1
+Xft.antialias:1
+Xft.dpi:96
+Xft.rgba:rgb
+
+! URxvt {{{
+URxvt.preeditType:OverTheSpot,Root
+URxvt.letterSpace:0
+URxvt.borderLess:false
+URxvt.visualBell:false
+URxvt.cursorBlink:false
+URxvt.highlightSelection:true
+URxvt.buffered:true
+URxvt.saveLines:1500
+URxvt.urgentOnBell:true
+URxvt.perl-ext-common:default,matcher,url-picker,keyboard-select
+URxvt.urlLauncher:open
+URxvt.matcher.button:3
+URxvt.matcher.pattern.1:\\bwww\\.[\\w-]+\\.[\\w./?&@#-]*[\\w/-]
+URxvt.url-picker.order:descending
+URxvt.keysym.Control-f:perl:url-picker
+URxvt.keysym.M-Down:perl:keyboard-select:activate
+URxvt.keysym.M-Up:perl:keyboard-select:search
+Urxvt.keysym.Control-Up:\033[1;5A
+URxvt.keysym.Control-Down:\033[1;5B
+URxvt.keysym.Control-Left:\033[1;5D
+URxvt.keysym.Control-Right:\033[1;5C
+URxvt.jumpScroll:true
+URxvt.skipScroll:true
+URxvt.scrollBar:false
+URxvt.scrollBar_right:false
+URxvt.scrollstyle:plain
+URxvt.secondaryScroll:true
+URxvt.scrollTtyOutput:false
+URxvt.scrollWithBuffer:true
+URxvt.scrollTtyKeypress:true
+URXvt.mouseWheelScrollPage:false
+URxvt.keysym.C-plus:command:\033]50;xft:DejaVu Sans Mono:pixelsize=16,xft:IPAGothic\007
+URxvt.keysym.C-minus:command:\033]50;xft:terminus:pixelsize=8,xft:IPAGothic\007
+URxvt.font:xft:terminus:pixelsize=8,xft:IPAGothic
+URxvt.depth:24
+!}}}

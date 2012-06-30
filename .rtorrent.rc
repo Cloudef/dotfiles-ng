@@ -1,0 +1,101 @@
+# default download directory and session settings
+directory            = /media/storage
+session              = /home/loli/.rtorrent
+
+# up|down
+download_rate = 0
+upload_rate   = 200
+
+# peer limits
+min_peers            = 20
+max_peers            = 60
+min_peers_seed       = 30
+max_peers_seed       = 80
+
+# ram limits
+max_memory_usage = 1800M
+xmlrpc_size_limit = 2M
+
+# sort views by creation date
+view_sort_new = main,less=d.get_creation_date=
+view_sort_current = main,less=d.get_creation_date=
+
+# close torrents when disk space below 2,5G
+schedule = low_diskspace,5,60,close_low_diskspace=2500M
+
+# auto torrent directories
+schedule = anime_torrent,10,10,"load_start=/media/anime/torrent/*.torrent,d.set_directory=/media/anime/seed"
+schedule = anime_torrent2,10,10,"load_start=/media/storage/anime/torrent/*.torrent,d.set_directory=/media/storage/anime/seed"
+schedule = storage_torrent,10,10,"load_start=/media/storage/torrent/*.torrent,d.set_directory=/media/storage"
+schedule = music_torrent,10,10,"load_start=/media/storage/musiikki/torrent/*.torrent,d.set_directory=/media/storage/musiikki"
+
+#
+# Other settings below
+#
+
+# general network
+max_uploads          = 100
+max_uploads_global   = 250
+port_range           = 49164-49164
+port_random          = no
+
+# general protocol
+dht                  = auto
+dht_port             = 49162
+peer_exchange        = yes
+use_udp_trackers     = yes
+
+# general other
+encryption           = allow_incoming,try_outgoing,enable_retry
+check_hash           = no
+
+# pyroscope settings
+system.method.insert = pyro.extended, value|const, 1
+
+# auto-collapse views
+schedule = bind_collapse,0,0,"ui.bind_key=download_list,c,view.collapsed.toggle="
+view.collapsed.toggle=main
+view.collapsed.toggle=name
+view.collapsed.toggle=active
+view.collapsed.toggle=started
+view.collapsed.toggle=stopped
+view.collapsed.toggle=complete
+view.collapsed.toggle=incomplete
+view.collapsed.toggle=hashing
+view.collapsed.toggle=seeding
+view.collapsed.toggle=leeching
+view.collapsed.toggle=rtcontrol
+
+# network graph
+schedule = network_history_sampling,1,32, network.history.sample=
+method.insert = network.history.auto_scale.toggle, simple|private, "branch=network.history.auto_scale=,\"network.history.auto_scale.set=0\",\"network.history.auto_scale.set=1\""
+method.insert = network.history.auto_scale.ui_toggle, simple|private, "network.history.auto_scale.toggle= ;network.history.refresh="
+branch=pyro.extended=,"schedule = bind_auto_scale,0,0,\"ui.bind_key=download_list,=,network.history.auto_scale.ui_toggle=\""
+
+# Colors
+ui.color.alarm.set=""
+ui.color.focus.set="reverse"
+ui.color.footer.set="white on black"
+ui.color.incomplete.set="yellow"
+ui.color.info.set="white"
+ui.color.label.set="blue"
+ui.color.leeching.set="bold bright yellow"
+ui.color.queued.set="magenta"
+ui.color.seeding.set="bold bright green"
+ui.color.title.set="white on black"
+
+# 256 color tweak
+ui.color.complete.set=41
+ui.color.stopped.set=33
+ui.color.even.set="on 234"
+ui.color.odd.set="on 232"
+ui.color.progress0.set=196
+ui.color.progress20.set=202
+ui.color.progress40.set=213
+ui.color.progress60.set=214
+ui.color.progress80.set=226
+ui.color.progress100.set=41
+ui.color.progress120.set="bold bright green"
+
+# ASCII glyphs
+ui.style.ratio.set=0
