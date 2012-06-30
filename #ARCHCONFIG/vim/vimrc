@@ -179,9 +179,6 @@ vmap <C-c> :<Esc>`>a<CR><Esc>mx`<i<CR><Esc>my'xk$v'y!xclip -selection c<CR>u
 " toggle folds with space
 nnoremap <space> za
 
-" strip non ascii characters from file
-nnoremap <silent> :strip :%s/[<C-V>128-<C-V>255<C-V>01-<C-V>31]//gi
-
 " {{{ Dmenu functions
 function! Chomp(str)
   return substitute(a:str, '\n$', '', '')
@@ -199,6 +196,24 @@ endfunction
 " use ctrl-f to open file in current buffer
 map <c-t> :call DmenuOpen("tabe")<cr>
 map <c-f> :call DmenuOpen("open")<cr>
+ " }}}
+" {{{ Aliases
+" {{{ Tab change functions
+function SetTab(var1)
+   let level=a:var1
+   execute "set softtabstop=".level
+   execute "set shiftwidth=".level
+   :IndentGuidesToggle
+   :IndentGuidesToggle
+endfunction
+" }}}
+" change tab settings
+nnoremap <silent> :8t :call SetTab(8)<CR>
+nnoremap <silent> :4t :call SetTab(4)<CR>
+nnoremap <silent> :3t :call SetTab(3)<CR>
+
+" strip non ascii characters from file
+nnoremap <silent> :strip :%s/[<C-V>128-<C-V>255<C-V>01-<C-V>31]//gi
 
 "{{{ Modeline append function
 " use substitute() instead of printf() to handle '%%s' modeline in LaTeX
@@ -213,7 +228,7 @@ endfunction
 " }}}
 " append modeline after last line in buffer.
 nnoremap <silent> :ml :call AppendModeline()<CR>
- " }}}
+" }}}
 
 "
 " some really useful autostart stuff below
