@@ -1,0 +1,33 @@
+#!/bin/sh
+# Streams the nicovideo to mplayer
+#
+# Store your credentials in:
+#   $HOME/.passwd/nicovideo
+#
+# with format:
+# <username>
+# <password>
+#
+# needs: nicovideo-dl, mplayer
+
+source "/arch/passwd/libpasswd-sh"
+err() { echo "$@" 1>&2; exit 1; }
+
+# password stuff
+nicowrap() {
+   nicovideo-dl                            \
+      -u "$(_passwd_get_user "nicovideo")" \
+      -p "$(_passwd_get_pass "nicovideo")" $@
+}
+
+# logic
+main() {
+   [ "$@" ] || err "usage: $(basename $0) <url>"
+   [[ -p /tmp/nicovideo.fifo ]] && rm /tmp/nicovideo.fifo
+   mkfifo -m 666 /tmp/nicovideo.fifo
+   nicowrap -o /tmp/nicovideo.fifo $@ &
+   mplayer -cache 300 /tmp/nicovideo.fifo
+   test -z "`jobs -p`" || kill -9 `jobs -p` &> /dev/null
+   rm /tmp/nicovideo.fifo &> /dev/null
+}
+main $@

@@ -1,0 +1,21 @@
+#
+# User credentials helper
+# for various user scripts and programs
+#
+
+Default database is stored in $HOME/.passwd
+All credentials are in plain text.
+
+This is not meant to be used to store actual
+sensitive information. Just easy and unified
+access for automated scripts and programs
+that just happen to need credentials.
+
+Supported languages:
+   - Shell
+
+To use this library, source/include the
+/arch/passwd/libpasswd-<language>
+
+And then refer to the include file for further
+documentation.

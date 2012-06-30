@@ -1,0 +1,26 @@
+#!/bin/sh
+# libpasswd access for shell scripts
+#
+# _passwd_get_user "<password file>" - to get user
+# _passwd_get_pass "<password file>" - to get password
+#
+
+err() { echo "$@" 1>&2; }
+
+# $@ = password file in database
+_passwd_get_user() {
+   [ -d "$_PASSWD_DATABASE" ] ||
+      { err "libpasswd: $_PASSWD_DATABASE database doesn't exist"; return; }
+   [ -f "$_PASSWD_DATABASE/$@" ] &&
+      { cat "$_PASSWD_DATABASE/$@" | head -n1; return; } ||
+      err "libpasswd: credentials for $@, do not exist."
+}
+
+# $@ = password file in database
+_passwd_get_pass() {
+   [ -d "$_PASSWD_DATABASE" ] ||
+      { err "libpasswd: $_PASSWD_DATABASE database doesn't exist"; return; }
+   [ -f "$_PASSWD_DATABASE/$@" ] &&
+      { cat "$_PASSWD_DATABASE/$@" | head -n2 | tail -n1; return; } ||
+      err "libpasswd: credentials for $@, do not exist."
+}

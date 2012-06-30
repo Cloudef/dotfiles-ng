@@ -1,0 +1,22 @@
+#
+# System configurations
+#
+
+All my edited system configuration files (in /) are
+stored here and symlinked to proper places.
+
+Packages contain list of packages for bare system with
+only X, -ck kernel and -ck nvidia stuff, and some other.
+
+Packages is generated with:
+   pacman -Q | grep -v "$(pacman -Qm)" > PACKAGES
+
+X Font setup:
+   ! XFT
+   Xft.autohint:1
+   Xft.lcdfilter:lcddefault
+   Xft.hintstyle:hintslight
+   Xft.hinting:1
+   Xft.antialias:1
+   Xft.dpi:96
+   Xft.rgba:rgb

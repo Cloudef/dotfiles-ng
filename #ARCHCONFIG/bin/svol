@@ -1,0 +1,118 @@
+#!/bin/sh
+# Volume utility
+# Origin from dvol, nowadays it's without dzen
+# Handles some volume quirks, and can be used either with ALSA or OSSv4
+#
+# needs: amixer or ossvol
+
+# customize this stuff
+IF="Master" # audio channel: Master|PCM
+MF="Master" # mute channel
+err() { echo "$@" 1>&2; exit 1; }
+
+# usage
+usage() {
+   echo "usage: $(basname $0) [option] [argument]"
+  echo
+  echo "Options:"
+  echo "     -i, --increase - increase volume by \`argument'"
+  echo "     -d, --decrease - decrease volume by \`argument'"
+  echo "     -t, --toggle   - toggle mute on and off"
+  echo "     -h, --help     - display this"
+  exit
+}
+
+# ALSA argument handling
+alsa_arg()
+{
+   case "$1" in
+     '-i'|'--increase')
+       [ -z "$2" ] && err "No argument specified for increase."
+       [ -n "$(tr -d [0-9] <<<$2)" ] && err "The argument needs to be an integer."
+       MIXARG="${2}%+"
+       ;;
+     '-d'|'--decrease')
+       [ -z "$2" ] && err "No argument specified for decrease."
+       [ -n "$(tr -d [0-9] <<<$2)" ] && err "The argument needs to be an integer."
+       MIXARG="${2}%-"
+       ;;
+     '-t'|'--toggle')
+       MIXARG="toggle"
+       IF="$MF"
+       ;;
+     ''|'-h'|'--help')
+       usage
+       ;;
+     *)
+       err "Unrecognized option \`$1', see dvol --help"
+       ;;
+   esac
+
+   echo "$MIXARG"
+}
+
+# OSSv4 argument handling
+oss_arg()
+{
+   case "$1" in
+     '-i'|'--increase')
+       [ -z "$2" ] && err "No argument specified for increase."
+       [ -n "$(tr -d [0-9] <<<$2)" ] && err "The argument needs to be an integer."
+       MIXARG="-i $2"
+       ;;
+     '-d'|'--decrease')
+       [ -z "$2" ] && err "No argument specified for decrease."
+       [ -n "$(tr -d [0-9] <<<$2)" ] && err "The argument needs to be an integer."
+       MIXARG="-d $2"
+       ;;
+     '-t'|'--toggle')
+       MIXARG="-t"
+       ;;
+     ''|'-h'|'--help')
+       usage
+       ;;
+     *)
+       err "Unrecognized option \`$1', see dvol --help"
+       ;;
+   esac
+
+   echo "$MIXARG"
+}
+
+# OSSv4 Volume handling
+ossvolume()
+{
+   MIXARG="$(oss_arg $@)"
+
+   # OSSv4
+   # Simple, clean and works
+   ossvol $MIXARG &> /dev/null # | sed 's/^.* //' <- for getting volume
+}
+
+# ALSA Volume handling
+alsavolume()
+{
+   MIXARG="$(alsa_arg $@)"
+
+   AMIXOUT="$(amixer set "$IF" "$MIXARG" | tail -n 1)"
+   VOL="$(cut -d '[' -f 2 <<<"$AMIXOUT" | sed 's/%.*//g')"
+
+   # Stupid alsa still playing sound even that MASTER vol is 0 <_<
+   # Go figure, other channels won't help here.
+   #
+   # So hack to workaround it. If OSSv4 ever takes off, switch to it.
+   # Has currently problems with few applications while using vmix.
+
+   if [[ "$VOL" == "0" ]]
+   then
+      # Volume == 0, mute the mute channel
+      amixer set "$MF" "mute" &> /dev/null
+   else
+      # If we did not press mute button, unmute
+      [[ "$MIXARG" == "toggle" ]] || amixer set "$MF" "unmute" &> /dev/null
+   fi
+}
+
+# Pick one!
+# ossvolume $@
+alsavolume $@

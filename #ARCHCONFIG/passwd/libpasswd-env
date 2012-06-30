@@ -1,0 +1,6 @@
+#
+# Systemwide enviroiment file for shell
+#
+
+# Database path for expected password files
+export _PASSWD_DATABASE="$HOME/.passwd"

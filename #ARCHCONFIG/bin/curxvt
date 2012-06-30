@@ -1,0 +1,13 @@
+#!/bin/sh
+# Urxvt client that launches daemon if needed
+#
+# needs: urxvt
+
+# main
+main() {
+   urxvtc "$@"
+   [[ ! $? -eq 2 ]] && return
+   urxvtd -q -o -f
+   urxvtc "$@"
+}
+main $@

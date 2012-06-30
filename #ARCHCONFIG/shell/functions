@@ -1,0 +1,241 @@
+#
+# Systemwide shell functions
+#
+
+#######################
+# Colorized man pages #
+#######################
+man() {
+   env \
+      LESS_TERMCAP_mb=$(printf "\e[1;31m") \
+      LESS_TERMCAP_md=$(printf "\e[1;31m") \
+      LESS_TERMCAP_me=$(printf "\e[0m") \
+      LESS_TERMCAP_se=$(printf "\e[0m") \
+      LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
+      LESS_TERMCAP_ue=$(printf "\e[0m") \
+      LESS_TERMCAP_us=$(printf "\e[1;32m") \
+      man "$@"
+}
+
+##############################################
+### Colored Find                             ##
+### NOTE: Searches current tree recrusively. ##
+###############################################
+f() {
+   find . -iregex ".*$@.*" -printf '%P\0' | xargs -r0 ls --color=auto -1d
+}
+
+################
+## Smarter CD ##
+################
+function goto() {
+   [ -d "$1" ] && cd "$1" || cd "$(dirname "$1")";
+}
+
+####################
+## Copy && Follow ##
+####################
+function cpf() {
+   cp "$@" && goto "$_";
+}
+
+####################
+## Move && Follow ##
+####################
+function mvf() {
+   mv "$@" && goto "$_";
+}
+
+#####################
+## mkdir && follow ##
+#####################
+function mkcdr() {
+   mkdir -vp "$@" && cd "$_";
+}
+
+##################
+## Start daemon ##
+##################
+function start() {
+   sudo rc.d start $@
+}
+
+#################
+## Stop daemon ##
+#################
+function stop() {
+   sudo rc.d stop $@
+}
+
+####################
+## Restart daemon ##
+####################
+function restart() {
+   sudo rc.d stop  $@
+   sudo rc.d start $@
+}
+
+###################
+## Daemon status ##
+###################
+function status() {
+   rc.d list $@
+}
+
+########################
+## Print window class ##
+########################
+xclass()
+{
+   xprop |awk '
+   /^WM_CLASS/{sub(/.* =/, "instance:"); sub(/,/, "\nclass:"); print}
+   /^WM_NAME/{sub(/.* =/, "title:"); print}'
+}
+
+###################################################################
+## Valgrind wrapper, use valgrind.supp for suppressions if found ##
+###################################################################
+memleak()
+{
+   [ -f valgrind.supp ] &&
+      valgrind --suppressions=valgrind.supp "$@" || valgrind "$@"
+}
+
+########################
+## Create tar archive ##
+########################
+function mktar() {
+   tar cvf  "${1%%/}.tar" "${1%%/}/";
+}
+
+###########################
+## Create tar.gz archive ##
+###########################
+function mktgz() {
+   tar cvzf "${1%%/}.tar.gz"  "${1%%/}/";
+}
+
+############################
+## Create tar.bz2 archive ##
+############################
+function mktbz() {
+   tar cvjf "${1%%/}.tar.bz2" "${1%%/}/";
+}
+
+######################
+## Extract archives ##
+######################
+function extract() {
+   # Allow work with wildcards
+   while [ "$1" ]; do
+      if [ -f "$1" ] ; then
+         case "$1" in
+            *.tar.bz2)   tar xvjf "$1"    ;;
+            *.tar.gz)    tar xvzf "$1"    ;;
+            *.bz2)       bunzip2 "$1"     ;;
+            *.rar)       unrar x "$1"     ;;
+            *.gz)        gunzip "$1"      ;;
+            *.tar)       tar xvf "$1"     ;;
+            *.tbz2)      tar xvjf "$1"    ;;
+            *.tgz)       tar xvzf "$1"    ;;
+            *.zip)       unzip "$1"       ;;
+            *.Z)         uncompress "$1"  ;;
+            *.7z)        7z x "$1"        ;;
+            *)           echo "don't know how to extract '$1'..." ;;
+         esac
+      else
+         echo "'$1' is not a valid file"
+      fi
+      shift || break
+   done
+}
+
+#####################################################
+## Remux MKV to use only 1 audio && subtible track ##
+#####################################################
+remux() {
+   if [ ! "$1" ] || [ ! "$2" ] || [ ! "$3" ] || [ ! "$4" ]; then
+      echo "Usage : remux [output] [input] [audio track to keep] [subtible track to keep]"
+      return
+   fi
+   mkvmerge -o "$1" -d 1 --audio-tracks "$3" --subtitle-tracks "$4" "$2"
+}
+
+#####################################################################
+## Same as earlier, expect you can batch whole directory with this ##
+#####################################################################
+bremux() {
+   local FILTER="*.mkv"
+   if [ ! "$1" ] || [ ! "$2" ]; then
+      echo "Usage : bremux [audio track] [subtible track] [filter]"
+      return
+   fi
+   [ "$3" ] && FILTER="$3"
+   for i in $FILTER
+   do
+      remux "[REMUX]$i" "$i" "$1" "$2"
+   done
+}
+
+############################################################
+## Print MKV info, use this to find out the track numbers ##
+############################################################
+mkv() {
+   if [ ! "$1" ]; then
+      echo "Usage : mkv [file]"
+      return
+   fi
+   mkvmerge -i "$@"
+}
+
+##################################
+## Compress && Strip elf binary ##
+##################################
+elfcompress() {
+   if [ ! "$1" ]; then
+      echo "Usage : elfcompress [binary]"
+      return
+   fi
+
+   cp "$1" /tmp/compress.temp
+   strip -s -R .comment -R .gnu.version /tmp/compress.temp
+
+   7z a -tGZip -mx=9 /tmp/compress.gz /tmp/compress.temp
+   echo 'a=/tmp/I;tail -n+2 $0|zcat>$a;chmod +x $a;$a;rm $a;exit' >> /tmp/unpack.header
+
+   cat /tmp/unpack.header /tmp/compress.gz > "$1.packed"
+   chmod +x "$1.packed"
+
+   rm /tmp/compress.temp
+   rm /tmp/compress.gz
+   rm /tmp/unpack.header
+}
+
+##################################################
+## Convert ISO to splitted WBFS to use with Wii ##
+##################################################
+wiisplit()
+{
+   if [ ! "$1" ]; then
+      echo "Usage: wiisplit [ISO file]"
+      return
+   fi
+   if [ ! -f "$1" ]; then
+      echo "'$1' is not a valid file"
+      return
+   fi
+
+   wbfs_file "$1"
+}
+
+######################################
+## Open file inside git tree on vim ##
+######################################
+vimo() {
+   local match=
+   [ "$@" ] && match="$(git ls-files | grep "$@")" ||
+               match="$(git ls-files)"
+   [[ $(echo "$match" | wc -l) -gt 1 ]] && match="$(echo $match | dmenu -i -l 20 -p "vim")"
+   [[ -f "$match" ]] || return
+   vim "$match"
+}

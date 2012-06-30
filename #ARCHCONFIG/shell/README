@@ -1,0 +1,10 @@
+#
+# Systemwide shell configuration
+# (including zsh and bash)
+#
+
+Include /arch/zsh/zshrc from your .zshrc
+Include /arch/zsh/bashrc from your .bashrc
+
+Portable shell configuration is in /arch/zsh/shellrc,
+this is included by bashrc and zshrc automatically.

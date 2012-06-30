@@ -1,0 +1,60 @@
+#
+# Systemwide zshrc
+#
+
+# source global shell file
+# (tests for interactive shell)
+source "/arch/shell/shellrc"
+
+# oh-my-zsh enviroiment
+ZSH="/arch/shell/oh-my-zsh"
+ZSH_THEME="dothack"
+CASE_SENSITIVE="false"
+DISABLE_AUTO_UPDATE="true"
+DISABLE_LS_COLORS="false"
+DISABLE_AUTO_TITLE="true"
+COMPLETION_WAITING_DOTS="false"
+
+# oh-my-zsh plugins
+plugins=(git autojump nyan ssh-agent zsh-syntax-highlighting)
+
+# zmv
+autoload -U zmv
+
+# ssh-agent forwarding
+zstyle :omz:plugins:ssh-agent agent-forwarding on
+
+# load oh-my-zsh
+source "$ZSH/oh-my-zsh.sh"
+
+# HACK: override aliases again which oh-my-zsh overrided
+source "/arch/shell/alias"
+
+# link completitions
+compdef pacmatic=pacman
+
+# zsh options
+set -o vi # vi mode
+unsetopt correct_all # I can't see why people like this
+                     # stop typing wrong silly people
+bindkey "\e[1~"   beginning-of-line    # Home
+bindkey "^A"      beginning-of-line    # CTRL+A
+bindkey "\e[4~"   end-of-line          # End
+bindkey "\e[5~"   beginning-of-history # PageUp
+bindkey "\e[6~"   end-of-history       # PageDown
+bindkey "\e[2~"   quoted-insert        # Ins
+bindkey "\e[3~"   delete-char          # Del
+bindkey "\e[5C"   forward-word
+bindkey "\eOc"    emacs-forward-word
+bindkey "\e[5D"   backward-word
+bindkey "\eOd"    emacs-backward-word
+bindkey "\e\e[C"  forward-word
+bindkey "\e\e[D"  backward-word
+bindkey "\e[Z"    reverse-menu-complete # Shift+Tab
+bindkey "\e[7~"   beginning-of-line     # Home
+bindkey "\e[8~"   end-of-line           # End
+bindkey "\eOH"    beginning-of-line
+bindkey "\eOF"    end-of-line
+bindkey "^I"      menu-complete         # Why press tab twice?
+bindkey "^Z"      undo                  # Undo
+bindkey '^R' history-incremental-search-backward

@@ -1,0 +1,17 @@
+#
+# Systemwide bashrc
+#
+
+# source global shell file
+# (tests for interactive shell)
+source "/arch/shell/shellrc"
+
+# bash settings
+shopt -s cdspell
+shopt -s checkwinsize
+shopt -s cmdhist
+shopt -s dirspell
+shopt -s histappend
+shopt -s hostcomplete
+shopt -s no_empty_cmd_completion
+shopt -s nocaseglob

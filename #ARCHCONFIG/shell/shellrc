@@ -1,0 +1,74 @@
+################################
+## Test for interactive shell ##
+################################
+[[ "$-" == *i* ]] || return
+
+#########################
+## SSH complicant mode ##
+#########################
+[ "$SSH_TTY" ] && export TERM="linux"
+
+###########################
+## Enviroiment Variables ##
+###########################
+
+# Default programs
+export EDITOR="vim"
+export BROWSER="dwb"
+
+# Fix weird urxvt bugs on su, ssh
+[[ "$TERM" == *rxvt* ]] && export TERM="xterm-256color"
+
+# Better sorting
+export LC_ALL=
+export LC_COLLATE="C"
+
+# SDL
+export SDL_AUDIODRIVER="alsa"
+export SDL_VIDEO_FULLSCREEN_HEAD=1
+
+# JAVA
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+# GTK
+export GDK_USE_XFT=1
+
+# Global override path
+# ($HOME/bin && /arch/bin)
+export PATH="$HOME/bin:/arch/bin:$PATH"
+
+# Vim as less
+VLESS="$(find /usr/share/vim -name 'less.sh')"
+[ ! "$VLESS" ] || alias less="$VLESS"
+
+# Source passwd enviroiment
+source "/arch/passwd/libpasswd-env"
+
+# LS_COLORS
+# https://github.com/trapd00r/LS_COLORS
+eval $( dircolors -b /arch/shell/LS_COLORS )
+
+# Source global functions
+source "/arch/shell/functions"
+source "/arch/shell/alias"
+
+# Welcome text
+echo "Welcome to lolified Arch Linux"
+echo "\ts  - pacman -S"
+echo "\tss - pacman -Ss"
+echo "\tq  - pacman -Q"
+echo "\tr  - pacman -Rsn"
+echo "\tu  - pacman -Syu"
+echo "\t+  - sudo"
+echo "\nAll modified system wide configurations,"
+echo "AUR packages and other related reside in /arch"
+
+#########################################
+# Change prompt name                    #
+# NOTE: oh-my-zsh themes need to        #
+# be modified to work with PROMPT_TITLE #
+#########################################
+function tname() {
+   echo -ne "\033]0;${@:-$PWD}\007";
+   PROMPT_TITLE=${@:-""}
+}

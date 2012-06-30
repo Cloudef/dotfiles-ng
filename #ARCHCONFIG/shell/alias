@@ -1,0 +1,32 @@
+#
+# Systemwide shell aliases
+#
+
+# coreutils aliases
+alias ls='ls++'
+alias dir='dir -h --color=auto'
+alias vdir='vdir -h --color=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias du='du -sh'
+alias df='df -h'
+
+# vim support
+alias :w='echo this is a shell, not vim.'
+alias :wq=:w
+alias :q='exit'
+
+# pacmatic wrapper
+alias pacman='pacmatic'
+alias q='/usr/bin/pacman -Q'
+alias r='sudo pacmatic -Rsn'
+alias s='sudo pacmatic -S'
+alias ss='/usr/bin/pacman -Ss'
+alias u='sudo pacmatic -Syu'
+
+# shorter sudo
+alias -- +='sudo'
+
+# get extrenal ip
+alias extip='echo $(curl -s http://automation.whatismyip.com/n09230945.asp)'

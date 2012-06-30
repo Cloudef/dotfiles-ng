@@ -1,0 +1,54 @@
+#!/bin/sh
+# dtach a urxvt client
+# only allow one urxvt session by default
+#
+# needs: dtach
+# optional: urxvt
+
+[ ! "$TERMINAL" ] && TERMINAL="urxvt"
+
+# error
+error() { echo "$@" 1>&2; exit 1; }
+
+# check pid
+check_pid() {
+   local PID="$(cat "$@")"
+   kill -0 $PID &> /dev/null && error "already running" || rm "$@"
+}
+
+# attach
+# $1: name of attach
+# $2: socket file
+# $3: pid file
+attach() {
+   $TERMINAL -title "$1" -name "$1" -e dtach -a "$2" &
+   echo "$!" > "$3"
+}
+
+# create new session
+# $1: name of session
+# $2: program to run
+# $3: socket file
+# $4: pid file
+create() {
+   $TERMINAL -title "$1" -name "$1" -e dtach -c "$3" "$2" &
+   echo "$1" > "$4"
+}
+
+# $1: name of dtach
+# $2: program to run
+main() {
+   local SOCKET_DIR="/tmp/durxvt"
+   local PIDFILE="$SOCKET_DIR/$1.pid"
+   local SOCKET="$SOCKET_DIR/$1.sck"
+   [[ -d "$SOCKET_DIR" ]] || mkdir "$SOCKET_DIR"
+   [[ -d "$SOCKET_DIR" ]] || error "no socket directory"
+
+   # comment this line to allow multiple
+   # urxvt sessions
+   [[ -e "$PIDFILE" ]] && check_pid $PIDFILE
+
+   [[ -e "$SOCKET" ]]    && { attach "$1" "$SOCKET" "$PIDFILE"; return; }
+   [[ ! -e "$PIDFILE" ]] && { create "$1" "$2" "$SOCKET" "$PIDFILE"; return; }
+}
+main "$1" "$2"

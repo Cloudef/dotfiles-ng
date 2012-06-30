@@ -1,0 +1,6 @@
+#
+# Systemwide vim configuration
+#
+
+Put systemwide pathogen bundles to bundle.
+Install: source "/arch/vim/vimrc" in your .vimrc

@@ -1,0 +1,17 @@
+#!/bin/sh
+# dmenu wrapper, assing some options
+# if they weren't given.
+#
+# TODO: integrate with monsterwm,
+# maybe make monsterwm output some of it's
+# settings as enviroiment variables?
+main() {
+   local ARGS=
+   [[ "$@" != *-fn ]] && ARGS="$ARGS -fn terminus:8"
+   [[ "$@" != *-nb ]] && ARGS="$ARGS -nb #161616"
+   [[ "$@" != *-nf ]] && ARGS="$ARGS -nf #FF950E"
+   [[ "$@" != *-sb ]] && ARGS="$ARGS -sb #444444"
+   [[ "$@" != *-sf ]] && ARGS="$ARGS -sf #FF950E"
+   /usr/bin/dmenu $ARGS $@
+}
+main $@
