@@ -1,0 +1,31 @@
+#!/bin/sh
+# Pacman update script
+#
+# Doing -Sy to real database is dangerous.
+# For example, if your system were out of date
+# and cron job runs -Sy at background and you
+# were to install some package with -S now,
+# it could break things if some things were
+# dratastically changed.
+#
+# Thefore you should always run -Syu manually.
+#
+# What this script does is, that it syncs
+# a new temporari database to /tmp and
+# symlinks your local database there as well
+# and just runs -Qu on this temporary database.
+#
+# You can then obtain the update count from
+# userspace bu doing 'pacman -Qu --dbpath /tmp/.pacman_updates'
+
+_UPDATES_DB="/tmp/.pacman_updates"
+_LOCAL_DB="/var/lib/pacman/local"
+
+main() {
+   [[ -d "$_UPDATES_DB" ]] || {
+      mkdir -p "$_UPDATES_DB" || return
+      ln -s "$_LOCAL_DB" "$_UPDATES_DB" || return
+   }
+   pacman -Sy --dbpath "$_UPDATES_DB" &> /dev/null
+}
+main "$@"

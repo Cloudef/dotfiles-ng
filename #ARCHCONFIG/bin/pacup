@@ -1,0 +1,12 @@
+#!/bin/sh
+# check pacman updates
+# the core of this script resides in
+# /etc/cron.d/hourly/pacman_update
+# and wont work without it.
+
+_UPDATES_DB="/tmp/.pacman_updates"
+
+main() {
+   pacman -Qu --dbpath "$_UPDATES_DB" $@
+}
+main "$@"
