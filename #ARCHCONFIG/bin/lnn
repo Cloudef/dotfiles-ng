@@ -1,0 +1,22 @@
+#!/bin/sh
+# Creates symbolic link to the same
+# directory as target, works with
+# multiple targets and wildcards.
+
+usage() {
+   echo "usage: $(basename $0) <files>"
+   exit 1
+}
+
+main() {
+   [ "$1" ] || usage
+   while [ "$1" ]; do
+      if [ -e "$1" ]; then
+         folder="$(dirname "$1")"
+         file="$(basename "$1")"
+         ln -s "$1" "${folder}/${file} (link)"
+      fi
+      shift || break
+   done
+}
+main "$@"
