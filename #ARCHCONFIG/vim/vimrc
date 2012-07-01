@@ -24,7 +24,7 @@ if has('gui_running')
 endif
 " }}}
 " {{{ Vim's own settings
-colorscheme slate                " modified slate colorscheme
+colorscheme colorshot            " modified slate theme
 set background=dark              " dark background
 set nocompatible                 " non Vi compatible
 set completeopt-=preview         " disable scratch buffer
