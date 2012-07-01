@@ -22,14 +22,14 @@ __anime_base_d() {
 # filter search to files only
 __anime_filter_f() {
    while read fn; do
-      [[ -f "$fn" ]] && echo "$fn" | grep -v ".ass" | grep -v ".srt"
+      [[ -f "$fn" ]] && echo "$fn" | egrep -v "\.srt|\.ass"
    done
 }
 
 # get anime list from location (files only)
 _anime_get_f() {
    locate -d "$_LIBANIME_DB" "$@" | __anime_base_f | \
-      grep "." | grep -v ".ass" | grep -v ".srt" | \
+      egrep -v "\.srt|\.ass" | \
       sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[ ]//g;s/^- //g' | \
       perl -p -e 's/^\n//g'
 }
@@ -37,7 +37,7 @@ _anime_get_f() {
 # get anime list from location (directories only)
 _anime_get_d() {
    locate -d "$_LIBANIME_DB" "$@" | __anime_base_d | \
-      grep "." | grep -v ".ass" | grep -v ".srt" | \
+      egrep -v "\.srt|\.ass" | \
       sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[ ]//g;s/^- //g' | \
       perl -p -e 's/^\n//g'
 }
