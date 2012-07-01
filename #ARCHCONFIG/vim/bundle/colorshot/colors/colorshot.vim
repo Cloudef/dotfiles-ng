@@ -38,19 +38,19 @@ let colors_name = 'colorshot'
 
 " General colors
 hi Normal      guifg=#F8F8F8 guibg=#12384B gui=NONE
-hi NonText     guifg=#A3FEFE gui=NONE      ctermfg=blue
+hi NonText     guifg=#A3FEFE gui=NONE ctermfg=blue
 
-hi Cursor      guifg=NONE  guibg=#8BA7A7
-hi LineNr      guifg=#B0B3B9  gui=bold ctermfg=darkgray cterm=bold
+hi Cursor      guifg=NONE guibg=#8BA7A7
+hi LineNr      guifg=#B0B3B9 gui=bold ctermfg=darkgray cterm=bold
 
-hi VertSplit   guifg=#F8F8F8  guibg=#0F2130  gui=NONE ctermfg=lightgray ctermbg=black cterm=NONE
+hi VertSplit   guifg=#F8F8F8 guibg=#0F2130 gui=NONE ctermfg=lightgray ctermbg=black cterm=NONE
 
-hi Visual      guibg=#B0C3DA  ctermbg=cyan
+hi Visual      guibg=#B0C3DA ctermbg=cyan
 
-hi Title       guifg=#F1B356  guibg=NONE ctermfg=magenta ctermbg=NONE
-hi WildMenu    guifg=#0F2130  guibg=#B0B3B9 ctermfg=black ctermbg=lightgray
-hi ErrorMsg    guifg=#F8F8F8  guibg=#D22613	gui=bold ctermfg=lightgray ctermbg=darkred cterm=bold
-hi WarningMsg  guifg=#F4EF82  guibg=#0F2130	gui=bold ctermfg=yellow ctermbg=black cterm=bold
+hi Title       guifg=#F1B356 guibg=NONE ctermfg=magenta ctermbg=NONE
+hi WildMenu    guifg=#0F2130 guibg=#B0B3B9 ctermfg=black ctermbg=lightgray
+hi ErrorMsg    guifg=#F8F8F8 guibg=#D22613 gui=bold ctermfg=lightgray ctermbg=darkred cterm=bold
+hi WarningMsg  guifg=#F4EF82 guibg=#0F2130 gui=bold ctermfg=yellow ctermbg=black cterm=bold
 
 hi ModeMsg     guifg=#B0B3B9 guibg=#0F2130 gui=bold ctermfg=lightgray ctermbg=black cterm=bold
 
@@ -61,9 +61,9 @@ if version >= 700 " Vim 7 specific colors
    hi Search      guifg=NONE guibg=NONE gui=inverse ctermfg=NONE ctermbg=NONE cterm=inverse
 endif
 
-hi Pmenu       guifg=#000000  guibg=#F8F8F8 ctermfg=black ctermbg=lightgray
-hi PmenuSbar   guifg=#8A95A7  guibg=#F8F8F8	gui=NONE ctermfg=darkcyan ctermbg=lightgray	cterm=NONE
-hi PmenuThumb  guifg=#F8F8F8  guibg=#8A95A7	gui=NONE ctermfg=lightgray ctermbg=darkcyan	cterm=NONE
+hi Pmenu       guifg=#000000 guibg=#F8F8F8 ctermfg=black ctermbg=lightgray
+hi PmenuSbar   guifg=#8A95A7 guibg=#F8F8F8 gui=NONE ctermfg=darkcyan ctermbg=lightgray cterm=NONE
+hi PmenuThumb  guifg=#F8F8F8 guibg=#8A95A7 gui=NONE ctermfg=lightgray ctermbg=darkcyan cterm=NONE
 
 " Syntax highlighting
 hi Comment  guifg=#2C9ADE gui=italic ctermfg=darkblue
