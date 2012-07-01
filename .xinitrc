@@ -6,6 +6,8 @@ _STATUS_FONT="terminus"
 
 # autostart
 autostart() {
+   # wait for wm
+   while ! killall -0 $_XINIT_WM; do sleep 1; done
    # clipboard dmenu daemon
    clipbored
    # redshift for my eyes
@@ -32,7 +34,7 @@ monsterwm_init() {
    monsterstatus | \
       dzen2 -h $_STATUS_HEIGHT -y 0 -x $pagerw -w $statusw -ta r -fn $_STATUS_FONT -e -p &
 
-   while [[ ! -p "$ff" ]]; do sleep 1; done; sleep 2
+   while [[ ! -p "$ff" ]]; do sleep 1; done; sleep 1
    exec monsterwm | tee -a "$ff" &> /dev/null
    [[ -p "$ff" ]] && rm "$ff"
 }
@@ -61,7 +63,7 @@ xrdb -load $HOME/.Xresources
 xsetroot -cursor_name left_ptr
 setxkbmap -option terminate:ctrl_alt_bksp
 
-(sleep 2 && autostart) &
+autostart &
 [[ "$_XINIT_WM" == "monsterwm" ]] && monsterwm_init
 [[ "$_XINIT_WM" != "monsterwm" ]] && exec $_XINIT_WM &> /dev/null
 autokill; sleep 1
