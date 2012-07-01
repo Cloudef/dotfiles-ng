@@ -1,5 +1,5 @@
 # default download directory and session settings
-directory            = /media/storage
+directory            = /mnt/storage
 session              = /home/loli/.rtorrent
 
 # up|down
@@ -24,10 +24,10 @@ view_sort_current = main,less=d.get_creation_date=
 schedule = low_diskspace,5,60,close_low_diskspace=2500M
 
 # auto torrent directories
-schedule = anime_torrent,10,10,"load_start=/media/anime/torrent/*.torrent,d.set_directory=/media/anime/seed"
-schedule = anime_torrent2,10,10,"load_start=/media/storage/anime/torrent/*.torrent,d.set_directory=/media/storage/anime/seed"
-schedule = storage_torrent,10,10,"load_start=/media/storage/torrent/*.torrent,d.set_directory=/media/storage"
-schedule = music_torrent,10,10,"load_start=/media/storage/musiikki/torrent/*.torrent,d.set_directory=/media/storage/musiikki"
+schedule = anime_torrent,10,10,"load_start=/mnt/anime/torrent/*.torrent,d.set_directory=/mnt/anime/seed"
+schedule = anime_torrent2,10,10,"load_start=/mnt/storage/anime/torrent/*.torrent,d.set_directory=/mnt/storage/anime/seed"
+schedule = storage_torrent,10,10,"load_start=/mnt/storage/torrent/*.torrent,d.set_directory=/mnt/storage"
+schedule = music_torrent,10,10,"load_start=/mnt/storage/musiikki/torrent/*.torrent,d.set_directory=/mnt/storage/musiikki"
 
 #
 # Other settings below
