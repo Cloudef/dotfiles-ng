@@ -1,0 +1,73 @@
+#!/bin/bash
+#
+# /etc/rc.local: Local multi-user startup script.
+#
+
+############
+# RC.LOCAL #
+############
+
+# no blanking
+setterm -blank 0
+
+################
+# CPU GOVERNOR #
+################
+
+# Change ondemand governor's up threshold
+(sleep 10 && echo -n 25 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold) &
+
+######################################
+# Assign different scheduler for SSD #
+######################################
+declare -ar SSDS=(
+   'ata-OCZ-AGILITY3_OCZ-PEOA50X8TS772L78'
+)
+
+for SSD in "${SSDS[@]}"; do
+   BY_ID=/dev/disk/by-id/$SSD
+   if [[ -e "$BY_ID" ]]; then
+      DEV_NAME=`ls -l $BY_ID | awk '{ print $NF }' | sed -e 's/[/\.]//g'`
+      SCHED=/sys/block/$DEV_NAME/queue/scheduler
+
+      if [[ -w $SCHED ]]; then
+         echo noop > $SCHED
+      fi
+   fi
+done
+
+####################
+# MAKE HDDs SILENT #
+####################
+
+hdparm -M254 /dev/disk/by-label/Anime   &> /dev/null
+hdparm -M254 /dev/disk/by-label/Storage &> /dev/null
+
+################
+# POWER SAVING #
+################
+
+# USB powersave
+for i in /sys/bus/usb/devices/*/power; do
+   [[ -f "$i/autosuspend" ]] || continue;
+   echo 2 > "$i/autosuspend";
+done &
+
+# PCI, i2c powersave
+for i in /sys/bus/{pci,i2c}/devices/*/power/control; do echo auto > $i; done &
+
+# SATA powersave
+for i in /sys/class/scsi_host/host*/link_power_management_policy; do echo min_power > $i; done &
+echo min_power > /sys/class/scsi_host/host0/link_power_management_policy &
+
+# Sound card powersave
+echo 1 > /sys/module/snd_hda_intel/parameters/power_save &
+echo Y > /sys/module/snd_hda_intel/parameters/power_save_controller &
+
+# Disable WOL
+which ethtool &> /dev/null && ethtool -s eth0 wol d &
+
+########
+# EXIT #
+########
+exit 0
