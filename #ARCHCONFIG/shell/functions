@@ -1,10 +1,10 @@
-#
+#!/bin/sh
 # Systemwide shell functions
 #
 
-#######################
-# Colorized man pages #
-#######################
+#########################
+## Colorized man pages ##
+#########################
 man() {
    env \
       LESS_TERMCAP_mb=$(printf "\e[1;31m") \
@@ -17,10 +17,20 @@ man() {
       man "$@"
 }
 
+#####################################
+## Take screenshot of main monitor ##
+#####################################
+shot() {
+   local mon=$@
+   local file="$HOME/shot-$(date +'%H:%M-%d-%m-%Y').png"
+   [ "$mon" ] || mon=1
+   ffcast -x $mon % scrot -g %wx%h+%x+%y $file
+}
+
 ##############################################
-### Colored Find                             ##
-### NOTE: Searches current tree recrusively. ##
-###############################################
+## Colored Find                             ##
+## NOTE: Searches current tree recrusively. ##
+##############################################
 f() {
    find . -iregex ".*$@.*" -printf '%P\0' | xargs -r0 ls --color=auto -1d
 }
@@ -155,7 +165,7 @@ function extract() {
 #####################################################
 remux() {
    if [ ! "$1" ] || [ ! "$2" ] || [ ! "$3" ] || [ ! "$4" ]; then
-      echo "Usage : remux [output] [input] [audio track to keep] [subtible track to keep]"
+      echo "usage : remux [output] [input] [audio track to keep] [subtible track to keep]"
       return
    fi
    mkvmerge -o "$1" -d 1 --audio-tracks "$3" --subtitle-tracks "$4" "$2"
@@ -167,7 +177,7 @@ remux() {
 bremux() {
    local FILTER="*.mkv"
    if [ ! "$1" ] || [ ! "$2" ]; then
-      echo "Usage : bremux [audio track] [subtible track] [filter]"
+      echo "usage : bremux [audio track] [subtible track] [filter]"
       return
    fi
    [ "$3" ] && FILTER="$3"
@@ -182,7 +192,7 @@ bremux() {
 ############################################################
 mkv() {
    if [ ! "$1" ]; then
-      echo "Usage : mkv [file]"
+      echo "usage : mkv [file]"
       return
    fi
    mkvmerge -i "$@"
@@ -193,7 +203,7 @@ mkv() {
 ##################################
 elfcompress() {
    if [ ! "$1" ]; then
-      echo "Usage : elfcompress [binary]"
+      echo "usage : elfcompress [binary]"
       return
    fi
 
@@ -217,7 +227,7 @@ elfcompress() {
 wiisplit()
 {
    if [ ! "$1" ]; then
-      echo "Usage: wiisplit [ISO file]"
+      echo "usage: wiisplit [ISO file]"
       return
    fi
    if [ ! -f "$1" ]; then
@@ -233,9 +243,83 @@ wiisplit()
 ######################################
 vimo() {
    local match=
+   local curpw="$PWD"
+
+   [[ -d ".git" ]] || return
+   while [ $(git ls-files --full-name | head -n1 | grep -o "s" <<<"$x" | wc -l) -gt 0 ]; do cd ..; done
    [ "$@" ] && match="$(git ls-files | grep "$@")" ||
                match="$(git ls-files)"
    [[ $(echo "$match" | wc -l) -gt 1 ]] && match="$(echo $match | dmenu -i -l 20 -p "vim")"
+   cd "$curpw" # go back
    [[ -f "$match" ]] || return
    vim "$match"
+}
+
+#######################
+## Setup github repo ##
+#######################
+function mkgit() {
+   local GITHUB="Cloudef"
+
+   mkdir "$1"
+   cd "$1"
+   git init
+   touch README
+   git add README
+   git commit -a -m 'inital setup - automated'
+   git remote add origin "git@github.com:$GITHUB/$1.git"
+   git push -u origin master
+}
+
+####################################
+## Getting undefined references?  ##
+## Grep your libs for symbols     ##
+####################################
+function greplib() {
+   if [ ! "$1" ]; then
+      echo "usage : greplib [symbol] (lookup path)"
+      return
+   fi
+
+   if [ ! "$2" ]; then
+      nm -a -o /usr/lib/*.so 2> /dev/null | grep $1
+      nm -a -o /usr/lib/*.a  2> /dev/null | grep $1
+   else
+      nm -a -o $2/*.so 2> /dev/null | grep $1
+      nm -a -o $2/*.a  2> /dev/null | grep $1
+   fi
+}
+
+##############################
+## Encode GLC captured file ##
+##############################
+glc-encode() {
+   if [ ! "$1" ] || [ ! "$2" ] || [ ! "$3" ] || [ ! "$4" ]; then
+      echo "Usage : glc-encode [input] [audio bitrate] [video bitrate] [output]"
+      return
+   fi
+
+   [[ "$2" == "0" ]] || glc-play "$1" -o - -a 1 | ffmpeg -i pipe: -ab $2 /tmp/audio.mp4
+   if [ -f /tmp/audio.mp4 ]; then
+      glc-play "$1" -o - -y 1 | ffmpeg -i pipe: -i /tmp/audio.mp4 -acodec copy -b $3 "$4"
+      rm /tmp/audio.mp4
+   else
+      glc-play "$1" -o - -y 1 | ffmpeg -i pipe: -b $3 "$4"
+   fi
+}
+
+#############################
+## Japanese text to speech ##
+#############################
+say() {
+   local URL="$(echo "$@" | perl -MURI::Escape -ne 'chomp;print uri_escape($_)')"
+   mplayer -really-quiet "http://translate.google.com/translate_tts?ie=UTF-8&tl=JA&q=$URL" &> /dev/null
+}
+
+######################################
+## Crappy google translate [JA->EN] ##
+######################################
+translate() {
+   local URL="$(echo "$@" | perl -MURI::Escape -ne 'chomp;print uri_escape($_)')"
+   curl -s -A "Mozilla" "http://translate.google.com/translate_a/t?client=t&ie=UTF-8&text=$URL&sl=ja&tl=en" | awk -F'"' '{print $2}'
 }
