@@ -262,14 +262,30 @@ vimo() {
 #######################
 function mkgit() {
    local GITHUB="Cloudef"
+   local dir="$1"
+   local gitname="$2"
 
-   mkdir "$1"
-   cd "$1"
-   git init
-   touch README
-   git add README
+   # check dir
+   [ "$dir" ] || {
+      echo "usage: mkgit <dir> [name]"
+      return
+   }
+
+   # use dir name if, no gitname specified
+   [ "$gitname" ]  || gitname="$dir"
+   [[ -d "$dir" ]] || mkdir "$dir"
+
+   # bail out, if already git repo
+   [[ -d "$dir/.git" ]] && {
+      echo "already a git repo: $dir"
+      return
+   }
+
+   cd "$dir"
+   git init || return
+   touch README; git add README
    git commit -a -m 'inital setup - automated'
-   git remote add origin "git@github.com:$GITHUB/$1.git"
+   git remote add origin "git@github.com:$GITHUB/$gitname.git"
    git push -u origin master
 }
 
