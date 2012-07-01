@@ -1,0 +1,78 @@
+#!/bin/sh
+# common source file for anime functions
+#
+# needs: mlocate, sed, perl
+
+err() { echo "$@" 1>&2; exit 1; }
+
+# basename and echo files only
+__anime_base_f() {
+   while read fn; do
+      [[ -f "$fn" ]] && basename "$fn"
+   done
+}
+
+# basename and echo directories only
+__anime_base_d() {
+   while read fn; do
+      [[ -d "$fn" ]] && basename "$fn"
+   done
+}
+
+# filter search to files only
+__anime_filter_f() {
+   while read fn; do
+      [[ -f "$fn" ]] && echo "$fn" | grep -v ".ass" | grep -v ".srt"
+   done
+}
+
+# get anime list from location (files only)
+_anime_get_f() {
+   locate -d "$_LIBANIME_DB" "$@" | __anime_base_f | \
+      grep "." | grep -v ".ass" | grep -v ".srt" | \
+      sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[ ]//g;s/^- //g' | \
+      perl -p -e 's/^\n//g'
+}
+
+# get anime list from location (directories only)
+_anime_get_d() {
+   locate -d "$_LIBANIME_DB" "$@" | __anime_base_d | \
+      grep "." | grep -v ".ass" | grep -v ".srt" | \
+      sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[ ]//g;s/^- //g' | \
+      perl -p -e 's/^\n//g'
+}
+
+# lookup anime from _get list (files only)
+_anime_lookup_f() {
+   locate -d "$_LIBANIME_DB" "$@" | __anime_filter_f | head -n1
+}
+
+# lookup anime from _get list (directories only)
+_anime_lookup_d() {
+   locate -d "$_LIBANIME_DB" "$@" | __anime_filter_d | head -n1
+}
+
+# pass main $@ arguments here
+_anime_init() {
+   [[ "$1" == "-r" ]] &&
+   { _ANIME_ROOT="$2"; shift 2; }
+
+   [[ -d "$_ANIME_ROOT" ]] ||
+      err "$_ANIME_ROOT: directory does not exist"
+
+   # time to set correct variables
+   _ANIME_SEED="$_ANIME_ROOT/$_ANIME_SEED"
+   _ANIME_WATCHING="$_ANIME_ROOT/$_ANIME_WATCHING"
+   _ANIME_WATCHED="$_ANIME_ROOT/$_ANIME_WATCHED"
+
+   # final checks
+   [[ -d "$_ANIME_SEED" ]] ||
+      err "$_ANIME_SEED: directory does not exist"
+   [[ -d "$_ANIME_WATCHING" ]] ||
+      err "$_ANIME_WATCHING: directory does not exist"
+   [[ -d "$_ANIME_WATCHED" ]] ||
+      err "$_ANIME_WATCHED: directory does not exist"
+
+   # update database
+   updatedb -l 0 -o "$_LIBANIME_DB" -U "$_ANIME_ROOT"
+}

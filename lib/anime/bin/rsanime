@@ -1,0 +1,21 @@
+#!/bin/sh
+# move anime from watching location
+# to watched location
+#
+# rsanime uses only find (atm at least)
+
+source "$_LIBANIME_ROOT/libanime"
+
+main() {
+   local from=; local to=
+   _anime_init "$@"
+
+   # select seed
+   from="$(find "$_ANIME_WATCHING" -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | \
+      dmenu -i -l 20 -p rsanime)"
+   [[ "$from" ]] && [[ -d "$_ANIME_WATCHING/$from" ]] || return
+
+   # store
+   mv -v "$_ANIME_WATCHING/$from" "$_ANIME_WATCHED/$from"
+}
+main "$@"

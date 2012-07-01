@@ -1,0 +1,29 @@
+#!/bin/sh
+# move anime from seed location
+# to watching location
+#
+# mvanime uses only find (atm at least)
+
+source "$_LIBANIME_ROOT/libanime"
+
+main() {
+   local from=; local to=
+   _anime_init "$@"
+
+   # select seed
+   fromf="$(find $_ANIME_SEED -maxdepth 1 -mindepth 1 -type f -exec basename {} \; | \
+      grep -v ".ass" | grep -v ".srt")"
+   fromd="$(find $_ANIME_SEED -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)"
+   from="$(echo -e "$fromf\n$fromd" | dmenu -i -l 20 -p mvanime)"
+   [[ "$from"    ]] || return
+   [[ -f "$from" ]] || [[ -d "$from" ]] || return
+
+   # select destination
+   to="$(find $_ANIME_WATCHING $_ANIME_WATCHED -maxdepth 1 -mindepth 1 -type d | \
+      dmenu -i -l 20 -p "to")"
+   [[ -d "$to" ]] || return
+
+   # move
+   mv -v "$from" "$to"
+}
+main "$@"

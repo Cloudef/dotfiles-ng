@@ -1,0 +1,14 @@
+#!/bin/sh
+# create new anime directory in watched
+# directory
+
+source "$_LIBANIME_ROOT/libanime"
+
+err() { echo "$@" 1>&2; exit 1; }
+main() {
+   [ "$@" ] || err "usage: $(basename $0) [anime name]"
+   _anime_init "$@"
+   mkdir "$ANIME_WATCHING/$@"
+   echo  "created: $ANIME_WATCHING/$@"
+}
+main "$@"

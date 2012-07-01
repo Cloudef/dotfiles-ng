@@ -1,0 +1,57 @@
+#!/bin/sh
+# watch anime
+#
+# to save history do alias
+# in zsh:
+#     alias anime='print -s "$(_anime)"'
+# in bash:
+#     alias anime='history -s "$(_anime)"'
+#
+# otherwise just alias to _anime or rename
+# this shell script.
+
+source "$_LIBANIME_ROOT/libanime"
+
+main() {
+   # strip
+   local orig="$@"
+   local name="$(echo "$orig" | sed 's/ /*/g')"
+   [ "$name" ] && name="*$name*"
+
+   # init
+   _anime_init "$@"
+
+   # locate and filter
+   local match1="$(_anime_get_f "$_ANIME_WATCHING/$name")"
+   local match2="$(_anime_get_f "$_ANIME_WATCHED/$name")"
+
+   # join matches
+   [ "$match1" ] && match="$match1"
+   if [ "$match2" ]; then
+      [ "$match" ] && match="$match\n"
+      match="$match$match2"
+   fi
+
+   # output to dmenu
+   if [[ $(echo -e "$match" | wc -l) -gt 1 ]]; then
+      match="$(echo -e "$match" | dmenu -i -l 20 -p "anime")"
+      orig="" # save the selected to history
+   fi
+   [ "$match" ] || return 1
+
+   # create full path
+   local lookup="$(echo $match | sed 's/ /*/g')"
+   file="$(_anime_lookup_f "$_ANIME_WATCHING/*$lookup*")"
+   [[ -f "$file" ]] || file="$(_anime_lookup_f "$_ANIME_WATCHED/*$lookup*")"
+   [[ -f "$file" ]] || return 1;
+
+   # append to history
+   [ ! "$orig" ] && echo "$match" >> "$_ANIME_HISTORY"
+   [   "$orig" ] && echo "$orig"  >> "$_ANIME_HISTORY"
+
+   # play
+   echo "playing: $file"
+   mplayer -really-quiet "$file" &> /dev/null
+}
+main "$@"
+exit $?
