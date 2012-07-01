@@ -46,8 +46,8 @@ URxvt.scrollTtyOutput:false
 URxvt.scrollWithBuffer:true
 URxvt.scrollTtyKeypress:true
 URXvt.mouseWheelScrollPage:false
-URxvt.keysym.C-plus:command:\033]50;xft:DejaVu Sans Mono:pixelsize=16,xft:IPAGothic\007
-URxvt.keysym.C-minus:command:\033]50;xft:terminus:pixelsize=8,xft:IPAGothic\007
-URxvt.font:xft:terminus:pixelsize=8,xft:IPAGothic
+URxvt.keysym.C-plus:command:\033]50;xft:DejaVu Sans Mono:pixelsize=16,xft:IPAMincho\007
+URxvt.keysym.C-minus:command:\033]50;xft:terminus,xft:Kochi Gothic:antialias=false\007
+URxvt.font:xft:terminus,xft:Kochi Gothic:antialias=false
 URxvt.depth:24
 !}}}
