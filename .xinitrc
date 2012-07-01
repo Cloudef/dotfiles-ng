@@ -11,7 +11,7 @@ autostart() {
    # clipboard dmenu daemon
    clipbored
    # redshift for my eyes
-   redshift -l 62:22 &> /dev/null &
+   redshift -l 62:22 -m vidmode &> /dev/null &
    # start irc, torrent
    irc; torrent
 }
