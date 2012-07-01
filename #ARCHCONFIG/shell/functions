@@ -243,14 +243,15 @@ wiisplit()
 ######################################
 vimo() {
    local match=
-   local curpw="$PWD"
-
-   [[ -d ".git" ]] || return
-   while [ $(git ls-files --full-name | head -n1 | grep -o "s" <<<"$x" | wc -l) -gt 0 ]; do cd ..; done
+   local gtdir=
+   git ls-files &>/dev/null || return # test if git
+   gtdir="$(git rev-parse --show-toplevel)"
+   pushd "$gtdir" &> /dev/null # git root
    [ "$@" ] && match="$(git ls-files | grep "$@")" ||
                match="$(git ls-files)"
    [[ $(echo "$match" | wc -l) -gt 1 ]] && match="$(echo $match | dmenu -i -l 20 -p "vim")"
-   cd "$curpw" # go back
+   match="$gtdir/$match" # convert to absolute
+   popd &> /dev/null # go back
    [[ -f "$match" ]] || return
    vim "$match"
 }
