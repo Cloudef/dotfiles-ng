@@ -1,3 +1,6 @@
+#!/bin/sh
+# bash and zsh complicant rc source
+
 ################################
 ## Test for interactive shell ##
 ################################
