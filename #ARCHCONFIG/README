@@ -26,6 +26,8 @@ Qt is sadly needed by uim-mozc.
 Current issues:
    Clipboard manager stops syncing to XA_PRIMARY after while.
    Monsterwm switches workspace sometimes when qurxvt is invoked.
+   $TERM is forced to 'xterm-256color' otherwise there is issues with root zsh
+   and programs such as vim run as root or sudo (no syntax colors).
 
 Reminders?
    You should use ':set cc=80' more often.
