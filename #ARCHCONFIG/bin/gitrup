@@ -1,0 +1,18 @@
+#!/bin/sh
+# Walks through all the directories
+# in current working directory
+# and runs git pull on them if
+# the directory is a git repository.
+
+main() {
+   for i in *; do
+      [[ -d "$i" ]]      || continue
+      [[ -d "$i/.git" ]] || continue
+      pushd "$i" &> /dev/null
+      echo "-!- Updating $(basename $i)"
+      git pull
+      echo ""
+      popd &> /dev/null
+   done
+}
+main "$@"
