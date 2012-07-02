@@ -16,6 +16,7 @@ export _ANIME_ROOT="/mnt/anime"                 # root of your animus
 
 # alias for binaries
 alias anime="__anime"
+alias upanime="$_LIBANIME_ROOT/bin/upanime"
 alias mkanime="$_LIBANIME_ROOT/bin/mkanime"
 alias mvanime="$_LIBANIME_ROOT/bin/mvanime"
 alias rsanime="$_LIBANIME_ROOT/bin/rsanime"

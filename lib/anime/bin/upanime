@@ -1,0 +1,12 @@
+#!/bin/sh
+# update anime cache manually
+
+source "$_LIBANIME_ROOT/libanime"
+
+main() {
+   _anime_init "$@"
+   echo "-!- updating cache"
+   _anime_update "$_ANIME_WATCHING"
+   _anime_update "$_ANIME_WATCHED"
+}
+main "$@"
