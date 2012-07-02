@@ -73,41 +73,41 @@ X Font setup:
    continue where it left.
 
 /arch/bin/qurxvt: quake urxvt
-   quake styled urxvt console, binded to 'tilde' in monsterwm.
+   Quake styled urxvt console, binded to 'tilde' in monsterwm.
 
 /arch/bin/extract: archive extraction
-   extracts various file archives.
+   Extracts various file archives.
 
 /arch/bin/gitrup: subdirectory git puller
-   small script for updating 'git bundles' in pathogen for example.
+   Small script for updating 'git bundles' in pathogen for example.
 
 /arch/bin/nicoplay: stream nicovideo to mplayer
-   streams nicovideo to mplayer, simple as that.
+   Streams nicovideo to mplayer, simple as that.
 
 /arch/bin/pacup: small pacman update checker
    - /arch/etc/cron.hourly/pacman_update
       ^ dependant, more information in this file.
 
 /arch/bin/relink: relink symbolic links
-   relink symbolic links using regular expression.
+   Relink symbolic links using regular expression.
 
 /arch/bin/scrotwin: scrot active window
    - /arch/pkg/pkgbuild/scrot
       ^ dependant, patched to support cropping
-   gets screenshot of active window without clicking it.
+   Gets screenshot of active window without clicking it.
 
 /arch/bin/svol: OSSv4 && alsa volume controller
-   small and simple volume controller.
+   Small and simple volume controller.
 
 /arch/vim: systemwide vim configuration
-   refer to '/arch/vim/README' for more information.
+   Refer to '/arch/vim/README' for more information.
 
 /arch/shell: systemwide shell configuration
-   refer to '/arch/shell/README' for more information.
+   Refer to '/arch/shell/README' for more information.
 
 /arch/passwd: passwd library for simple scripts
-   password handler for automated scripts that need authentication. refer to
+   Rassword handler for automated scripts that need authentication. Refer to
    '/arch/passwd/README' for more information.
 
 /arch/xcolors: systemwide xcolors for .Xresources
-   xcolors I like are stored here.
+   Xcolors I like are stored here.
