@@ -2,14 +2,38 @@
 # System configurations
 #
 
-All my edited system configuration files (in /) are
-stored here and symlinked to proper places.
+All my edited system configuration files (in /) are stored here and symlinked
+to proper places. Package list contains packages for all packages needed for
+stuff in '/arch' to work.
 
-Packages contain list of packages for bare system with
-only X, -ck kernel and -ck nvidia stuff, and some other.
+AUR and other sources are in '/arch/pkg'
 
 Packages is generated with:
    pacman -Q | grep -v "$(pacman -Qm)" > PACKAGES
+
+In addition I use these repositories (and pacakges):
+   [repo-ck]: http://repo-ck.com/$arch
+      - linux-ck-corex
+      - nvidia-ck-corex
+   [pnsft-pur]: http://downloads.sourceforge.net/project/pnsft-aur/pur/$arch
+      - uim-mozc-ut
+
+GTK2 is needed by dwb.
+Qt is sadly needed by uim-mozc.
+
+\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
+
+Current issues:
+   Clipboard manager stops syncing to XA_PRIMARY after while.
+   Monsterwm switches workspace sometimes when qurxvt is invoked.
+
+Reminders?
+   You should use ':set cc=80' more often.
+   Do dmenu binding for vim for opening new files to split pane. (c-s)
+   Move some tools to PKGBUILD's
+   You have job, remember to sleep.
+
+\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 X Font setup:
    ! XFT
@@ -21,5 +45,69 @@ X Font setup:
    Xft.dpi:96
    Xft.rgba:rgb
 
-TODO:
-   Write everything I have done, down here...
+/arch/pkg/source/monsterwm: window manager
+   Slightly modified monsterwm setup. Status and pager are seperate C programs.
+   For more, refer to the sources itself.
+
+/arch/pkg/source/clipbored: clipboard manager
+   meta-c: access clipboard history
+   meta-shift-c: access clipboard url history
+   alt-shift-c: sync XA_PRIMARY to XA_CLIPBOARD
+
+/arch/pkg/pkgbuild/linopen: xdg-open replacement
+   Small handy xdg-open replacement.
+
+/arch/pkg/pkgbuild/scrot: patched scrot
+   Scrot with geometry support.
+
+/arch/bin/dmenu: dmenu wrapper
+   Sets defaults for arguments which was not passed
+   to the wrapper. (fonts, colors)
+
+/arch/bin/curxvt: urxvtd && urxvtc helper
+   Spawn new urxvtc terminal. Starts urxvtd automatically, if it's not running.
+
+/arch/bin/durxvt: dtach for urxvt
+   Run only one instance of urxvt with the program running dtached. If you
+   close the urxvt and run durxvt with same arguments again, the session will
+   continue where it left.
+
+/arch/bin/qurxvt: quake urxvt
+   quake styled urxvt console, binded to 'tilde' in monsterwm.
+
+/arch/bin/extract: archive extraction
+   extracts various file archives.
+
+/arch/bin/gitrup: subdirectory git puller
+   small script for updating 'git bundles' in pathogen for example.
+
+/arch/bin/nicoplay: stream nicovideo to mplayer
+   streams nicovideo to mplayer, simple as that.
+
+/arch/bin/pacup: small pacman update checker
+   - /arch/etc/cron.hourly/pacman_update
+      ^ dependant, more information in this file.
+
+/arch/bin/relink: relink symbolic links
+   relink symbolic links using regular expression.
+
+/arch/bin/scrotwin: scrot active window
+   - /arch/pkg/pkgbuild/scrot
+      ^ dependant, patched to support cropping
+   gets screenshot of active window without clicking it.
+
+/arch/bin/svol: OSSv4 && alsa volume controller
+   small and simple volume controller.
+
+/arch/vim: systemwide vim configuration
+   refer to '/arch/vim/README' for more information.
+
+/arch/shell: systemwide shell configuration
+   refer to '/arch/shell/README' for more information.
+
+/arch/passwd: passwd library for simple scripts
+   password handler for automated scripts that need authentication. refer to
+   '/arch/passwd/README' for more information.
+
+/arch/xcolors: systemwide xcolors for .Xresources
+   xcolors I like are stored here.
