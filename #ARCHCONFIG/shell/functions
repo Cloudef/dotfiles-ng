@@ -23,8 +23,8 @@ man() {
 shot() {
    local mon=$@
    local file="$HOME/shot-$(date +'%H:%M-%d-%m-%Y').png"
-   [ "$mon" ] || mon=1
-   ffcast -x $mon % scrot -g %wx%h+%x+%y $file
+   [[ -n "$mon" ]] && mon=1
+   ffcast -x $mon % scrot -g %wx%h+%x+%y "$file"
 }
 
 ##############################################
@@ -39,7 +39,7 @@ f() {
 ## Smarter CD ##
 ################
 function goto() {
-   [ -d "$1" ] && cd "$1" || cd "$(dirname "$1")";
+   [[ -d "$1" ]] && { cd "$1"; } || cd "$(dirname "$1")";
 }
 
 ####################
@@ -107,8 +107,8 @@ xclass()
 ###################################################################
 memleak()
 {
-   [ -f valgrind.supp ] &&
-      valgrind --suppressions=valgrind.supp "$@" || valgrind "$@"
+   [[ -f valgrind.supp ]] && {
+      valgrind --suppressions=valgrind.supp "$@"; } || valgrind "$@"
 }
 
 ########################
@@ -132,42 +132,14 @@ function mktbz() {
    tar cvjf "${1%%/}.tar.bz2" "${1%%/}/";
 }
 
-######################
-## Extract archives ##
-######################
-function extract() {
-   # Allow work with wildcards
-   while [ "$1" ]; do
-      if [ -f "$1" ] ; then
-         case "$1" in
-            *.tar.bz2)   tar xvjf "$1"    ;;
-            *.tar.gz)    tar xvzf "$1"    ;;
-            *.bz2)       bunzip2 "$1"     ;;
-            *.rar)       unrar x "$1"     ;;
-            *.gz)        gunzip "$1"      ;;
-            *.tar)       tar xvf "$1"     ;;
-            *.tbz2)      tar xvjf "$1"    ;;
-            *.tgz)       tar xvzf "$1"    ;;
-            *.zip)       unzip "$1"       ;;
-            *.Z)         uncompress "$1"  ;;
-            *.7z)        7z x "$1"        ;;
-            *)           echo "don't know how to extract '$1'..." ;;
-         esac
-      else
-         echo "'$1' is not a valid file"
-      fi
-      shift || break
-   done
-}
-
 #####################################################
 ## Remux MKV to use only 1 audio && subtible track ##
 #####################################################
 remux() {
-   if [ ! "$1" ] || [ ! "$2" ] || [ ! "$3" ] || [ ! "$4" ]; then
+   [[ -n "$1" ]] && [[ -n "$2" ]] && [[ -n "$3" ]] && [[ -n "$4" ]] || {
       echo "usage : remux [output] [input] [audio track to keep] [subtible track to keep]"
       return
-   fi
+   }
    mkvmerge -o "$1" -d 1 --audio-tracks "$3" --subtitle-tracks "$4" "$2"
 }
 
@@ -176,13 +148,12 @@ remux() {
 #####################################################################
 bremux() {
    local FILTER="*.mkv"
-   if [ ! "$1" ] || [ ! "$2" ]; then
+   [[ -n "$1" ]] && [[ -n "$2" ]] || {
       echo "usage : bremux [audio track] [subtible track] [filter]"
       return
-   fi
-   [ "$3" ] && FILTER="$3"
-   for i in $FILTER
-   do
+   }
+   [[ -n "$3" ]] && FILTER="$3"
+   for i in $FILTER; do
       remux "[REMUX]$i" "$i" "$1" "$2"
    done
 }
@@ -191,10 +162,10 @@ bremux() {
 ## Print MKV info, use this to find out the track numbers ##
 ############################################################
 mkv() {
-   if [ ! "$1" ]; then
+   [[ -n "$@" ]] || {
       echo "usage : mkv [file]"
       return
-   fi
+   }
    mkvmerge -i "$@"
 }
 
@@ -202,19 +173,19 @@ mkv() {
 ## Compress && Strip elf binary ##
 ##################################
 elfcompress() {
-   if [ ! "$1" ]; then
+   [[ -n "$@" ]] || {
       echo "usage : elfcompress [binary]"
       return
-   fi
+   }
 
-   cp "$1" /tmp/compress.temp
+   cp "$@" /tmp/compress.temp
    strip -s -R .comment -R .gnu.version /tmp/compress.temp
 
    7z a -tGZip -mx=9 /tmp/compress.gz /tmp/compress.temp
    echo 'a=/tmp/I;tail -n+2 $0|zcat>$a;chmod +x $a;$a;rm $a;exit' >> /tmp/unpack.header
 
-   cat /tmp/unpack.header /tmp/compress.gz > "$1.packed"
-   chmod +x "$1.packed"
+   cat /tmp/unpack.header /tmp/compress.gz > "$@.packed"
+   chmod +x "$@.packed"
 
    rm /tmp/compress.temp
    rm /tmp/compress.gz
@@ -226,16 +197,16 @@ elfcompress() {
 ##################################################
 wiisplit()
 {
-   if [ ! "$1" ]; then
+   [[ -n "$@" ]] || {
       echo "usage: wiisplit [ISO file]"
       return
-   fi
-   if [ ! -f "$1" ]; then
+   }
+   [[ -f "$@" ]] || {
       echo "'$1' is not a valid file"
       return
-   fi
+   }
 
-   wbfs_file "$1"
+   wbfs_file "$@"
 }
 
 ######################################
@@ -248,8 +219,8 @@ vimo() {
    git ls-files &>/dev/null || return # test if git
    gtdir="$(git rev-parse --show-toplevel)"
    [[ "$cwd" != "$gtdir" ]] && pushd "$gtdir" &> /dev/null # git root
-   [ "$@" ] && match="$(git ls-files | grep "$@")" ||
-               match="$(git ls-files)"
+   [[ -n "$@" ]] && { match="$(git ls-files | grep "$@")"; } ||
+                      match="$(git ls-files)"
    [[ $(echo "$match" | wc -l) -gt 1 ]] && match="$(echo $match | dmenu -i -l 20 -p "vim")"
    match="$gtdir/$match" # convert to absolute
    [[ "$cwd" != "$gtdir" ]] && popd &> /dev/null # go back
@@ -266,14 +237,14 @@ function mkgit() {
    local gitname="$2"
 
    # check dir
-   [ "$dir" ] || {
+   [[ -n "$dir" ]] || {
       echo "usage: mkgit <dir> [name]"
       return
    }
 
    # use dir name if, no gitname specified
-   [ "$gitname" ]  || gitname="$dir"
-   [[ -d "$dir" ]] || mkdir "$dir"
+   [[ -n "$gitname" ]] || gitname="$dir"
+   [[ -d "$dir"     ]] || mkdir "$dir"
 
    # bail out, if already git repo
    [[ -d "$dir/.git" ]] && {
@@ -294,36 +265,36 @@ function mkgit() {
 ## Grep your libs for symbols     ##
 ####################################
 function greplib() {
-   if [ ! "$1" ]; then
+   [[ -n "$1" ]] || {
       echo "usage : greplib [symbol] (lookup path)"
       return
-   fi
+   }
 
-   if [ ! "$2" ]; then
+   [[ -n "$2" ]] || {
       nm -a -o /usr/lib/*.so 2> /dev/null | grep $1
       nm -a -o /usr/lib/*.a  2> /dev/null | grep $1
-   else
+   } || {
       nm -a -o $2/*.so 2> /dev/null | grep $1
       nm -a -o $2/*.a  2> /dev/null | grep $1
-   fi
+   }
 }
 
 ##############################
 ## Encode GLC captured file ##
 ##############################
 glc-encode() {
-   if [ ! "$1" ] || [ ! "$2" ] || [ ! "$3" ] || [ ! "$4" ]; then
+   [[ -n "$1" ]] && [[ -n "$2" ]] && [[ -n "$3" ]] && [[ -n "$4" ]] || {
       echo "Usage : glc-encode [input] [audio bitrate] [video bitrate] [output]"
       return
-   fi
+   }
 
    [[ "$2" == "0" ]] || glc-play "$1" -o - -a 1 | ffmpeg -i pipe: -ab $2 /tmp/audio.mp4
-   if [ -f /tmp/audio.mp4 ]; then
+   [[ -f /tmp/audio.mp4 ]] && {
       glc-play "$1" -o - -y 1 | ffmpeg -i pipe: -i /tmp/audio.mp4 -acodec copy -b $3 "$4"
       rm /tmp/audio.mp4
-   else
+   } || {
       glc-play "$1" -o - -y 1 | ffmpeg -i pipe: -b $3 "$4"
-   fi
+   }
 }
 
 #############################

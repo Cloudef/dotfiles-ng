@@ -2,8 +2,8 @@
 # extract various archives
 
 main() {
-   while [ "$1" ]; do
-      if [ -f "$1" ] ; then
+   while [[ -n "$1" ]]; do
+      [[ -f "$1" ]] && {
          case "$1" in
             *.tar.bz2)   tar xvjf "$1"    ;;
             *.tar.gz)    tar xvzf "$1"    ;;
@@ -18,9 +18,9 @@ main() {
             *.7z)        7z x "$1"        ;;
             *)           echo "don't know how to extract '$1'..." ;;
          esac
-      else
+      } || {
          echo "'$1' is not a valid file"
-      fi
+      }
       shift || break
    done
 }

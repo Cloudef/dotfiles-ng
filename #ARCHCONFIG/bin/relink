@@ -19,22 +19,22 @@ badregexp() {
 
 main() {
    local quiet=0
-   [ "$1" ] && [ "$2" ] || usage
+   [[ -n "$1" ]] && [[ -n "$2" ]] || usage
    [[ "$1" == "-q" ]] && { quiet=1; shift 1; }
    echo -n "" | sed "$1" || badregexp
    local exp="$1"; shift 1
-   while [ "$1" ]; do
-      if [[ -h "$1" ]]; then
+   while [[ -n "$1" ]]; do
+      [[ -h "$1" ]] && {
          op="$(readlink "$1")"
          np="$(echo "$op" | sed "$exp")"
          [[ "$op" == "$np" ]] && { shift || break; continue; }
          ln -snf "$np" "$1" && echo "$1 -> $np"
-      elif [[ -e "$1" ]]; then
+      } || [[ -e "$1" ]] && {
          # skip normal files and directories
          foo=bar # avoid bash syntax error
-      else
+      } || {
          [[ $quiet -eq 0 ]] && echo "$1: No such symbolic link" 1>&2
-      fi
+      }
       shift || break
    done
 }

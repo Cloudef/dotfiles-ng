@@ -15,7 +15,7 @@ main() {
       grep -v ".ass" | grep -v ".srt")"
    fromd="$(find "$_ANIME_SEED" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)"
    from="$(echo -e "$fromf\n$fromd" | dmenu -i -l 20 -p mvanime)"
-   [[ "$from" ]] || return
+   [[ -n "$from" ]] || return
    [[ -f "$_ANIME_SEED/$from" ]] && from="$_ANIME_SEED/$from"
    [[ -d "$_ANIME_SEED/$from" ]] && from="$_ANIME_SEED/$from"
    [[ ! -d "$from" ]] && [[ ! -f "$from" ]] && return
@@ -23,7 +23,7 @@ main() {
    # select destination
    to="$(find "$_ANIME_WATCHING" "$_ANIME_WATCHED" -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | \
       dmenu -i -l 20 -p "to")"
-   [[ "$to" ]] | return
+   [[ -n "$to" ]] | return
    [[ -d "$_ANIME_WATCHING/$to" ]] && to="$_ANIME_WATCHING/$to"
    [[ -d "$_ANIME_WATCHED/$to"  ]] && to="$_ANIME_WATCHED/$to"
    [[ ! -d "$to" ]] && [[ ! -f "$to" ]] && return

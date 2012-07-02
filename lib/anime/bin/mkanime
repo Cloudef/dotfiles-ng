@@ -7,7 +7,7 @@ source "$_LIBANIME_ROOT/libanime"
 err() { echo "$@" 1>&2; exit 1; }
 main() {
    _anime_init "$@"; shift $?
-   [ "$@" ] || err "usage: [-r <path>] $(basename $0) [anime name]"
+   [[ -n "$@" ]] || err "usage: [-r <path>] $(basename $0) [anime name]"
 
    # mkdir
    mkdir "$_ANIME_WATCHING/$@"

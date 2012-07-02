@@ -22,11 +22,11 @@ nicowrap() {
 
 # logic
 main() {
-   [ "$@" ] || err "usage: $(basename $0) <url>"
+   [[ -n "$@" ]] || err "usage: $(basename $0) <url>"
    [[ -p /tmp/nicovideo.fifo ]] && rm /tmp/nicovideo.fifo
    mkfifo -m 666 /tmp/nicovideo.fifo
-   nicowrap -o /tmp/nicovideo.fifo $@ &
-   mplayer -cache 300 /tmp/nicovideo.fifo
+   mplayer -cache 300 /tmp/nicovideo.fifo &
+   nicowrap -o /tmp/nicovideo.fifo $@
    test -z "`jobs -p`" || kill -9 `jobs -p` &> /dev/null
    rm /tmp/nicovideo.fifo &> /dev/null
 }

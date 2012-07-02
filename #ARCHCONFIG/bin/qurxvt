@@ -25,19 +25,19 @@ spawn() {
 # toggle
 toggle() {
    local visible="$(xdotool search --onlyvisible --classname qurxvt 2>/dev/null)"
-   if [ ! "$visible" ]; then
+   [[ ! -n "$visible" ]] && {
       xdotool windowmap $wid
       xdotool windowfocus $wid
       xdotool windowraise $wid
-   else
+   } || {
       xdotool windowunmap $wid
-   fi
+   }
 }
 
 # main
 main() {
    local wid="$(xdotool search --classname qurxvt 2>&1 | head -1)"
    [[ "$wid" == *BadWindow* ]] && exit
-   [ ! "$wid" ] && spawn || toggle
+   [[ ! -n "$wid" ]] && { spawn; } || toggle
 }
 main $@

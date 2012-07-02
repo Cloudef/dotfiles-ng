@@ -26,18 +26,18 @@ main() {
    local match2="$(_anime_get_f "$_ANIME_WATCHED" "$@")"
 
    # join matches
-   [ "$match1" ] && match="$match1"
-   if [ "$match2" ]; then
-      [ "$match" ] && match="$match\n"
+   [[ -n "$match1" ]] && match="$match1"
+   [[ -n "$match2" ]] && {
+      [[ -n "$match" ]] && match="$match\n"
       match="$match$match2"
-   fi
+   }
 
    # output to dmenu
    if [[ $(echo -e "$match" | wc -l) -gt 1 ]]; then
       match="$(echo -e "$match" | dmenu -i -l 20 -p "anime")"
       orig="" # save the selected to history
    fi
-   [ "$match" ] || return 1
+   [[ -n "$match" ]] || return 1
 
    # create full path
    file="$(_anime_lookup_f "$_ANIME_WATCHING" "$match")"
@@ -45,8 +45,10 @@ main() {
    [[ -f "$file" ]] || return 1;
 
    # append to history
-   [ ! "$orig" ] && echo "$ahist$match" >> "$_ANIME_HISTORY"
-   [   "$orig" ] && echo "$ahist$orig"  >> "$_ANIME_HISTORY"
+   [[ -n "$orig" ]]
+   [[ -n "$orig" ]] &&
+      { echo "$ahist$orig"  >> "$_ANIME_HISTORY"; } ||
+      { echo "$ahist$match" >> "$_ANIME_HISTORY"; }
 
    # play
    echo "playing: $file"

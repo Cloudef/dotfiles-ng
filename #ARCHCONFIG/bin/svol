@@ -13,13 +13,13 @@ err() { echo "$@" 1>&2; exit 1; }
 # usage
 usage() {
    echo "usage: $(basname $0) [option] [argument]"
-  echo
-  echo "Options:"
-  echo "     -i, --increase - increase volume by \`argument'"
-  echo "     -d, --decrease - decrease volume by \`argument'"
-  echo "     -t, --toggle   - toggle mute on and off"
-  echo "     -h, --help     - display this"
-  exit
+   echo
+   echo "Options:"
+   echo "     -i, --increase - increase volume by \`argument'"
+   echo "     -d, --decrease - decrease volume by \`argument'"
+   echo "     -t, --toggle   - toggle mute on and off"
+   echo "     -h, --help     - display this"
+   exit
 }
 
 # ALSA argument handling
@@ -27,13 +27,13 @@ alsa_arg()
 {
    case "$1" in
      '-i'|'--increase')
-       [ -z "$2" ] && err "No argument specified for increase."
-       [ -n "$(tr -d [0-9] <<<$2)" ] && err "The argument needs to be an integer."
+       [[ -n "$2" ]] || err "No argument specified for increase."
+       [[ -n "$(tr -d [0-9] <<<$2)" ]] && err "The argument needs to be an integer."
        MIXARG="${2}%+"
        ;;
      '-d'|'--decrease')
-       [ -z "$2" ] && err "No argument specified for decrease."
-       [ -n "$(tr -d [0-9] <<<$2)" ] && err "The argument needs to be an integer."
+       [[ -n "$2" ]] || err "No argument specified for decrease."
+       [[ -n "$(tr -d [0-9] <<<$2)" ]] && err "The argument needs to be an integer."
        MIXARG="${2}%-"
        ;;
      '-t'|'--toggle')
@@ -56,13 +56,13 @@ oss_arg()
 {
    case "$1" in
      '-i'|'--increase')
-       [ -z "$2" ] && err "No argument specified for increase."
-       [ -n "$(tr -d [0-9] <<<$2)" ] && err "The argument needs to be an integer."
+       [[ -n "$2" ]] || err "No argument specified for increase."
+       [[ -n "$(tr -d [0-9] <<<$2)" ]] && err "The argument needs to be an integer."
        MIXARG="-i $2"
        ;;
      '-d'|'--decrease')
-       [ -z "$2" ] && err "No argument specified for decrease."
-       [ -n "$(tr -d [0-9] <<<$2)" ] && err "The argument needs to be an integer."
+       [[ -n "$2" ]] && err "No argument specified for decrease."
+       [[ -n "$(tr -d [0-9] <<<$2)" ]] && err "The argument needs to be an integer."
        MIXARG="-d $2"
        ;;
      '-t'|'--toggle')
@@ -103,14 +103,13 @@ alsavolume()
    # So hack to workaround it. If OSSv4 ever takes off, switch to it.
    # Has currently problems with few applications while using vmix.
 
-   if [[ "$VOL" == "0" ]]
-   then
+   [[ "$VOL" == "0" ]] && {
       # Volume == 0, mute the mute channel
       amixer set "$MF" "mute" &> /dev/null
-   else
+   } || {
       # If we did not press mute button, unmute
       [[ "$MIXARG" == "toggle" ]] || amixer set "$MF" "unmute" &> /dev/null
-   fi
+   }
 }
 
 # Pick one!

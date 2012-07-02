@@ -63,14 +63,14 @@ _anime_get_d() {
 # $1 = directory to search
 # $2 = search term
 _anime_lookup_f() {
-   local db="$1"; local md5="$(__anime_hash "$1")";
+   local db="$1"; local md5="$(__anime_hash "$db")";
    shift; local lookup="$(echo "$@" | sed 's/ /?/g')"
    locate -d "$_LIBANIME_DB" "$db/*$lookup*" | __anime_filter_f | head -n1
 }
 
 # lookup anime from _get list (directories only)
 _anime_lookup_d() {
-   local db="$1"; local md5="$(__anime_hash "$1")";
+   local db="$1"; local md5="$(__anime_hash "$db")";
    shift; local lookup="$(echo "$@" | sed 's/ /?/g')"
    locate -d "$_LIBANIME_DB" "$db/*$lookup*" | __anime_filter_d | head -n1
 }
@@ -118,11 +118,11 @@ _anime_init() {
       err "$_ANIME_ROOT: directory does not exist"
 
    # db is not set
-   [ "$_LIBANIME_DB" ] ||
+   [[ -n "$_LIBANIME_DB" ]] ||
       err "\$_LIBANIME_DB is not set!"
 
    # cache is not set
-   [ "$_LIBANIME_CACHE" ] ||
+   [[ -n "$_LIBANIME_CACHE" ]] ||
       err "\$_LIBANIME_CACHE is not set!"
 
    # create cache dir, if it doesn't exist

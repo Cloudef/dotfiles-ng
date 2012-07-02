@@ -9,7 +9,7 @@
 #########################
 ## SSH complicant mode ##
 #########################
-[ "$SSH_TTY" ] && export TERM="linux"
+[[ -n "$SSH_TTY" ]] && export TERM="linux"
 
 ###########################
 ## Enviroiment Variables ##
@@ -43,7 +43,7 @@ export GDK_USE_XFT=1
 
 # Vim as less
 VLESS="$(find /usr/share/vim -name 'less.sh')"
-[ ! "$VLESS" ] || alias less="$VLESS"
+[[ -n "$VLESS" ]] && alias less="$VLESS"
 
 # Source passwd enviroiment
 source "/arch/passwd/libpasswd-env"

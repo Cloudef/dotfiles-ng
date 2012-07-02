@@ -13,7 +13,7 @@ main() {
    # select seed
    from="$(find "$_ANIME_WATCHING" -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | \
       dmenu -i -l 20 -p rsanime)"
-   [[ "$from" ]] && [[ -d "$_ANIME_WATCHING/$from" ]] || return
+   [[ -n "$from" ]] && [[ -d "$_ANIME_WATCHING/$from" ]] || return
 
    # store
    mv -v "$_ANIME_WATCHING/$from" "$_ANIME_WATCHED/$from" ||
