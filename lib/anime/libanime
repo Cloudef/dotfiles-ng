@@ -40,12 +40,11 @@ __anime_filter_f() {
 # $2 = search term
 _anime_get_f() {
    local db="$1"; local md5="$(__anime_hash "$1")"; shift; local name="$@"
-   [[ ! -f "$_LIBANIME_CACHE/$md5.afil" ]] && name="$(echo "$name" | sed 's/ /?/g')"
    [[ -f "$_LIBANIME_CACHE/$md5.afil" ]] && { grep "$name" "$_LIBANIME_CACHE/$md5.afil"; return; } ||
-   locate -d "$_LIBANIME_DB" "$db/$name" | __anime_base_f | \
+   locate -d "$_LIBANIME_DB" "$db" | __anime_base_f | \
       egrep -v "\.srt|\.ass" | \
       sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[- ]*//g;s/[- ]*$//' | \
-      perl -p -e 's/^\n//g' | tee "$_LIBANIME_CACHE/$md5.afil"
+      perl -p -e 's/^\n//g' | tee "$_LIBANIME_CACHE/$md5.afil" | grep "$name"
 }
 
 # get anime list from location (directories only)
@@ -53,12 +52,11 @@ _anime_get_f() {
 # $2 = search term
 _anime_get_d() {
    local db="$1"; local md5="$(__anime_hash "$1")"; shift; local name="$@"
-   [[ ! -f "$_LIBANIME_CACHE/$md5.adil" ]] && name="$(echo "$name" | sed 's/ /?/g')"
    [[ -f "$_LIBANIME_CACHE/$md5.adir" ]] && { grep "$name" "$_LIBANIME_CACHE/$md5.adir"; return; } ||
-   locate -d "$_LIBANIME_DB" "$1/$@" | __anime_base_d | \
+   locate -d "$_LIBANIME_DB" "$db" | __anime_base_d | \
       egrep -v "\.srt|\.ass" | \
       sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[- ]*//g;s/[- ]*$//' | \
-      perl -p -e 's/^\n//g' | tee "$_LIBANIME_CACHE/$md5.adir"
+      perl -p -e 's/^\n//g' | tee "$_LIBANIME_CACHE/$md5.adir" | grep "$name"
 }
 
 # lookup anime from _get list (files only)
@@ -112,8 +110,9 @@ _anime_update() {
 
 # pass main $@ arguments here
 _anime_init() {
+   local sft=0
    [[ "$1" == "-r" ]] &&
-   { _ANIME_ROOT="$2"; shift 2; }
+   { _ANIME_ROOT="$2"; shift 2; sft=2; }
 
    [[ -d "$_ANIME_ROOT" ]] ||
       err "$_ANIME_ROOT: directory does not exist"
@@ -145,4 +144,7 @@ _anime_init() {
 
    # update database
    updatedb -l 0 -o "$_LIBANIME_DB" -U "$_ANIME_ROOT"
+
+   # shifted arguments
+   return $sft
 }
