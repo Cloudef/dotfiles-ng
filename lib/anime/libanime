@@ -36,33 +36,45 @@ __anime_filter_f() {
 }
 
 # get anime list from location (files only)
+# $1 = directory to search
+# $2 = search term
 _anime_get_f() {
-   local md5="$(__anime_hash "$@")"
-   [[ -f "$_LIBANIME_CACHE/$md5.afil" ]] && { cat "$_LIBANIME_CACHE/$md5.afil"; return; } ||
-   locate -d "$_LIBANIME_DB" "$@" | __anime_base_f | \
+   local db="$1"; local md5="$(__anime_hash "$1")"; shift; local name="$@"
+   [[ ! -f "$_LIBANIME_CACHE/$md5.afil" ]] && name="$(echo "$name" | sed 's/ /?/g')"
+   [[ -f "$_LIBANIME_CACHE/$md5.afil" ]] && { grep "$name" "$_LIBANIME_CACHE/$md5.afil"; return; } ||
+   locate -d "$_LIBANIME_DB" "$db/$name" | __anime_base_f | \
       egrep -v "\.srt|\.ass" | \
       sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[- ]*//g;s/[- ]*$//' | \
       perl -p -e 's/^\n//g' | tee "$_LIBANIME_CACHE/$md5.afil"
 }
 
 # get anime list from location (directories only)
+# $1 = directory to search
+# $2 = search term
 _anime_get_d() {
-   local md5="$(__anime_hash "$@")"
-   [[ -f "$_LIBANIME_CACHE/$md5.adir" ]] && { cat "$_LIBANIME_CACHE/$md5.adir"; return; } ||
-   locate -d "$_LIBANIME_DB" "$@" | __anime_base_d | \
+   local db="$1"; local md5="$(__anime_hash "$1")"; shift; local name="$@"
+   [[ ! -f "$_LIBANIME_CACHE/$md5.adil" ]] && name="$(echo "$name" | sed 's/ /?/g')"
+   [[ -f "$_LIBANIME_CACHE/$md5.adir" ]] && { grep "$name" "$_LIBANIME_CACHE/$md5.adir"; return; } ||
+   locate -d "$_LIBANIME_DB" "$1/$@" | __anime_base_d | \
       egrep -v "\.srt|\.ass" | \
       sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[- ]*//g;s/[- ]*$//' | \
       perl -p -e 's/^\n//g' | tee "$_LIBANIME_CACHE/$md5.adir"
 }
 
 # lookup anime from _get list (files only)
+# $1 = directory to search
+# $2 = search term
 _anime_lookup_f() {
-   locate -d "$_LIBANIME_DB" "$@" | __anime_filter_f | head -n1
+   local db="$1"; local md5="$(__anime_hash "$1")";
+   shift; local lookup="$(echo "$@" | sed 's/ /?/g')"
+   locate -d "$_LIBANIME_DB" "$db/*$lookup*" | __anime_filter_f | head -n1
 }
 
 # lookup anime from _get list (directories only)
 _anime_lookup_d() {
-   locate -d "$_LIBANIME_DB" "$@" | __anime_filter_d | head -n1
+   local db="$1"; local md5="$(__anime_hash "$1")";
+   shift; local lookup="$(echo "$@" | sed 's/ /?/g')"
+   locate -d "$_LIBANIME_DB" "$db/*$lookup*" | __anime_filter_d | head -n1
 }
 
 # purge cache
