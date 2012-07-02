@@ -5,6 +5,15 @@
 
 err() { echo "$@" 1>&2; exit 1; }
 
+# get md5sum for bath
+__anime_hash() {
+   local bname="$@"; local md5=
+   [[   -d "$bname" ]] && bname="$(echo "$bname" | sed 's/\/*$//')"
+   [[ ! -d "$bname" ]] && bname="$(dirname "$bname")"
+   md5="$(echo "$bname" | md5sum)"
+   echo "${md5%% *}"
+}
+
 # basename and echo files only
 __anime_base_f() {
    while read fn; do
@@ -28,9 +37,7 @@ __anime_filter_f() {
 
 # get anime list from location (files only)
 _anime_get_f() {
-   bname="$@"; [[ -d "$bname" ]] || bname="$(dirname "$bname")"
-   md5="$(echo "$bname" | md5sum)"
-   md5="${md5%% *}"
+   local md5="$(__anime_hash "$@")"
    [[ -f "$_LIBANIME_CACHE/$md5.afil" ]] && { cat "$_LIBANIME_CACHE/$md5.afil"; return; } ||
    locate -d "$_LIBANIME_DB" "$@" | __anime_base_f | \
       egrep -v "\.srt|\.ass" | \
@@ -40,9 +47,7 @@ _anime_get_f() {
 
 # get anime list from location (directories only)
 _anime_get_d() {
-   bname="$@"; [[ -d "$bname" ]] || bname="$(dirname "$bname")"
-   md5="$(echo "$bname" | md5sum)"
-   md5="${md5%% *}"
+   local md5="$(__anime_hash "$@")"
    [[ -f "$_LIBANIME_CACHE/$md5.adir" ]] && { cat "$_LIBANIME_CACHE/$md5.adir"; return; } ||
    locate -d "$_LIBANIME_DB" "$@" | __anime_base_d | \
       egrep -v "\.srt|\.ass" | \
@@ -70,10 +75,8 @@ _anime_purge() {
 
 # update cache
 _anime_update() {
-   hasd=0; hasf=0;
-   bname="$@"; [[ -d "$bname" ]] || bname="$(dirname "$bname")"
-   md5="$(echo "$bname" | md5sum)"
-   md5="${md5%% *}"
+   local hasd=0; local hasf=0;
+   local md5="$(__anime_hash "$@")"
 
    # remove cache files
    [[ -f "$_LIBANIME_CACHE/$md5.afil" ]] && {
@@ -85,11 +88,14 @@ _anime_update() {
       hasd=1
    }
 
+   # update database
+   updatedb -l 0 -o "$_LIBANIME_DB" -U "$_ANIME_ROOT"
+
    # update cache files
    [[ $hasd -eq 1 ]] &&
-      _anime_get_d "$bname" &> /dev/null
+      _anime_get_d "$@" &> /dev/null
    [[ $hasf -eq 1 ]] &&
-      _anime_get_f "$bname" &> /dev/null
+      _anime_get_f "$@" &> /dev/null
 }
 
 # pass main $@ arguments here
