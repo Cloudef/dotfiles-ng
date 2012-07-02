@@ -22,7 +22,7 @@ nicowrap() {
 
 # logic
 main() {
-   [[ -n "$@" ]] || err "usage: $(basename $0) <url>"
+   [[ -n "$@" ]] || err "usage: $(basename $0) [url]"
    [[ -p /tmp/nicovideo.fifo ]] && rm /tmp/nicovideo.fifo
    mkfifo -m 666 /tmp/nicovideo.fifo
    mplayer -cache 300 /tmp/nicovideo.fifo &
