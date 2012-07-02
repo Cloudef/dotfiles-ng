@@ -28,18 +28,26 @@ __anime_filter_f() {
 
 # get anime list from location (files only)
 _anime_get_f() {
+   bname="$@"; [[ -d "$bname" ]] || bname="$(dirname "$bname")"
+   md5="$(echo "$bname" | md5sum)"
+   md5="${md5%% *}"
+   [[ -f "$_LIBANIME_CACHE/$md5.afil" ]] && { cat "$_LIBANIME_CACHE/$md5.afil"; return; } ||
    locate -d "$_LIBANIME_DB" "$@" | __anime_base_f | \
       egrep -v "\.srt|\.ass" | \
       sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[ ]//g;s/^- //g' | \
-      perl -p -e 's/^\n//g'
+      perl -p -e 's/^\n//g' | tee "$_LIBANIME_CACHE/$md5.afil"
 }
 
 # get anime list from location (directories only)
 _anime_get_d() {
+   bname="$@"; [[ -d "$bname" ]] || bname="$(dirname "$bname")"
+   md5="$(echo "$bname" | md5sum)"
+   md5="${md5%% *}"
+   [[ -f "$_LIBANIME_CACHE/$md5.adir" ]] && { cat "$_LIBANIME_CACHE/$md5.adir"; return; } ||
    locate -d "$_LIBANIME_DB" "$@" | __anime_base_d | \
       egrep -v "\.srt|\.ass" | \
       sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[ ]//g;s/^- //g' | \
-      perl -p -e 's/^\n//g'
+      perl -p -e 's/^\n//g' | tee "$_LIBANIME_CACHE/$md5.adir"
 }
 
 # lookup anime from _get list (files only)
@@ -52,6 +60,38 @@ _anime_lookup_d() {
    locate -d "$_LIBANIME_DB" "$@" | __anime_filter_d | head -n1
 }
 
+# purge cache
+_anime_purge() {
+   [[ -d "$_LIBANIME_CACHE" ]] && {
+      rm "$_LIBANIME_CACHE/*.afil"
+      rm "$_LIBANIME_CACHE/*.adir"
+   }
+}
+
+# update cache
+_anime_update() {
+   hasd=0; hasf=0;
+   bname="$@"; [[ -d "$bname" ]] || bname="$(dirname "$bname")"
+   md5="$(echo "$bname" | md5sum)"
+   md5="${md5%% *}"
+
+   # remove cache files
+   [[ -f "$_LIBANIME_CACHE/$md5.afil" ]] && {
+      rm "$_LIBANIME_CACHE/$md5.afil"
+      hasf=1
+   }
+   [[ -f "$_LIBANIME_CACHE/$md5.adir" ]] && {
+      rm "$_LIBANIME_CACHE/$md5.adir"
+      hasd=1
+   }
+
+   # update cache files
+   [[ $hasd -eq 1 ]] &&
+      _anime_get_d "$bname" &> /dev/null
+   [[ $hasf -eq 1 ]] &&
+      _anime_get_f "$bname" &> /dev/null
+}
+
 # pass main $@ arguments here
 _anime_init() {
    [[ "$1" == "-r" ]] &&
@@ -59,6 +99,18 @@ _anime_init() {
 
    [[ -d "$_ANIME_ROOT" ]] ||
       err "$_ANIME_ROOT: directory does not exist"
+
+   # db is not set
+   [ "$_LIBANIME_DB" ] ||
+      err "\$_LIBANIME_DB is not set!"
+
+   # cache is not set
+   [ "$_LIBANIME_CACHE" ] ||
+      err "\$_LIBANIME_CACHE is not set!"
+
+   # create cache dir, if it doesn't exist
+   [[ -d "$_LIBANIME_CACHE" ]] ||
+      mkdir "$_LIBANIME_CACHE"
 
    # time to set correct variables
    _ANIME_SEED="$_ANIME_ROOT/$_ANIME_SEED"

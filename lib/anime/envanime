@@ -4,14 +4,15 @@
 # needs: mlocate
 
 # configuration
-export _LIBANIME_ROOT="$HOME/lib/anime"
-export _LIBANIME_DB="$_LIBANIME_ROOT/cache.db"
-export _ANIME_SAVE_HISTORY=1
-export _ANIME_SEED="seed"
-export _ANIME_WATCHING="watching"
-export _ANIME_WATCHED="watched"
-export _ANIME_HISTORY="/tmp/animehist"
-export _ANIME_ROOT="/mnt/anime"
+export _LIBANIME_ROOT="$HOME/lib/anime"         # root path to this library
+export _LIBANIME_DB="$_LIBANIME_ROOT/locate.db" # locate.db for mlocate
+export _LIBANIME_CACHE="$_LIBANIME_ROOT/cache"  # .afil, .adir for regexped cache
+export _ANIME_SAVE_HISTORY=1                    # save history?
+export _ANIME_SEED="seed"                       # seed directory
+export _ANIME_WATCHING="watching"               # watching directory
+export _ANIME_WATCHED="watched"                 # watched directory
+export _ANIME_HISTORY="/tmp/.animehist"         # history list
+export _ANIME_ROOT="/mnt/anime"                 # root of your animus
 
 # alias for binaries
 alias anime="__anime"

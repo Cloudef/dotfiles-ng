@@ -8,7 +8,11 @@ err() { echo "$@" 1>&2; exit 1; }
 main() {
    [ "$@" ] || err "usage: $(basename $0) [anime name]"
    _anime_init "$@"
-   mkdir "$ANIME_WATCHING/$@"
-   echo  "created: $ANIME_WATCHING/$@"
+   mkdir "$_ANIME_WATCHING/$@"
+   echo  "created: $_ANIME_WATCHING/$@"
+
+   # update caches
+   echo "-!- updating cache"
+   _anime_update "$_ANIME_WATCHING"
 }
 main "$@"

@@ -16,6 +16,12 @@ main() {
    [[ "$from" ]] && [[ -d "$_ANIME_WATCHING/$from" ]] || return
 
    # store
-   mv -v "$_ANIME_WATCHING/$from" "$_ANIME_WATCHED/$from"
+   mv -v "$_ANIME_WATCHING/$from" "$_ANIME_WATCHED/$from" ||
+      return
+
+   # update caches
+   echo "-!- updating cache"
+   _anime_update "$_ANIME_WATCHING"
+   _anime_update "$_ANIME_WATCHED"
 }
 main "$@"
