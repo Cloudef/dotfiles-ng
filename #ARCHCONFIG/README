@@ -47,6 +47,15 @@ X Font setup:
    Xft.dpi:96
    Xft.rgba:rgb
 
+Additionally to these, I'm using the infinality patches (in /arch/pkg/pkgbuild)
+and custom fontconfig rule which is in '/arch/etc/fonts/conf.d'.
+
+Fonts:
+   Terminus - Terminal
+   DejaVu   - Web browsing
+   IPA      - Japanese (high point size)
+   Kochi    - Japanese (terminal, xim)
+
 /arch/pkg/source/monsterwm: window manager
    Slightly modified monsterwm setup. Status and pager are seperate C programs.
    For more, refer to the sources itself.
