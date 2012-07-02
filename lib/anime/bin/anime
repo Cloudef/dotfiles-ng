@@ -13,17 +13,12 @@
 source "$_LIBANIME_ROOT/libanime"
 
 main() {
-   # strip
-   local orig="$@"
-   local name="$(echo "$orig" | sed 's/ /*/g')"
-   [ "$name" ] && name="*$name*"
-
    # init
    _anime_init "$@"
 
    # locate and filter
-   local match1="$(_anime_get_f "$_ANIME_WATCHING/$name")"
-   local match2="$(_anime_get_f "$_ANIME_WATCHED/$name")"
+   local match1="$(_anime_get_f "$_ANIME_WATCHING" "$@")"
+   local match2="$(_anime_get_f "$_ANIME_WATCHED" "$@")"
 
    # join matches
    [ "$match1" ] && match="$match1"
@@ -40,9 +35,8 @@ main() {
    [ "$match" ] || return 1
 
    # create full path
-   local lookup="$(echo $match | sed 's/ /*/g')"
-   file="$(_anime_lookup_f "$_ANIME_WATCHING/*$lookup*")"
-   [[ -f "$file" ]] || file="$(_anime_lookup_f "$_ANIME_WATCHED/*$lookup*")"
+   file="$(_anime_lookup_f "$_ANIME_WATCHING" "$match")"
+   [[ -f "$file" ]] || file="$(_anime_lookup_f "$_ANIME_WATCHED" "$match")"
    [[ -f "$file" ]] || return 1;
 
    # append to history
