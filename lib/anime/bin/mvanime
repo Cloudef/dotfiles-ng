@@ -8,7 +8,7 @@ source "$_LIBANIME_ROOT/libanime"
 
 main() {
    local from=; local to=
-   _anime_init "$@"
+   _anime_init "$@"; shift $?
 
    # select seed
    fromf="$(find $_ANIME_SEED -maxdepth 1 -mindepth 1 -type f -exec basename {} \; | \

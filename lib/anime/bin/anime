@@ -13,8 +13,13 @@
 source "$_LIBANIME_ROOT/libanime"
 
 main() {
+   local ahist=
+   [[ "$1" == "-r" ]] && ahist=1
+
    # init
-   _anime_init "$@"
+   _anime_init "$@"; shift $?
+   [[ $ahist -eq 1 ]] && ahist="-r \"$_ANIME_ROOT\" " ||
+      ahist=""
 
    # locate and filter
    local match1="$(_anime_get_f "$_ANIME_WATCHING" "$@")"
@@ -40,8 +45,8 @@ main() {
    [[ -f "$file" ]] || return 1;
 
    # append to history
-   [ ! "$orig" ] && echo "$match" >> "$_ANIME_HISTORY"
-   [   "$orig" ] && echo "$orig"  >> "$_ANIME_HISTORY"
+   [ ! "$orig" ] && echo "$ahist$match" >> "$_ANIME_HISTORY"
+   [   "$orig" ] && echo "$ahist$orig"  >> "$_ANIME_HISTORY"
 
    # play
    echo "playing: $file"
