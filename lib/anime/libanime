@@ -5,7 +5,7 @@
 
 err() { echo "$@" 1>&2; exit 1; }
 
-# get md5sum for bath
+# get md5sum for path
 __anime_hash() {
    local bname="$@"; local md5=
    [[   -d "$bname" ]] && bname="$(echo "$bname" | sed 's/\/*$//')"
