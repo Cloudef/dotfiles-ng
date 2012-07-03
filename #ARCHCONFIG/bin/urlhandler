@@ -1,0 +1,24 @@
+#!/bin/sh
+# Common url handler
+# urxvt uses this, dwb it's binded to ctrl+y
+
+# $@ = Get domain from url
+domain() {
+   echo "$@" | sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/"
+}
+
+# $@ = URL
+main() {
+   case "$(domain "$@")" in
+      *youtube.com)
+         mplayer -really-quiet -cache 300 "$(youtube-dl -f 18 -g "$@")" &> /dev/null
+      ;;
+      *nicovideo.jp)
+         nicoplay "$@" &> /dev/null
+      ;;
+      *)
+         "$BROWSER" "$@" &> /dev/null
+      ;;
+   esac
+}
+main "$@"
