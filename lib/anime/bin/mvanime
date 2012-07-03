@@ -7,7 +7,7 @@
 source "$_LIBANIME_ROOT/libanime"
 
 main() {
-   local from=; local to=
+   local from=; local to=; local update=;
    _anime_init "$@"; shift $?
 
    # select seed
@@ -24,8 +24,8 @@ main() {
    to="$(find "$_ANIME_WATCHING" "$_ANIME_WATCHED" -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | \
       dmenu -i -l 20 -p "to")"
    [[ -n "$to" ]] | return
-   [[ -d "$_ANIME_WATCHING/$to" ]] && to="$_ANIME_WATCHING/$to"
-   [[ -d "$_ANIME_WATCHED/$to"  ]] && to="$_ANIME_WATCHED/$to"
+   [[ -d "$_ANIME_WATCHING/$to" ]] && { update="$_ANIME_WATCHING"; to="$_ANIME_WATCHING/$to"; }
+   [[ -d "$_ANIME_WATCHED/$to"  ]] && { update="$_ANIME_WATCHED"; to="$_ANIME_WATCHED/$to"; }
    [[ ! -d "$to" ]] && [[ ! -f "$to" ]] && return
 
    # move
@@ -34,6 +34,6 @@ main() {
 
    # update caches
    echo "-!- updating cache"
-   _anime_update "$(dirname $to)"
+   _anime_update "$update"
 }
 main "$@"
