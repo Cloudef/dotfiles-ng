@@ -34,6 +34,6 @@ main() {
 
    # update caches
    echo "-!- updating cache"
-   _anime_update "$(dirname $to)"
+   _anime_update "$to"
 }
 main "$@"
