@@ -29,7 +29,7 @@ monsterwm_init() {
    local ff="/tmp/monsterwm.fifo"
    local pagerw=980
    local statusw=$((_MONITOR_WIDTH-pagerw))
-   monsterpager "$ff" 1 | \
+   monsterpager "$ff" 0 | \
       dzen2 -h $_STATUS_HEIGHT -y 0 -w $pagerw -ta l -fn $_STATUS_FONT -e -p &
    monsterstatus | \
       dzen2 -h $_STATUS_HEIGHT -y 0 -x $pagerw -w $statusw -ta r -fn $_STATUS_FONT -e -p &
@@ -62,6 +62,7 @@ setxkbmap fi
 xrdb -load $HOME/.Xresources
 xsetroot -cursor_name left_ptr
 setxkbmap -option terminate:ctrl_alt_bksp
+nvidia-load-settings &> /dev/null
 
 autostart &
 [[ "$_XINIT_WM" == "monsterwm" ]] && monsterwm_init
