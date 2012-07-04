@@ -12,8 +12,8 @@ autostart() {
    clipbored
    # redshift for my eyes
    redshift -l 62:22 -m vidmode &> /dev/null &
-   # start irc, torrent
-   irc; torrent
+   # start irc, rss, torrent
+   irc; rss; torrent;
 }
 
 # kill leftovers
