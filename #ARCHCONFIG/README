@@ -18,8 +18,13 @@ In addition I use these repositories (and pacakges):
    [pnsft-pur]: http://downloads.sourceforge.net/project/pnsft-aur/pur/$arch
       - uim-mozc-ut
 
-GTK2 is needed by dwb.
-Qt is sadly needed by uim-mozc.
+GTK3 is needed by dwb.
+   - GTK2 is buggy without composite extension
+      - Composite extension causes tearing with Xv
+      - Providing packages to gtk3-minimal and gtk2-minimal in /arch/pkg/pkgbuild
+         - disables colord, libcups, etc..
+uim-mozc depends on Qt
+   - However can be safely removed with -dd qt
 
 \\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
