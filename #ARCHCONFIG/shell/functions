@@ -23,7 +23,7 @@ man() {
 shot() {
    local mon=$@
    local file="$HOME/shot-$(date +'%H:%M-%d-%m-%Y').png"
-   [[ -n "$mon" ]] && mon=0
+   [[ -n "$mon" ]] || mon=0
    ffcast -x $mon % scrot -g %wx%h+%x+%y "$file"
 }
 
