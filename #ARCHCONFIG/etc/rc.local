@@ -67,6 +67,9 @@ echo Y > /sys/module/snd_hda_intel/parameters/power_save_controller &
 # Disable WOL
 which ethtool &> /dev/null && ethtool -s eth0 wol d &
 
+# Check pacman updates
+/etc/cron.hourly/pacman_update &
+
 ########
 # EXIT #
 ########
