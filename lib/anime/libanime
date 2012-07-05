@@ -64,15 +64,15 @@ _anime_get_d() {
 # $2 = search term
 _anime_lookup_f() {
    local db="$1"; local md5="$(__anime_hash "$db")";
-   shift; local lookup="$(echo "$@" | sed 's/ \+ /*/g;s/ /?/g')"
-   echo "$db/*$lookup*" 1>&2
+   shift; local lookup="$(echo "$@" | sed 's/[!]/*/g;s/ \+ /*/g;s/ /?/g')"
+   # echo "$db/*$lookup*" 1>&2
    locate -d "$_LIBANIME_DB" "$db/*$lookup*" | __anime_filter_f | head -n1
 }
 
 # lookup anime from _get list (directories only)
 _anime_lookup_d() {
    local db="$1"; local md5="$(__anime_hash "$db")";
-   shift; local lookup="$(echo "$@" | sed 's/ \+ /*/g;s/ /?/g')"
+   shift; local lookup="$(echo "$@" | sed 's/[!]/*/g;s/ \+ /*/g;s/ /?/g')"
    locate -d "$_LIBANIME_DB" "$db/*$lookup*" | __anime_filter_d | head -n1
 }
 
