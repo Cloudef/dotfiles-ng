@@ -173,8 +173,8 @@ let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
 nmap <C-e> :tabNext<CR>
 imap <C-e> <Esc><C-e>a
 
-" C-c = copy to XA_PRIMARY using xclip
-vmap <C-c> :<Esc>`>a<CR><Esc>mx`<i<CR><Esc>my'xk$v'y!xclip -selection c<CR>u
+" C-c = copy to XA_PRIMARY using xsel
+vmap <C-c> :<Esc>`>a<CR><Esc>mx`<i<CR><Esc>my'xk$v'y!tee >(xsel -ip)<CR>u
 
 " toggle folds with space
 nnoremap <space> za
