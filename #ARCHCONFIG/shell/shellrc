@@ -41,6 +41,18 @@ export GDK_USE_XFT=1
 [[ "$PATH" == *$HOME/bin* ]] && [[ "$PATH" == */arch/bin* ]] ||
    export PATH="$HOME/bin:/arch/bin:$PATH"
 
+# Ccache
+[[ "$PATH" == */usr/lib/ccache/bin* ]] ||
+   export PATH="/usr/lib/ccache/bin:$PATH"
+
+# Colored gcc
+[[ "$PATH" == */usr/lib/colorgcc/bin* ]] ||
+   export PATH="/usr/lib/colorgcc/bin:$PATH"
+
+# Make ccache use compilers from this path
+export CCACHE_PATH="/usr/bin"
+export CCACHE_DIR="/arch/ccache"
+
 # Vim as less
 VLESS="$(find /usr/share/vim -name 'less.sh')"
 [[ -n "$VLESS" ]] && alias less="$VLESS"
