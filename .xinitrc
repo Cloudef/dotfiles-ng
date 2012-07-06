@@ -56,6 +56,7 @@ export XMODIFIERS=@im='uim'
 export QT_IM_MODULE='uim'
 uim-xim &> /dev/null &
 
+xset r rate 350 45
 xset s off
 xset -dpms
 setxkbmap fi
