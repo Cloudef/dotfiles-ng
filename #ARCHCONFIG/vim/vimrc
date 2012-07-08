@@ -219,7 +219,7 @@ nnoremap <silent> :4t :call SetTab(4)<CR>
 nnoremap <silent> :3t :call SetTab(3)<CR>
 
 " strip non ascii characters from file
-nnoremap <silent> :strip :%s/[<C-V>128-<C-V>255<C-V>01-<C-V>31]//gi
+nnoremap <silent> :strip :%s/[<C-V>128-<C-V>255<C-V>01-<C-V>31]//g<CR>
 
 "{{{ Modeline append function
 " use substitute() instead of printf() to handle '%%s' modeline in LaTeX
