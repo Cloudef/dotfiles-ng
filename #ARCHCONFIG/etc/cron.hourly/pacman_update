@@ -19,6 +19,7 @@
 # userspace bu doing 'pacman -Qu --dbpath /tmp/.pacman_updates'
 
 _UPDATES_DB="/tmp/.pacman_updates"
+_LOG_FILE="$_UPDATES_DB/pacman.log"
 _LOCAL_DB="/var/lib/pacman/local"
 
 main() {
@@ -26,6 +27,6 @@ main() {
       mkdir -p "$_UPDATES_DB" || return
       ln -s "$_LOCAL_DB" "$_UPDATES_DB" || return
    }
-   pacman -Sy --dbpath "$_UPDATES_DB" &> /dev/null
+   pacman -Sy --dbpath "$_UPDATES_DB" --logfile "$_LOG_FILE" &> /dev/null
 }
 main "$@"
