@@ -4,7 +4,7 @@
 # needs: urxvt, xdotool
 
 # border width * 2
-BORDER=6
+BORDER=2
 
 # offset
 X=0
