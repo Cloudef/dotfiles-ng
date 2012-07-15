@@ -1,0 +1,446 @@
+#!/bin/sh
+# Crawl danbooru for pictures
+#
+# Uses JSON API instead of crawling HTML
+# Much fool proof and allows more control.
+# Also it won't bloat your directory with lots of images,
+# that slows down various file browsers.
+#
+# The script does lots of caching since crawling always web is slow,
+# So while you run the script few times, it starts getting faster
+
+# Limit requests
+# Why? See: http://danbooru.donmai.us/forum/show/72300
+#
+# If you are calling this script in for loop,
+# you should call sleep each iteration.
+
+# Local directory where to store the pictures
+# Images are stored in following format
+#
+# $LOCAL_STORE/$RATING/$ARTIST/$IMAGE
+#
+# eg.
+# /danbooru/safe/Rib_y(uhki)/12401290395023.jpg"
+LOCAL_STORE="/mnt/storage/pictures/danbooru"
+
+# Filename expression
+# Set characters which you want stripped from filename, eg, if you use fat32.
+FILENAME_EXP='s/[][%\+\\\"\*;:\?\|<>,=]/_/g'
+
+# Artist database
+# Since danbooru API allows no easy way to get artist from post,
+# it needs to be crawled, and this is _really_ slow.
+#
+# We can workaround it by keeping local artist cache, which will speed up things eventually.
+ARTIST_DB="$LOCAL_STORE/artist.db"
+
+# Ignore database
+# Another speedup method!
+# Stores all tags here that are not linked to any artist
+IGNORE_DB="$LOCAL_STORE/ignore.db"
+
+# Status to download
+# active  = Only download active posts
+# pending = Download pending && active
+DANBOORU_STATUS="active"
+
+# Rating to download
+# s = Only download safe posts
+# q = Download questionable && safe posts
+# e = Download explicit && questionable && safe posts
+DANBOORU_RATING="e"
+
+# Download pictures with no artist tag?
+DANBOORU_NO_ARTIST=0
+
+# Filter tags
+# Pictures which match one of these tags will not be downloaded
+DANBOORU_FILTER=("yaoi tiger_&_bunny boys_love shounen-ai")
+
+# Limit the number of sub processes for download
+FORK_LIMIT=20
+
+# Lock file
+TMP_DIR="/tmp/danbooru"
+LOCK_FILE="$TMP_DIR/lock"
+
+# Danbooru API root
+DANBOORU_ROOT="http://danbooru.donmai.us"
+DANBOORU_COOKIE="$TMP_DIR/cookie"
+
+# Danbooru user && password
+source "/arch/passwd/libpasswd-sh"
+DANBOORU_USER="$(_passwd_get_user "danbooru")"
+DANBOORU_PASSWD="$(_passwd_get_pass "danbooru")"
+
+# Curl agent
+CURL_AGENT="Mozilla/4.73 [en] (X11; U; Linux 2.2.15 i686)"
+
+# Depencies for this script
+# Perl is used for url encoding tags
+BIN_DEPS="curl jsawk awk perl"
+VERBOSE=0
+
+error()
+{
+   unlock
+   echo "$@"
+   exit 1
+}
+
+error_no_unlock()
+{
+   echo "$@"
+   exit 1
+}
+
+check_deps()
+{
+   for i in $BIN_DEPS; do
+      which $i > /dev/null
+      if [ $? -ne 0 ]; then
+         error_no_unlock "Missing depency: $i"
+      fi
+   done
+}
+
+# Lock
+lock()
+{
+   [[ ! "$TMP_DIR" ]]      || mkdir -p "$TMP_DIR"
+   [[ ! -f "$LOCK_FILE" ]] || error_no_unlock "$(basename "$0") is already running!"
+   touch "$LOCK_FILE"
+}
+
+# Unlock
+unlock()
+{
+   [[ -f "$LOCK_FILE" ]] || return
+   rm "$LOCK_FILE"
+
+   [[ -d "$TMP_DIR" ]]   || return
+   rm -r "$TMP_DIR"
+}
+
+# Signal handler
+sigint()
+{
+   # Kill all sub processes
+   test -z "`jobs -p`" || kill -9 `jobs -p` &> /dev/null
+
+   # Unlock
+   unlock
+
+   echo "$(basename "$0"): SIGINT"
+   exit 1
+}
+
+# Usage
+usage()
+{
+   for i in $@
+   do
+      [[ "$i" != "-h" ]] && [[ "$i" != "--help" ]] || error_no_unlock "$(basename "$0") (-v) [page] [tags] [limit]"
+      [[ "$i" != "-v" ]]                           || VERBOSE=1
+   done
+}
+
+# Encode urls
+# $1 = URL
+urlencode()
+{
+   echo -n "$@" | perl -pe's/([^-_.~A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg'
+}
+
+# Login to danbooru
+# $1 = Username
+# $2 = Password
+login()
+{
+   local RET=
+   RET="$(curl -s -c "$DANBOORU_COOKIE" --user-agent "$CURL_AGENT" \
+          -F "user[name]=$1" -F "user[password]=$2" -F "commit=1" \
+             "$DANBOORU_ROOT/user/authenticate")"
+
+   # Check login
+   RET="$(curl -s -b "$DANBOORU_COOKIE" --user-agent "$CURL_AGENT" "$DANBOORU_ROOT/user/login")"
+   [[ ! "$(echo "$RET" | grep -w "Access denied")" ]] || error "Login failed.."
+}
+
+# $1 = API URL
+# $2 = URL Arguments
+get_json()
+{
+   curl -s -b "$DANBOORU_COOKIE" --user-agent "$CURL_AGENT" "$DANBOORU_ROOT/$1.json?$2"
+}
+
+# $1 = JSON data
+# $2 = Element
+# Parses quoted strings (Needs eval set -- ${ARRAY[@]})
+json_parse_q()
+{
+   echo "$1" | jsawk "return this.$2" | sed -e 's/\[\"/"/' -e 's/\"\]/"/' -e 's/","/" "/g' -e 's/`/\\`/g' -e 's/\$/\\$/g'
+}
+
+# $1 = JSON data
+# $2 = Element
+# Parses unquoted strings
+json_parse()
+{
+   echo "$1" | jsawk "return this.$2" | sed -e 's/\[\"//' -e 's/\"\]//' -e 's/","/ /g'
+}
+
+# $1 = JSON rating
+# Return readable rating
+rating_str()
+{
+   [[ "$@" != "s" ]] || echo "safe"
+   [[ "$@" != "q" ]] || echo "questionable"
+   [[ "$@" != "e" ]] || echo "explicit"
+}
+
+# $1 = Matching tag
+# $2 = Artist name
+# Caches artist to DB file
+cache_artist()
+{
+   local ARTIST="$2"
+   [[ "$1" ]]        || return
+   [[ "$ARTIST" ]]   || ARTIST="$1"
+
+   echo "$1::$2" >> "$ARTIST_DB"
+}
+
+# $1 = Matching tag
+# Return artist, if matching tag is found from cache
+check_artist()
+{
+   [[ "$@" ]]            || return
+   [[ -f "$ARTIST_DB" ]] || return
+   grep -F "$@::" "$ARTIST_DB" | awk -F'::' '{print $2}' | head -n1
+}
+
+# $1 = Tag
+# Caches tag to ignore file
+cache_ignore()
+{
+   [[ "$@" ]]        || return
+   [[ "$@" ]]        || return
+   echo "$@" >> "$IGNORE_DB"
+}
+
+# $1 = Matching tag
+# Return tag, if matching tag is found from ignore cache
+check_ignore()
+{
+   [[ "$@" ]]            || return
+   [[ -f "$IGNORE_DB" ]] || return
+   grep -wF "$@" "$IGNORE_DB" | head -n1
+}
+
+# $1 = URL
+# $2 = Rating
+# $3 = Artist
+# $4 = Tags
+# Download picture
+store_picture()
+{
+   # artist
+   local ARTIST="$3"
+   ARTIST=$(echo -n "$ARTIST" | sed 's/^ *//' | sed 's/[ .]*$//') # Strip leading spaces and trailing spaces / periods.
+   ARTIST=$(echo -n "$ARTIST" | sed "$FILENAME_EXP")              # Replace illegal characters.
+
+   # target
+   local TARGET="$LOCAL_STORE/$2/$ARTIST/$(basename "$1")"
+   local TEMP="$TMP_DIR/$(basename "$1")"
+
+   # download to $TEMP and move after finished to
+   # destination to avoid partial downloads
+   echo "$TARGET"
+   curl -s -o "$TEMP" "$1"
+
+   # Download failed
+   [ -f "$TEMP" ] || return
+
+   # mkdirs
+   mkdir -p "$LOCAL_STORE/$2"
+   mkdir -p "$LOCAL_STORE/$2/$ARTIST"
+
+   # move to destination
+   mv "$TEMP"  "$TARGET"
+   echo "$4" > "$TARGET.tags"
+}
+
+# $1 = URL
+# $2 = Rating
+# $3 = Tags
+# Stores the picture
+check_picture()
+{
+   local RESULT=
+   local ARTIST=
+   local MATCH=
+
+   [[ "$1" ]] || return
+   [[ "$2" ]] || return
+
+   if [ -d "$LOCAL_STORE/$2" ]
+   then
+      if [[ "$(find "$LOCAL_STORE/$2" -type f -name "$(basename $1)" | sed 1q)" ]]
+      then
+         echo "exist: $(basename $1)"
+         return
+      fi
+   fi
+
+   # Check filter first
+   for TAG in $3
+   do
+      for FILTER in $DANBOORU_FILTER
+      do
+         if [[ "$TAG" == "$FILTER" ]]
+         then
+            echo "filter [$TAG]: $(basename $1)"
+            return
+         fi
+      done
+   done
+
+   # Check cache second
+   [[ $VERBOSE -eq 0 ]] || echo "local artist lookup"
+   for TAG in $3
+   do
+      ARTIST="$(check_artist "$TAG")"
+      if [[ "$ARTIST" ]]
+      then
+         MATCH="$TAG"
+         break
+      fi
+   done
+
+   # If no match in cache, get from danbooru
+   if [[ ! "$MATCH" ]]
+   then
+      [[ $VERBOSE -eq 0 ]] || echo "remote artist lookup"
+      for TAG in $3
+      do
+         [[ ! "$(check_ignore "$TAG")" ]] || continue
+         RESULT="$(get_json "artist/index" "limit=1&name=$(urlencode "$TAG")")"
+         if [[ "$RESULT" != "[]" ]]
+         then
+            MATCH="$TAG"
+            break
+         else
+            cache_ignore "$TAG"
+         fi
+      done
+
+      if [[ "$MATCH" ]]
+      then
+         ARTIST="$(json_parse "$RESULT" 'name')"
+         cache_artist "$MATCH" "$ARTIST"
+      fi
+   fi
+
+   if [[ ! "$ARTIST" ]]
+   then
+      [[ $DANBOORU_NO_ARTIST -eq 1 ]] || return
+      ARTIST="unknown"
+   fi
+
+   store_picture "$1" "$2" "$ARTIST" "$3" &
+}
+
+# Main
+main()
+{
+   # get rid of the verbose argument
+   [[ "$VERBOSE" -eq 0 ]] || shift 1
+
+   local RESULT=
+   local URLS=
+   local RATING=
+   local STATUS=
+   local TAGS=
+
+   local LIMIT="${3-100}"
+   local PAGE="${1-1}"
+   local PTAGS="$(urlencode "$2")"
+   local OK=0
+   local i=
+
+   # Trap SIGINT
+   trap sigint SIGINT
+
+   [[ "$VERBOSE" -eq 0 ]] || echo "$DANBOORU_ROOT/user/authenticate"
+   login "$DANBOORU_USER" "$DANBOORU_PASSWD"
+
+   [[ "$VERBOSE" -eq 0 ]] || echo "$DANBOORU_ROOT/post/index.json?page=$PAGE&limit=$LIMIT&tags=$PTAGS"
+
+   RESULT="$(get_json "post/index" "page=$PAGE&limit=$LIMIT&tags=$PTAGS")"
+   URLS=("$(json_parse "$RESULT" 'file_url')")
+   TAGS=("$(json_parse_q "$RESULT" 'tags')")
+   RATING=($(json_parse "$RESULT" 'rating'))
+   STATUS=($(json_parse "$RESULT" 'status'))
+
+   # Unfortunately we need to do this for tags
+   eval set -- ${TAGS[@]}
+
+   i=0
+   for URL in $URLS
+   do
+      [[ "$URL" != "[]" ]] || error "No results.."
+      # Check status
+      OK=0
+      [[ "${STATUS[$i]}" == "pending" ]] && [[ "$DANBOORU_STATUS" != "pending" ]] || OK=1
+      [[ "${STATUS[$i]}" != "active"  ]] || OK=1
+
+      if [[ $OK -eq 0 ]]
+      then
+         echo "block status [${STATUS[$i]}]: $URL"
+         ((i++))
+         shift 1
+         continue
+      fi
+
+      # Check rating
+      OK=0
+      [[ "${RATING[$i]}" == "e" ]] && [[ "$DANBOORU_RATING" != "e" ]] || OK=1
+      [[ "${RATING[$i]}" == "q" ]] && [[ "$DANBOORU_RATING" != "q" ]] || [[ "$DANBOORU_RATING" != "e" ]] || OK=1
+      [[ "${RATING[$i]}" != "s" ]] || OK=1
+
+      if [[ $OK -eq 0 ]]
+      then
+         echo "block rating [${RATING[$i]}]: $URL"
+         ((i++))
+         shift 1
+         continue
+      fi
+
+      # Check picture
+      check_picture "$URL" "$(rating_str "${RATING[$i]}")" "$1"
+
+      # Wait for forks
+      while [ $(jobs -p | wc -l) -gt $FORK_LIMIT ]
+      do
+         sleep 1
+      done
+
+      ((i++)) # Next array index
+      shift 1 # Next tag cloud
+   done
+   [[ $i -gt 0 ]] || error "Hm? No URLs from: $DANBOORU_ROOT/post/index.json?page=$PAGE&limit=$LIMIT&tags=$PTAGS"
+
+   # Wait for subprocesses
+   while [ $(jobs -p | wc -l) -gt 1 ]
+   do
+      sleep 1
+   done
+}
+
+check_deps
+usage $@
+lock
+main $@
+unlock
