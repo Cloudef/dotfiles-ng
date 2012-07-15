@@ -8,20 +8,20 @@ _STATUS_FONT="terminus"
 autostart() {
    # wait for wm
    while ! killall -0 $_XINIT_WM; do sleep 1; done
-   # clipboard dmenu daemon
-   clipbored
    # redshift for my eyes
    redshift -l 62:22 -m vidmode &> /dev/null &
    # start irc, rss, torrent
    irc; rss; torrent;
+   # loliclip clipboard manager
+   loliclip -d
 }
 
 # kill leftovers
 autokill() {
-   # kill clipboard dmenu daemon
-   clipbored -k
    # kill redshift
    killall redshift
+   # kill loliclip
+   killall loliclip
 }
 
 # special route for monsterwm
