@@ -1,0 +1,32 @@
+needs schedtool
+source /arch/toolsched/toolsched-env
+
+\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//
+
+Simple scripts for automatically starting commands as either SCHED_BATCH,
+SCHED_ISO, SCHED_IDLEPRIO or nice 19.
+
+Installing:
+Put toolsched.*, in your PATH (eg in /usr/bin)
+
+Then make a symbolic link with the name of the command highest in your PATH you
+want to run as SCHED_BATCH to the relevant toolsched script.
+
+eg:
+cp toolsched.* /usr/bin
+ln -s /usr/bin/toolsched.d ~/bin/make
+ln -s /usr/bin/toolsched.i ~/bin/mplayer
+
+Provided ~/bin/make is earlier in your PATH this will work.
+i.e. adding the line
+PATH=~/bin:$PATH
+to your .bashrc
+
+'make' will then always start as SCHED_IDLEPRIO if it can. Toolsched.d also
+detects if SCHED_IDLEPRIO is not supported and will drop it to a SCHED_BATCH
+policy if it can instead.
+
+The toolsched script can only ever be run as a symbolic link. Multiple copies of
+toolsched in your PATH will fail.
+
+Con

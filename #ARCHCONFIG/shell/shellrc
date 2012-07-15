@@ -60,6 +60,9 @@ VLESS="$(find /usr/share/vim -name 'less.sh')"
 # Source passwd enviroiment
 source "/arch/passwd/libpasswd-env"
 
+# Source toolsched enviroiment
+source "/arch/toolsched/toolsched-env"
+
 # LS_COLORS
 # https://github.com/trapd00r/LS_COLORS
 eval $( dircolors -b /arch/shell/LS_COLORS )
