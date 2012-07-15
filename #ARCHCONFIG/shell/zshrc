@@ -27,7 +27,8 @@ zstyle :omz:plugins:ssh-agent agent-forwarding on
 # load oh-my-zsh
 source "$ZSH/oh-my-zsh.sh"
 
-# HACK: override aliases again which oh-my-zsh overrided
+# source functions and aliases
+source "/arch/shell/functions"
 source "/arch/shell/alias"
 
 # link completitions

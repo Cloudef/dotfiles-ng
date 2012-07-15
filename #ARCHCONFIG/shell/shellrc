@@ -67,10 +67,6 @@ source "/arch/toolsched/toolsched-env"
 # https://github.com/trapd00r/LS_COLORS
 eval $( dircolors -b /arch/shell/LS_COLORS )
 
-# Source global functions
-source "/arch/shell/functions"
-source "/arch/shell/alias"
-
 # Welcome text
 echo "Welcome to lolified Arch Linux"
 echo "\ts  - pacman -S"

@@ -12,6 +12,12 @@ alias egrep='egrep --color=auto'
 alias du='du -sh'
 alias df='df -h'
 
+# interactive coreutils
+alias cp='cp -iv'
+alias mv='mv -iv'
+alias rm='rm -iv'
+alias ln='ln -iv'
+
 # vim support
 alias :w='echo this is a shell, not vim.'
 alias :wq=:w
@@ -24,6 +30,9 @@ alias r='sudo pacmatic -Rsn'
 alias s='sudo pacmatic -S'
 alias ss='/usr/bin/pacman -Ss'
 alias u='sudo pacmatic -Syu'
+
+# ncmpc && mpc alias
+alias m='ncmpc'
 
 # shorter sudo
 alias -- +='sudo'

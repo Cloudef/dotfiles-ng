@@ -6,6 +6,10 @@
 # (tests for interactive shell)
 source "/arch/shell/shellrc"
 
+# source functions and aliases
+source "/arch/shell/functions"
+source "/arch/shell/alias"
+
 # bash settings
 shopt -s cdspell
 shopt -s checkwinsize
