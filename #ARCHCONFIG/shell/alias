@@ -31,8 +31,9 @@ alias s='sudo pacmatic -S'
 alias ss='/usr/bin/pacman -Ss'
 alias u='sudo pacmatic -Syu'
 
-# ncmpc && mpc alias
+# mpd client aliases
 alias m='ncmpc'
+alias lm='lolimpd'
 
 # shorter sudo
 alias -- +='sudo'
