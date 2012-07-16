@@ -14,6 +14,9 @@ autostart() {
    irc; rss; torrent;
    # loliclip clipboard manager
    loliclip -d
+   # mpd scribble
+   pidof mpdscribble &> /dev/null || \
+      mpdscribble &
 }
 
 # kill leftovers
@@ -27,7 +30,7 @@ autokill() {
 # special route for monsterwm
 monsterwm_init() {
    local ff="/tmp/monsterwm.fifo"
-   local pagerw=980
+   local pagerw=460
    local statusw=$((_MONITOR_WIDTH-pagerw))
    monsterpager "$ff" 0 | \
       dzen2 -h $_STATUS_HEIGHT -y 0 -w $pagerw -ta l -fn $_STATUS_FONT -e -p &
