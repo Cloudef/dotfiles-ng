@@ -7,7 +7,7 @@
 # settings as enviroiment variables?
 main() {
    local ARGS=
-   [[ "$@" != *-fn ]] && ARGS="$ARGS -fn terminus:8"
+   [[ "$@" != *-fn ]] && ARGS="$ARGS -fn terminus"
    [[ "$@" != *-nb ]] && ARGS="$ARGS -nb #161616"
    [[ "$@" != *-nf ]] && ARGS="$ARGS -nf #FF950E"
    [[ "$@" != *-sb ]] && ARGS="$ARGS -sb #444444"
