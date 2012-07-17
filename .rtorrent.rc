@@ -27,7 +27,7 @@ schedule = low_diskspace,5,60,close_low_diskspace=2500M
 schedule = anime_torrent,10,10,"load_start=/mnt/anime/torrent/*.torrent,d.set_directory=/mnt/anime/seed"
 schedule = anime_torrent2,10,10,"load_start=/mnt/storage/anime/torrent/*.torrent,d.set_directory=/mnt/storage/anime/seed"
 schedule = storage_torrent,10,10,"load_start=/mnt/storage/torrent/*.torrent,d.set_directory=/mnt/storage"
-schedule = music_torrent,10,10,"load_start=/mnt/storage/musiikki/torrent/*.torrent,d.set_directory=/mnt/storage/musiikki"
+schedule = music_torrent,10,10,"load_start=/mnt/storage/music/torrent/*.torrent,d.set_directory=/mnt/storage/music"
 
 #
 # Other settings below
