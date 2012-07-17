@@ -1,3 +1,3 @@
 #!/bin/sh
-# dwb: we
+# dwb: Control y
 urlhandler "$DWB_URI"
