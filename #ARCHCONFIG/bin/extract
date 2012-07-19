@@ -5,6 +5,7 @@ main() {
    while [[ -n "$1" ]]; do
       [[ -f "$1" ]] && {
          case "$1" in
+            *.tar.xz)    tar xvf "$1"     ;;
             *.tar.bz2)   tar xvjf "$1"    ;;
             *.tar.gz)    tar xvzf "$1"    ;;
             *.bz2)       bunzip2 "$1"     ;;
