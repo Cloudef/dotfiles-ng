@@ -8,6 +8,8 @@ _STATUS_FONT="terminus"
 autostart() {
    # wait for wm
    while ! killall -0 $_XINIT_WM; do sleep 1; done
+   # nitrogen
+   nitrogen --restore
    # redshift for my eyes
    redshift -l 62:22 -m vidmode &> /dev/null &
    # start irc, rss, torrent
