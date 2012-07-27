@@ -34,6 +34,24 @@ source "/arch/shell/alias"
 # link completitions
 compdef pacmatic=pacman
 
+# ls colors
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+# menu sort
+zstyle ':completion:*' file-sort name
+
+# greedy matching
+zstyle ':completion:*' expand prefix suffix
+
+# don't show $PWD in ../
+zstyle ':completion:*' ignore-parents pwd
+
+# ignore commands I don't have
+zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
+
+# incasesensitive matching
+zstyle ':completion:*' matcher-list  'm:{a-zA-Z}={A-Za-z} r:|[._-,]=** r:|=** l:|=*'
+
 # zsh options
 set -o vi # vi mode
 unsetopt correct_all # I can't see why people like this
