@@ -14,7 +14,7 @@ main() {
    [[ "$@" != *-sb ]] && ARGS="$ARGS -sb #444444"
    [[ "$@" != *-sf ]] && ARGS="$ARGS -sf #FF950E"
    [[ -n "$FONT" ]] && {
-      /usr/bin/dmenu -fn "$FONT" ${ARGS[@]} "$@"; return;
+      /usr/bin/dmenu -fn "$FONT" $ARGS "$@"; return;
    } || { /usr/bin/dmenu $ARGS "$@"; return; }
 }
 main "$@"
