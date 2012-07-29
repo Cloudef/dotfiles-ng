@@ -19,13 +19,6 @@
 export EDITOR="vim"
 export BROWSER="dwb"
 
-# Fix weird urxvt bugs on su, ssh
-[[ "$TERM" == *rxvt* ]] && export TERM="xterm-256color"
-
-# Better sorting
-export LC_ALL=
-export LC_COLLATE="C"
-
 # SDL
 export SDL_AUDIODRIVER="alsa"
 export SDL_VIDEO_FULLSCREEN_HEAD=1
