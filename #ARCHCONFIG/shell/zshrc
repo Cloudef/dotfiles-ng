@@ -22,8 +22,7 @@ plugins=(git autojump nyan ssh-agent zsh-syntax-highlighting)
 autoload -U zmv
 
 # ssh-agent forwarding
-[[ "$TERM" != "linux" ]] &&
-   zstyle :omz:plugins:ssh-agent agent-forwarding on
+zstyle :omz:plugins:ssh-agent agent-forwarding on
 
 # load oh-my-zsh
 source "$ZSH/oh-my-zsh.sh"
