@@ -27,7 +27,8 @@ URxvt.urgentOnBell:true
 URxvt.perl-ext-common:default,matcher,url-picker,keyboard-select
 URxvt.urlLauncher:open
 URxvt.matcher.button:3
-URxvt.matcher.pattern.1:\\bwww\\.[\\w-]+\\.[\\w./?&@#-]*[\\w/-]
+URxvt*matcher.pattern.1:\\b(mailto|http|https|ftp|ftps|ssh|git|file):[/]*[\\w-]\\.[\\w./?&@()#-]*[\\w/-]
+URxvt.matcher.pattern.2:\\bwww\\.[\\w-]+\\.[\\w./?&@()#-]*[\\w/-]
 URxvt.url-picker.order:descending
 URxvt.url-picker.launcher:open
 URxvt.keysym.Control-f:perl:url-picker
