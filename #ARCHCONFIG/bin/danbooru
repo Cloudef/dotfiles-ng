@@ -1,5 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 # Crawl danbooru for pictures
+#
+# -- Thu Aug  2 21:27:42 UTC 2012
+# artist.db format changed
+# update using ':%s/::/ /' in vim for example.
+# <filename>.meta and <filename>.tags are provided also.
 #
 # Uses JSON API instead of crawling HTML
 # Much fool proof and allows more control.
@@ -180,7 +185,7 @@ get_json()
 # Parses quoted strings (Needs eval set -- ${ARRAY[@]})
 json_parse_q()
 {
-   echo "$1" | jsawk "return this.$2" | sed -e 's/\[\"/"/' -e 's/\"\]/"/' -e 's/","/" "/g' -e 's/`/\\`/g' -e 's/\$/\\$/g'
+   echo "$1" | jsawk "return this.$2" | sed 's/\[\"/"/;s/\"\]/"/;s/","/" "/g;s/`/\\`/g;s/\$/\\$/g'
 }
 
 # $1 = JSON data
@@ -188,7 +193,15 @@ json_parse_q()
 # Parses unquoted strings
 json_parse()
 {
-   echo "$1" | jsawk "return this.$2" | sed -e 's/\[\"//' -e 's/\"\]//' -e 's/","/ /g'
+   echo "$1" | jsawk "return this.$2" | sed 's/\[\"//;s/\"\]//;s/","/ /g'
+}
+
+# $1 = JSON data
+# $2 = Element
+# Parses numerical arrays
+json_parse_n()
+{
+   echo "$1" | jsawk "return this.$2" | sed 's/\[//;s/\]//;s/,/ /g'
 }
 
 # $1 = JSON rating
@@ -209,7 +222,7 @@ cache_artist()
    [[ "$1" ]]        || return
    [[ "$ARTIST" ]]   || ARTIST="$1"
 
-   echo "$1::$2" >> "$ARTIST_DB"
+   echo "$1 $2" >> "$ARTIST_DB"
 }
 
 # $1 = Matching tag
@@ -218,7 +231,7 @@ check_artist()
 {
    [[ "$@" ]]            || return
    [[ -f "$ARTIST_DB" ]] || return
-   grep -F "$@::" "$ARTIST_DB" | awk -F'::' '{print $2}' | head -n1
+   grep -F "$@ " "$ARTIST_DB" | awk -F' ' '{print $2}' | head -n1
 }
 
 # $1 = Tag
@@ -243,12 +256,13 @@ check_ignore()
 # $2 = Rating
 # $3 = Artist
 # $4 = Tags
+# $5 = ID
 # Download picture
 store_picture()
 {
    # artist
    local ARTIST="$3"
-   ARTIST=$(echo -n "$ARTIST" | sed 's/^ *//' | sed 's/[ .]*$//') # Strip leading spaces and trailing spaces / periods.
+   ARTIST=$(echo -n "$ARTIST" | sed 's/^ *//;s/[ .]*$//')         # Strip leading spaces and trailing spaces / periods.
    ARTIST=$(echo -n "$ARTIST" | sed "$FILENAME_EXP")              # Replace illegal characters.
 
    # target
@@ -269,12 +283,14 @@ store_picture()
 
    # move to destination
    mv "$TEMP"  "$TARGET"
-   echo "$4" > "$TARGET.tags"
+   echo "$4" > "${TARGET%.*}.tags"
+   echo "$5" > "${TARGET%.*}.meta"
 }
 
 # $1 = URL
 # $2 = Rating
 # $3 = Tags
+# $4 = ID
 # Stores the picture
 check_picture()
 {
@@ -285,22 +301,17 @@ check_picture()
    [[ "$1" ]] || return
    [[ "$2" ]] || return
 
-   if [ -d "$LOCAL_STORE/$2" ]
-   then
-      if [[ "$(find "$LOCAL_STORE/$2" -type f -name "$(basename $1)" | sed 1q)" ]]
-      then
+   if [ -d "$LOCAL_STORE/$2" ]; then
+      if [[ "$(find "$LOCAL_STORE/$2" -type f -name "$(basename $1)" | sed 1q)" ]]; then
          echo "exist: $(basename $1)"
          return
       fi
    fi
 
    # Check filter first
-   for TAG in $3
-   do
-      for FILTER in $DANBOORU_FILTER
-      do
-         if [[ "$TAG" == "$FILTER" ]]
-         then
+   for TAG in $3; do
+      for FILTER in $DANBOORU_FILTER; do
+         if [[ "$TAG" == "$FILTER" ]]; then
             echo "filter [$TAG]: $(basename $1)"
             return
          fi
@@ -309,26 +320,21 @@ check_picture()
 
    # Check cache second
    [[ $VERBOSE -eq 0 ]] || echo "local artist lookup"
-   for TAG in $3
-   do
+   for TAG in $3; do
       ARTIST="$(check_artist "$TAG")"
-      if [[ "$ARTIST" ]]
-      then
+      if [[ "$ARTIST" ]]; then
          MATCH="$TAG"
          break
       fi
    done
 
    # If no match in cache, get from danbooru
-   if [[ ! "$MATCH" ]]
-   then
+   if [[ ! "$MATCH" ]]; then
       [[ $VERBOSE -eq 0 ]] || echo "remote artist lookup"
-      for TAG in $3
-      do
+      for TAG in $3; do
          [[ ! "$(check_ignore "$TAG")" ]] || continue
          RESULT="$(get_json "artist/index" "limit=1&name=$(urlencode "$TAG")")"
-         if [[ "$RESULT" != "[]" ]]
-         then
+         if [[ "$RESULT" != "[]" ]]; then
             MATCH="$TAG"
             break
          else
@@ -336,20 +342,18 @@ check_picture()
          fi
       done
 
-      if [[ "$MATCH" ]]
-      then
+      if [[ "$MATCH" ]]; then
          ARTIST="$(json_parse "$RESULT" 'name')"
          cache_artist "$MATCH" "$ARTIST"
       fi
    fi
 
-   if [[ ! "$ARTIST" ]]
-   then
+   if [[ ! "$ARTIST" ]]; then
       [[ $DANBOORU_NO_ARTIST -eq 1 ]] || return
       ARTIST="unknown"
    fi
 
-   store_picture "$1" "$2" "$ARTIST" "$3" &
+   store_picture "$1" "$2" "$ARTIST" "$3" "$4" &
 }
 
 # Main
@@ -379,6 +383,7 @@ main()
    [[ "$VERBOSE" -eq 0 ]] || echo "$DANBOORU_ROOT/post/index.json?page=$PAGE&limit=$LIMIT&tags=$PTAGS"
 
    RESULT="$(get_json "post/index" "page=$PAGE&limit=$LIMIT&tags=$PTAGS")"
+   IDS=($(json_parse_n "$RESULT" 'id'))
    URLS=("$(json_parse "$RESULT" 'file_url')")
    TAGS=("$(json_parse_q "$RESULT" 'tags')")
    RATING=($(json_parse "$RESULT" 'rating'))
@@ -388,16 +393,14 @@ main()
    eval set -- ${TAGS[@]}
 
    i=0
-   for URL in $URLS
-   do
+   for URL in $URLS; do
       [[ "$URL" != "[]" ]] || error "No results.."
       # Check status
       OK=0
       [[ "${STATUS[$i]}" == "pending" ]] && [[ "$DANBOORU_STATUS" != "pending" ]] || OK=1
       [[ "${STATUS[$i]}" != "active"  ]] || OK=1
 
-      if [[ $OK -eq 0 ]]
-      then
+      if [[ $OK -eq 0 ]]; then
          echo "block status [${STATUS[$i]}]: $URL"
          ((i++))
          shift 1
@@ -410,8 +413,7 @@ main()
       [[ "${RATING[$i]}" == "q" ]] && [[ "$DANBOORU_RATING" != "q" ]] || [[ "$DANBOORU_RATING" != "e" ]] || OK=1
       [[ "${RATING[$i]}" != "s" ]] || OK=1
 
-      if [[ $OK -eq 0 ]]
-      then
+      if [[ $OK -eq 0 ]]; then
          echo "block rating [${RATING[$i]}]: $URL"
          ((i++))
          shift 1
@@ -419,11 +421,10 @@ main()
       fi
 
       # Check picture
-      check_picture "$URL" "$(rating_str "${RATING[$i]}")" "$1"
+      check_picture "$URL" "$(rating_str "${RATING[$i]}")" "$1" "${IDS[$i]}"
 
       # Wait for forks
-      while [ $(jobs -p | wc -l) -gt $FORK_LIMIT ]
-      do
+      while [ $(jobs -p | wc -l) -gt $FORK_LIMIT ]; do
          sleep 1
       done
 
@@ -433,8 +434,7 @@ main()
    [[ $i -gt 0 ]] || error "Hm? No URLs from: $DANBOORU_ROOT/post/index.json?page=$PAGE&limit=$LIMIT&tags=$PTAGS"
 
    # Wait for subprocesses
-   while [ $(jobs -p | wc -l) -gt 1 ]
-   do
+   while [ $(jobs -p | wc -l) -gt 1 ]; do
       sleep 1
    done
 }
