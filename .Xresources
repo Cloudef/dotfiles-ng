@@ -22,7 +22,7 @@ URxvt.visualBell:false
 URxvt.cursorBlink:false
 URxvt.highlightSelection:true
 URxvt.buffered:true
-URxvt.saveLines:1500
+URxvt.saveLines:8192
 URxvt.urgentOnBell:true
 URxvt.perl-ext-common:default,matcher,url-picker,keyboard-select
 URxvt.urlLauncher:open
