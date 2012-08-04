@@ -35,6 +35,9 @@ alias u='sudo pacmatic -Syu'
 alias m='ncmpc'
 alias lm='lolimpd'
 
+# view image in clipboard
+alias cim='loliclip -b image/tiff > /tmp/clipboard.tiff && { sxiv /tmp/clipboard.tiff; rm /tmp/clipboard.tiff; }'
+
 # shorter sudo
 alias -- +='sudo'
 
