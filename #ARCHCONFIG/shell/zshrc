@@ -95,8 +95,8 @@ source "/arch/shell/functions"
 source "/arch/shell/alias"
 
 # zsh options
-unsetopt correct_all # I can't see why people like this
-                     # stop typing wrong silly people
+unsetopt correct # I can't see why people like this
+                 # stop typing wrong silly people
 bindkey "\e[1~"   beginning-of-line    # Home
 bindkey "^A"      beginning-of-line    # CTRL+A
 bindkey "\e[4~"   end-of-line          # End
