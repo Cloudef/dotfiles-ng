@@ -29,6 +29,9 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 # GTK
 export GDK_USE_XFT=1
 
+# Check if everything is broken
+[[ -z "$LANG" ]] && eval "$(locale)"
+
 # Global override path
 # ($HOME/bin && /arch/bin)
 [[ "$PATH" == *$HOME/bin* ]] && [[ "$PATH" == */arch/bin* ]] ||
@@ -77,7 +80,7 @@ echo "\tmeta-shift-c\t- access url history from clipboard"
 echo "\talt-shift-c\t- synchorize XA_PRIMARY to XA_CLIPBOARD"
 echo "\nDo 'less /arch/README' to remind what you have done to me."
 echo "\nAll modified system wide configurations,"
-echo "AUR packages and other related reside in /arch"
+echo "AUR packages and other related reside in /arch\n"
 
 #########################################
 # Change prompt name                    #
