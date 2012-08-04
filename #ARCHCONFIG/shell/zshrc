@@ -6,61 +6,95 @@
 # (tests for interactive shell)
 source "/arch/shell/shellrc"
 
-# oh-my-zsh enviroiment
-ZSH="/arch/shell/oh-my-zsh"
-ZSH_THEME="dothack"
-CASE_SENSITIVE="false"
-DISABLE_AUTO_UPDATE="true"
-DISABLE_LS_COLORS="false"
-DISABLE_AUTO_TITLE="true"
-COMPLETION_WAITING_DOTS="false"
+# execute in background
+{
+   # compile the completion dump to increase startup speed.
+   dump_file="$HOME/.zcompdump"
+   if [[ "$dump_file" -nt "${dump_file}.zwc" || ! -s "${dump_file}.zwc" ]]; then
+      zcompile "$dump_file"
+   fi
+} &!
 
-# oh-my-zsh plugins
-plugins=(git autojump nyan ssh-agent zsh-syntax-highlighting)
+# prezto
+export OMZ="/arch/shell/prezto"
+
+# other enviroiment crap
+typeset -gU cdpath fpath mailpath manpath path
+typeset -gUT INFOPATH infopath
+
+# GNU info
+infopath=(
+   /usr/local/share/info
+   /usr/share/info
+   $infopath
+)
+
+# man
+manpath=(
+   /usr/local/share/man
+   /usr/share/man
+   $manpath
+)
+
+# add paths from /etc/manpaths.d as well
+for path_file in /etc/manpaths.d/*(.N); do
+   manpath+=($(<$path_file))
+done
+unset path_file
 
 # zmv
 autoload -U zmv
 
 # ssh-agent forwarding
-zstyle :omz:plugins:ssh-agent agent-forwarding on
+zstyle ':omz:plugins:ssh-agent' forwarding 'on'
 
-# load oh-my-zsh
-source "$ZSH/oh-my-zsh.sh"
+# Set the key mapping style to 'emacs' or 'vi'.
+zstyle ':omz:module:editor' keymap 'vi'
+
+# Auto convert .... to ../..
+zstyle ':omz:module:editor' dot-expansion 'no'
+
+# Set case-sensitivity for completion, history lookup, etc.
+zstyle ':omz:*:*' case-sensitive 'no'
+
+# Color output (auto set to 'no' on dumb terminals).
+zstyle ':omz:*:*' color 'yes'
+
+# don't show $PWD in ../
+zstyle ':completion:*' ignore-parents 'pwd'
+
+# ignore commands I don't have
+zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
+
+# Set the Oh My Zsh modules to load (browse modules).
+# The order matters.
+zstyle ':omz:load' omodule \
+  'environment' \
+  'editor' \
+  'history' \
+  'directory' \
+  'spectrum' \
+  'utility' \
+  'completion' \
+  'syntax-highlighting' \
+  'ssh-agent' \
+  'git' \
+  'prompt'
+
+# set prompt
+zstyle ':omz:module:prompt' theme 'hack'
+
+# launch
+source "$OMZ/init.zsh"
+
+# link completitions
+compdef pacmatic=pacman
 
 # source functions and aliases
 source "/arch/shell/functions"
 source "/arch/shell/alias"
 
-# link completitions
-compdef pacmatic=pacman
-
-# allow exact path completition
-zstyle ':completion:*' accept-exact '*(N)'
-
-# ls colors
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-
-# menu sort
-zstyle ':completion:*' file-sort name
-
-# greedy matching
-zstyle ':completion:*' expand prefix suffix
-
-# don't show $PWD in ../
-zstyle ':completion:*' ignore-parents pwd
-
-# ignore commands I don't have
-zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
-
-# incasesensitive matching
-zstyle ':completion:*' matcher-list  'm:{a-zA-Z}={A-Za-z} r:|[._-,]=** r:|=** l:|=*'
-
-# use ZSH cache
-zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path ~/.cache/zsh
-
 # zsh options
-set -o vi # vi mode
 unsetopt correct_all # I can't see why people like this
                      # stop typing wrong silly people
 bindkey "\e[1~"   beginning-of-line    # Home
