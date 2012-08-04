@@ -36,7 +36,7 @@ alias m='ncmpc'
 alias lm='lolimpd'
 
 # view image in clipboard
-alias cim='loliclip -b image/tiff > /tmp/clipboard.tiff && { sxiv /tmp/clipboard.tiff; rm /tmp/clipboard.tiff; }'
+alias cim='loliclip -b image/png > /tmp/clipboard.png && { sxiv /tmp/clipboard.png; rm /tmp/clipboard.png; }'
 
 # shorter sudo
 alias -- +='sudo'
