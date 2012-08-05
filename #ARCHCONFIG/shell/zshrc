@@ -66,20 +66,27 @@ zstyle ':completion:*' ignore-parents 'pwd'
 # ignore commands I don't have
 zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
 
+# Syntax hilight
+zstyle ':omz:module:syntax-highlighting' highlighters \
+   'main' \
+   'brackets' \
+   'pattern' \
+   'root'
+
 # Set the Oh My Zsh modules to load (browse modules).
 # The order matters.
 zstyle ':omz:load' omodule \
-  'environment' \
-  'editor' \
-  'history' \
-  'directory' \
-  'spectrum' \
-  'utility' \
-  'completion' \
-  'syntax-highlighting' \
-  'ssh-agent' \
-  'git' \
-  'prompt'
+   'environment' \
+   'editor' \
+   'history' \
+   'directory' \
+   'spectrum' \
+   'utility' \
+   'completion' \
+   'ssh-agent' \
+   'git' \
+   'syntax-highlighting' \
+   'prompt'
 
 # set prompt
 zstyle ':omz:module:prompt' theme 'hack'
