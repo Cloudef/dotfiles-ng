@@ -1,0 +1,18 @@
+#!/bin/sh
+# color output of -Ss
+
+[[ -n "$PACMAN" ]] || {
+   PACMAN="pacman"
+}
+
+C[0]="\033[33m" # core
+C[1]="\033[34m" # extra
+C[2]="\033[32m" # community
+C[3]="\033[35m" # multilib
+C[4]="\033[31m" # other
+"$PACMAN" -Ss "$@" | \
+      sed "s/^core\//`printf "${C[0]}core\033[0m\/"`/" | \
+      sed "s/^extra\//`printf "${C[1]}extra\033[0m\/"`/" | \
+      sed "s/^community\//`printf "${C[2]}community\033[0m\/"`/" | \
+      sed "s/^multilib\//`printf "${C[3]}multilib\033[0m\/"`/" | \
+      sed "s/^\([^ ].*\)\//`printf "${C[4]}"`\1`printf "\033[0m\/"`/"

@@ -28,7 +28,7 @@ alias pacman='pacmatic'
 alias q='/usr/bin/pacman -Q'
 alias r='sudo pacmatic -Rsn'
 alias s='sudo pacmatic -S'
-alias ss='/usr/bin/pacman -Ss'
+alias ss='sspacman'
 alias u='sudo pacmatic -Syu'
 
 # mpd client aliases
