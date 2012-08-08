@@ -31,8 +31,8 @@ URxvt*matcher.pattern.1:\\b(mailto|http|https|ftp|ftps|ssh|git|file):[/]*[\\w-]\
 URxvt.matcher.pattern.2:\\bwww\\.[\\w-]+\\.[\\w./?&@()#-]*[\\w/-]
 URxvt.url-picker.order:descending
 URxvt.url-picker.launcher:open
-URxvt.keysym.Control-f:perl:url-picker
-URxvt.keysym.Control-y:perl:url-yanker
+URxvt.keysym.M-f:perl:url-picker
+URxvt.keysym.M-y:perl:url-yanker
 URxvt.keysym.M-Down:perl:keyboard-select:activate
 URxvt.keysym.M-Up:perl:keyboard-select:search
 Urxvt.keysym.Control-Up:\033[1;5A

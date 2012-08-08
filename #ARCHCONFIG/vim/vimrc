@@ -201,7 +201,7 @@ endfunction
 " use ctrl-t to open file in a new tab
 " use ctrl-f to open file in current buffer
 map <c-t> :call DmenuOpen("tabe")<cr>
-map <c-g> :call DmenuOpen("edit")<cr>
+map <c-f> :call DmenuOpen("edit")<cr>
  " }}}
 " {{{ Aliases
 " {{{ Tab change functions
