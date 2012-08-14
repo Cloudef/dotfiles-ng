@@ -116,7 +116,7 @@ Fonts:
    Refer to '/arch/shell/README' for more information.
 
 /arch/passwd: passwd library for simple scripts
-   Rassword handler for automated scripts that need authentication. Refer to
+   Password handler for automated scripts that need authentication. Refer to
    '/arch/passwd/README' for more information.
 
 /arch/xcolors: systemwide xcolors for .Xresources
