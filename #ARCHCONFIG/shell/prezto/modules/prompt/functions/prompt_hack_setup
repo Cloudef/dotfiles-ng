@@ -44,9 +44,9 @@ function prompt_hack_setup {
    zstyle ':omz:module:git' untracked ' %%B%F{white}僥%f%%b'
    zstyle ':omz:module:git' info \
       'prompt'  ' %F{cyan}git%f$(coalesce "%b" "%p" "%c")%s' \
-      'rprompt' '%F{green}[%A%B%S%a%d%m%r%U%u'
+      'rprompt' '%F{green}%A%B%S%a%d%m%r%U%u'
 
-   RPROMPT='${editor_info[keymap]}${editor_info[overwrite]}%(?:: %f)${VIM:+" %B%F{green}V%f%b"}${git_info[rprompt]}'
+   RPROMPT='${editor_info[keymap]}${editor_info[overwrite]}%(?:: %f)${VIM:+" %B%F{green}V%f%b"}%F{green}[${git_info[rprompt]}%(?, %F{green}(⌐■_■), %F{yellow}%?%F{red}（╯°□°）╯ ┻━┻ )%f'
    SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 }
 
