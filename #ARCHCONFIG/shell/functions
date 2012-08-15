@@ -228,6 +228,25 @@ vimo() {
    vim "$match"
 }
 
+##########################################
+## Open file inside git tree on linopen ##
+##########################################
+openo() {
+   local match=
+   local gtdir=
+   local cwd=$PWD
+   git ls-files &>/dev/null || return # test if git
+   gtdir="$(git rev-parse --show-toplevel)"
+   [[ "$cwd" != "$gtdir" ]] && pushd "$gtdir" &> /dev/null # git root
+   [[ -n "$@" ]] && { match="$(git ls-files | grep "$@")"; } ||
+                      match="$(git ls-files)"
+   [[ $(echo "$match" | wc -l) -gt 1 ]] && match="$(echo $match | dmenu -i -l 20 -p "linopen")"
+   match="$gtdir/$match" # convert to absolute
+   [[ "$cwd" != "$gtdir" ]] && popd &> /dev/null # go back
+   [[ -f "$match" ]] || return
+   open "$match"
+}
+
 #######################
 ## Setup github repo ##
 #######################
