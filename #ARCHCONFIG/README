@@ -30,7 +30,6 @@ uim-mozc depends on Qt
 
 Reminders?
    You should use ':set cc=80' more often.
-   Do dmenu binding for vim for opening new files to split pane. (c-s)
    Move some tools to PKGBUILD's
    You have job, remember to sleep.
 
