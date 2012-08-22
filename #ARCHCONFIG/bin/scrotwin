@@ -2,6 +2,8 @@
 # Scrot the active window
 # without clicking anything.
 
+# border*2
+BORDER=2
 main() {
   unset x y w h
   local active="$(xdotool getactivewindow)"
@@ -11,7 +13,7 @@ main() {
            -e "s/^ \+Width: \+\([0-9]\+\).*/w=\1/p" \
            -e "s/^ \+Height: \+\([0-9]\+\).*/h=\1/p" )
    xdotool windowraise $active; sleep 0.1
-   scrot -g $((w+4))x$((h+4))+$x+$y $@
+   scrot -g $((w+BORDER))x$((h+BORDER))+$x+$y $@
    sleep 0.1; xdotool windowactivate $active
 }
 main "$@"
