@@ -1,0 +1,54 @@
+#!/bin/sh
+# toolsched library file
+
+schedtool="$(which schedtool 2>&1)"
+ionice="$(which ionice 2>&1)"
+
+# Launch process
+toolsched_launch()
+{
+   local cmd="$(basename $0)"
+   local scriptcmd="$(which $cmd 2>&1)"
+   local command=
+   for i in $(which -a "$cmd" 2>&1); do
+      [[ "$i" != "$scriptcmd" ]] && {
+         command="$i"
+         break
+      }
+   done
+
+   [[ -n "$command" ]] || {
+      echo "$cmd: command not found"
+      exit 1
+   }
+
+   exec "$command" "$@"
+   exit $?
+}
+
+# Set current process to idle
+toolsched_idle()
+{
+   # SCHED_IDLEPRIO
+   $schedtool -D $$ >/dev/null 2>&1
+
+   # IDLE
+   $ionice -c3 -p$$ >/dev/null 2>&1
+}
+
+# Set current process to iso
+toolsched_iso()
+{
+   # SCHED_ISO
+   $schedtool -I $$ >/dev/null 2>&1
+
+   # BEST-EFFORT
+   $ionice -c2 -n0 -p$$ >/dev/null 2>&1
+}
+
+# Set current process to batch
+toolsched_batch()
+{
+   # SCHED_BATCH
+   $schedtool -B $$ >/dev/null 2>&1
+}

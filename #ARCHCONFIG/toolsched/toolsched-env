@@ -2,7 +2,8 @@
 # toolsched enviroiment file
 
 [[ "$PATH" == */arch/toolsched/bin* ]] || {
-   which schedtool &> /dev/null && {
+   which schedtool &> /dev/null &&
+   which ionice    &> /dev/null && {
       export PATH="/arch/toolsched/bin:$PATH"
-   } || echo "WARN: schedtool not found, skipping toolsched enviroiment."
+   } || echo "WARN: schedtool or ionice not found, skipping toolsched enviroiment."
 }

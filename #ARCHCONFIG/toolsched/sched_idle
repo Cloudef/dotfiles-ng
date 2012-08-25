@@ -1,0 +1,6 @@
+#!/bin/sh
+# SCHED_IDLE template
+source "/arch/toolsched/toolsched-lib"
+
+toolsched_idle
+toolsched_launch "$@"

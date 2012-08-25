@@ -1,0 +1,6 @@
+#!/bin/sh
+# SCHED_ISO template
+source "/arch/toolsched/toolsched-lib"
+
+toolsched_iso
+toolsched_launch "$@"
