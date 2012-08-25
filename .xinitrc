@@ -16,9 +16,6 @@ autostart() {
    irc; rss; torrent;
    # loliclip clipboard manager
    loliclip -d
-   # mpd scribble
-   pidof mpdscribble &> /dev/null || \
-      mpdscribble &
 }
 
 # kill leftovers
@@ -29,20 +26,34 @@ autokill() {
    killall loliclip
 }
 
-# special route for monsterwm
-monsterwm_init() {
+# monsterwm bar
+monsterwm_bar() {
    local ff="/tmp/monsterwm.fifo"
    local pagerw=460
    local statusw=$((_MONITOR_WIDTH-pagerw))
-   monsterpager "$ff" 0 | \
-      dzen2 -h $_STATUS_HEIGHT -y 0 -w $pagerw -ta l -fn $_STATUS_FONT -e -p &
-   monsterstatus | \
-      dzen2 -h $_STATUS_HEIGHT -y 0 -x $pagerw -w $statusw -ta r -fn $_STATUS_FONT -e -p &
 
+   pgrep -x "^monsterpager" > /dev/null || {
+      monsterpager "$ff" 0 | \
+         dzen2 -h $_STATUS_HEIGHT -y 0 -w $pagerw -ta l -fn $_STATUS_FONT -e -p &
+   }
+
+   pgrep -x "^monsterstatus" > /dev/null || {
+      monsterstatus | \
+         dzen2 -h $_STATUS_HEIGHT -y 0 -x $pagerw -w $statusw -ta r -fn $_STATUS_FONT -e -p &
+   }
+}
+
+# special route for monsterwm
+monsterwm_init() {
+   local ff="/tmp/monsterwm.fifo"
+   monsterwm_bar
    while [[ ! -p "$ff" ]]; do sleep 1; done; sleep 1
    exec monsterwm | tee -a "$ff" &> /dev/null
    [[ -p "$ff" ]] && rm "$ff"
 }
+
+# Check if wm is already running
+pgrep -x "^$_XINIT_WM" > /dev/null && { monsterwm_bar; exit 0; }
 
 #
 # dirty bits below
