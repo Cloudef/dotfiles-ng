@@ -17,7 +17,7 @@ main() {
          nicoplay "$@" &> /dev/null
       ;;
       *)
-         "$BROWSER" "$@" &> /dev/null
+         "$BROWSER" "$@" &> /dev/null &
       ;;
    esac
 }
