@@ -1,0 +1,4 @@
+#!/bin/sh
+# Directory opener called from linopen
+
+sh -c "cd $@ && urxvtc"

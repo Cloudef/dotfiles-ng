@@ -1,0 +1,7 @@
+#!/bin/sh
+# Devmon wrapper for starting with system defaults
+
+/usr/bin/devmon --exec-on-drive "open %d"        \
+                --exec-on-disc  "open %d"        \
+                --exec-on-video "open dvd://%f"  \
+                --exec-on-audio "open cdda://%f" "$@"

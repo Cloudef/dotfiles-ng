@@ -8,6 +8,9 @@ _STATUS_FONT="terminus"
 autostart() {
    # wait for wm
    while ! killall -0 $_XINIT_WM; do sleep 1; done
+   # start devmon
+   devmon --unmount-all
+   devmon &
    # nitrogen
    nitrogen --restore
    # redshift for my eyes
@@ -24,6 +27,9 @@ autokill() {
    killall redshift
    # kill loliclip
    killall loliclip
+   # kill devmon
+   killall devmon
+   devmon --unmount-all
 }
 
 # monsterwm bar

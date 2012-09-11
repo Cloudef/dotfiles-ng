@@ -31,6 +31,9 @@ alias s='sudo pacmatic -S'
 alias ss='sspacman'
 alias u='sudo pacmatic -Syu'
 
+# unmount wrapper
+alias um='udevil --umount'
+
 # mpd client aliases
 alias m='ncmpc'
 alias lm='lolimpd'
@@ -42,4 +45,4 @@ alias cim='loliclip -b image/png > /tmp/clipboard.png && { sxiv /tmp/clipboard.p
 alias -- +='sudo'
 
 # get extrenal ip
-alias extip='echo $(curl -s http://automation.whatismyip.com/n09230945.asp)'
+alias extip='curl -s http://icanhazip.com'
