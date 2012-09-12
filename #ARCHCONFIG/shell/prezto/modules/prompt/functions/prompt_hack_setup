@@ -2,6 +2,9 @@
 # Modified sorin's theme
 #
 
+# Load dependencies
+pmodload 'helper'
+
 function prompt_hack_precmd {
    setopt LOCAL_OPTIONS
    unsetopt XTRACE KSH_ARRAYS
@@ -10,12 +13,16 @@ function prompt_hack_precmd {
       git-info
    fi
 
-   [[ ! -n "$PROMPT_TITLE" ]] && { _HKCH_CUSTOM=""; } ||
-      { _HCK_CUSTOM="%F{blue}$PROMPT_TITLE " }
-   [[ "$TERM" == "linux" ]] || [[ -n "$PROMPT_TITLE" ]] ||
+   [[ ! -n "$PROMPT_TITLE" ]] && {
+      _HCK_CUSTOM=""
+   } || {
+      _HCK_CUSTOM="%F{blue}$PROMPT_TITLE ";
+   }
+
+   [[ "$TERM" == "linux" ]] || [[ -n "$PROMPT_TITLE" ]] || \
       echo -ne "\033]0;${PWD}\007"
 
-   PROMPT="%F{white}%1~%f${git_info:+${(e)git_info[prompt]}} %(!.%B%F{red}#%f%b.%B${_HCK_CUSTOM}%F{green}]%f%b) "
+   PROMPT="%F{white}%1~%f${git_info:+${(e)git_info[prompt]}} ${_HCK_CUSTOM}%(!.%B%F{red}#%f%b.%B%F{green}]%f%b) "
 }
 
 function prompt_hack_setup {
@@ -26,23 +33,23 @@ function prompt_hack_setup {
    autoload -Uz add-zsh-hook
    add-zsh-hook precmd prompt_hack_precmd
 
-   zstyle ':omz:module:editor' completing '%B%F{red}...%f%b'
-   zstyle ':omz:module:editor:keymap:primary' overwrite ' %F{red}F%f'
-   zstyle ':omz:module:editor:keymap' alternate ' %F{yellow}<%f%B%F{red}<%f%b%F{red}<%f '
-   zstyle ':omz:module:git' action ':%%B%F{yellow}%s%f%%b'
-   zstyle ':omz:module:git' added ' %%B%F{green}+%f%%b'
-   zstyle ':omz:module:git' ahead ' %%B%F{yellow}A%f%%b'
-   zstyle ':omz:module:git' behind ' %%B%F{yellow}B%f%%b'
-   zstyle ':omz:module:git' branch ':%F{red}%b%f'
-   zstyle ':omz:module:git' commit ':%F{green}%.7c%f'
-   zstyle ':omz:module:git' deleted ' %%B%F{red}X%f%%b'
-   zstyle ':omz:module:git' modified ' %%B%F{red}変%f%%b'
-   zstyle ':omz:module:git' position ':%F{green}%p%f'
-   zstyle ':omz:module:git' renamed ' %%B%F{magenta}R%f%%b'
-   zstyle ':omz:module:git' stashed ' %%B%F{cyan}*%f%%b'
-   zstyle ':omz:module:git' unmerged ' %%B%F{yellow}合%f%%b'
-   zstyle ':omz:module:git' untracked ' %%B%F{white}僥%f%%b'
-   zstyle ':omz:module:git' info \
+   zstyle ':prezto:module:editor' completing '%B%F{red}...%f%b'
+   zstyle ':prezto:module:editor:keymap:primary' overwrite ' %F{red}F%f'
+   zstyle ':prezto:module:editor:keymap' alternate ' %F{yellow}<%f%B%F{red}<%f%b%F{red}<%f '
+   zstyle ':prezto:module:git' action ':%%B%F{yellow}%s%f%%b'
+   zstyle ':prezto:module:git' added ' %%B%F{green}+%f%%b'
+   zstyle ':prezto:module:git' ahead ' %%B%F{yellow}A%f%%b'
+   zstyle ':prezto:module:git' behind ' %%B%F{yellow}B%f%%b'
+   zstyle ':prezto:module:git' branch ':%F{red}%b%f'
+   zstyle ':prezto:module:git' commit ':%F{green}%.7c%f'
+   zstyle ':prezto:module:git' deleted ' %%B%F{red}X%f%%b'
+   zstyle ':prezto:module:git' modified ' %%B%F{red}変%f%%b'
+   zstyle ':prezto:module:git' position ':%F{green}%p%f'
+   zstyle ':prezto:module:git' renamed ' %%B%F{magenta}R%f%%b'
+   zstyle ':prezto:module:git' stashed ' %%B%F{cyan}*%f%%b'
+   zstyle ':prezto:module:git' unmerged ' %%B%F{yellow}合%f%%b'
+   zstyle ':prezto:module:git' untracked ' %%B%F{white}僥%f%%b'
+   zstyle ':prezto:module:git' info \
       'prompt'  ' %F{cyan}git%f$(coalesce "%b" "%p" "%c")%s' \
       'rprompt' '%F{green}%A%B%S%a%d%m%r%U%u'
 

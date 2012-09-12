@@ -91,3 +91,7 @@ function tname() {
    echo -ne "\033]0;${@:-$PWD}\007";
    PROMPT_TITLE=${@:-""}
 }
+
+# If root, set default prompt title
+[[ "$(whoami)" == "root" ]] && \
+   export PROMPT_TITLE="root"

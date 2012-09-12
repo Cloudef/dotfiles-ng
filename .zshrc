@@ -2,6 +2,9 @@
 # .zshrc
 #
 
+# export prezto directory
+export ZDOTDIR="$HOME"
+
 # source system-wide configuration
 source "/arch/shell/zshrc"
 source "$HOME/.private"

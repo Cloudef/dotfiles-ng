@@ -16,7 +16,7 @@ source "/arch/shell/shellrc"
 } &!
 
 # prezto
-export OMZ="/arch/shell/prezto"
+export PREZTO="/arch/shell/prezto"
 
 # other enviroiment crap
 typeset -gU cdpath fpath mailpath manpath path
@@ -42,23 +42,20 @@ for path_file in /etc/manpaths.d/*(.N); do
 done
 unset path_file
 
-# zmv
-autoload -U zmv
-
 # ssh-agent forwarding
-zstyle ':omz:plugins:ssh-agent' forwarding 'on'
+zstyle ':prezto:plugins:ssh-agent' forwarding 'on'
 
 # Set the key mapping style to 'emacs' or 'vi'.
-zstyle ':omz:module:editor' keymap 'vi'
+zstyle ':prezto:module:editor' keymap 'vi'
 
 # Auto convert .... to ../..
-zstyle ':omz:module:editor' dot-expansion 'no'
+zstyle ':prezto:module:editor' dot-expansion 'no'
 
 # Set case-sensitivity for completion, history lookup, etc.
-zstyle ':omz:*:*' case-sensitive 'no'
+zstyle ':prezto:*:*' case-sensitive 'no'
 
 # Color output (auto set to 'no' on dumb terminals).
-zstyle ':omz:*:*' color 'yes'
+zstyle ':prezto:*:*' color 'yes'
 
 # don't show $PWD in ../
 zstyle ':completion:*' ignore-parents 'pwd'
@@ -66,17 +63,41 @@ zstyle ':completion:*' ignore-parents 'pwd'
 # ignore commands I don't have
 zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
 
+# Load zsh modules
+zstyle ':prezto:load' 'zfunction' 'zargs' 'zmv'
+
 # Syntax hilight
-zstyle ':omz:module:syntax-highlighting' highlighters \
+zstyle ':prezto:module:syntax-highlighting' highlighters \
    'main' \
    'brackets' \
    'pattern' \
    'root'
 
+[[ -d "$ZDOTDIR/.zprezto" ]] && {
+
+[[ "$(whoami)" == "root" ]] && {
+
 # Set the Oh My Zsh modules to load (browse modules).
 # The order matters.
-zstyle ':omz:load' omodule \
+zstyle ':prezto:load' pmodule \
    'environment' \
+   'terminal' \
+   'editor' \
+   'directory' \
+   'spectrum' \
+   'utility' \
+   'completion' \
+   'ssh-agent' \
+   'git' \
+   'prompt'
+
+} || {
+
+# Set the Oh My Zsh modules to load (browse modules).
+# The order matters.
+zstyle ':prezto:load' pmodule \
+   'environment' \
+   'terminal' \
    'editor' \
    'history' \
    'directory' \
@@ -88,14 +109,22 @@ zstyle ':omz:load' omodule \
    'syntax-highlighting' \
    'prompt'
 
+}
+
+} # load if OK
+
 # set prompt
-zstyle ':omz:module:prompt' theme 'hack'
+zstyle ':prezto:module:prompt' theme 'hack'
 
 # launch
-source "$OMZ/init.zsh"
+source "$PREZTO/init.zsh"
+
+[[ -d "$ZDOTDIR/.zprezto" ]] && {
 
 # link completitions
 compdef pacmatic=pacman
+
+} # link if OK
 
 # source functions and aliases
 source "/arch/shell/functions"
@@ -125,3 +154,18 @@ bindkey "\eOF"    end-of-line
 bindkey "^I"      menu-complete         # Why press tab twice?
 bindkey "^Z"      undo                  # Undo
 bindkey '^R' history-incremental-search-backward
+
+# Interactive sanity
+[[ ! -n "$ZDOTDIR" ]] && {
+   echo ""
+   echo "* \$ZDOTDIR isnt exported"
+   echo "* Export \$ZDOTDIR point to your directory that will"
+   echo "* contain symlinked .zprezto directory for module loading"
+   echo ""
+} || {
+   [[ ! -d "$ZDOTDIR/.zprezto" ]] && {
+      echo ""
+      echo "* You forgot to symlink \"$PREZTO\" to \"$ZDOTDIR/.zprezto\""
+      echo ""
+   }
+}
