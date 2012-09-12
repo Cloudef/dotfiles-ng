@@ -67,29 +67,42 @@ function mkcdr() {
 ## Start daemon ##
 ##################
 function start() {
-   sudo rc.d start $@
+   sudo systemctl start $@
 }
 
 #################
 ## Stop daemon ##
 #################
 function stop() {
-   sudo rc.d stop $@
+   sudo systemctl stop $@
 }
 
 ####################
 ## Restart daemon ##
 ####################
 function restart() {
-   sudo rc.d stop  $@
-   sudo rc.d start $@
+   sudo systemctl restart $@
+}
+
+###################
+## Enable daemon ##
+###################
+function enable() {
+   sudo systemctl enable $@
+}
+
+####################
+## Disable daemon ##
+####################
+function disable() {
+   sudo systemctl disable $@
 }
 
 ###################
 ## Daemon status ##
 ###################
 function status() {
-   rc.d list $@
+   systemctl status $@
 }
 
 ########################
