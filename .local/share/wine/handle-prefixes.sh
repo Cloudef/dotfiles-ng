@@ -23,9 +23,13 @@ manage_prefix()
    done
 
    # Remove paths to /
+   # FIXME: needs more work
+   # since wine looks up fonts, etc from Z:
+   [[ 1 -eq 0 ]] && {
    for p in "$WINEPREFIX/dosdevices/"*; do
       [[ "$(readlink "$p")" == "/" ]] && rmdevice "$p"
    done
+   }
 
    # Copy fonts to prefix
    for f in "$ROOTDIR/fonts/"*; do
@@ -46,17 +50,13 @@ manage_prefix()
 
 call_if_exists()
 {
-   [[ -d "$ROOTDIR/prefixes/$1" ]] || {
-      echo "No such prefix: $1"
+   [[ -d "$WINEPREFIX" ]] || {
+      echo "No such prefix: $(basename "$WINEPREFIX")"
       return
    }
 
-   which "$2" &> /dev/null || {
-      echo "No such command: $2"
-      return
-   }
-
-   WINEPREFIX="$ROOTDIR/prefixes/$1" $2 > /dev/null
+   # run
+   $@
 }
 
 main()
@@ -65,7 +65,9 @@ main()
       local prefix="$1"
       shift 1
       [[ -n "$@" ]] && {
-         call_if_exists "$prefix" "$@"
+         WINEPREFIX="$ROOTDIR/prefixes/$prefix" \
+            call_if_exists "$@"
+         return
       } || {
          echo "Did not provide command for prefix"
       }
