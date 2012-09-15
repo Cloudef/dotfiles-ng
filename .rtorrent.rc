@@ -4,7 +4,7 @@ session              = /home/loli/.rtorrent
 
 # up|down
 download_rate = 0
-upload_rate   = 200
+upload_rate   = 500
 
 # peer limits
 min_peers            = 20
