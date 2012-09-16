@@ -1,0 +1,12 @@
+[Unit]
+Description=powersaving options
+
+[Service]
+Type=oneshot
+ExecStart=/arch/etc/systemd/bin/powersave.sh
+TimeoutSec=0
+RemainAfterExit=YES
+
+[Install]
+WantedBy=multi-user.target
+

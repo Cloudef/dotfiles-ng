@@ -1,0 +1,12 @@
+[Unit]
+Description=cpufreq options
+
+[Service]
+Type=oneshot
+ExecStart=/arch/etc/systemd/bin/cpufreq.sh
+TimeoutSec=0
+RemainAfterExit=YES
+
+[Install]
+WantedBy=multi-user.target
+

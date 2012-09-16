@@ -1,0 +1,12 @@
+[Unit]
+Description=hdparam options
+
+[Service]
+Type=oneshot
+ExecStart=/arch/etc/systemd/bin/hdparam.sh
+TimeoutSec=0
+RemainAfterExit=YES
+
+[Install]
+WantedBy=multi-user.target
+
