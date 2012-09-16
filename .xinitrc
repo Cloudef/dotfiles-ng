@@ -13,6 +13,8 @@ autostart() {
    devmon &
    # nitrogen
    nitrogen --restore
+   # start stalonetray daemon
+   stalonetrayd
    # redshift for my eyes
    redshift -l 62:22 -m vidmode &> /dev/null &
    # start irc, rss, torrent
@@ -27,6 +29,8 @@ autokill() {
    killall redshift
    # kill loliclip
    killall loliclip
+   # kill stalonetray
+   killall stalonetray
    # kill devmon
    killall devmon
    devmon --unmount-all

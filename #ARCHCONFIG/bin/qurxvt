@@ -4,22 +4,23 @@
 # needs: urxvt, xdotool
 
 # border width * 2
-BORDER=2
+BORDER=4
+
+# width && height
+WIDTH=$((1680-border))
+HEIGHT=300
 
 # offset
 X=0
-Y=1
-
-# width && height
-WIDTH=1680
-HEIGHT=300
+Y=0
 
 # spawn
 spawn() {
-   curxvt -name qurxvt -geometry 1x1+$X+$Y
+   curxvt -name qurxvt -geometry 1x1+0+0
    wid="$(xdotool search --classname qurxvt | head -1)"
    xdotool windowfocus $wid
-   xdotool windowsize $wid $((WIDTH-BORDER)) $HEIGHT
+   xdotool windowsize $wid $WIDTH $HEIGHT
+   xdotool windowmove $wid $X $Y
 }
 
 # toggle
@@ -29,6 +30,8 @@ toggle() {
       xdotool windowmap $wid
       xdotool windowfocus $wid
       xdotool windowraise $wid
+      xdotool windowsize $wid $WIDTH $HEIGHT
+      xdotool windowmove $wid $X $Y
    } || {
       xdotool windowunmap $wid
    }

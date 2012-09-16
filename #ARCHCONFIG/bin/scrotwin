@@ -3,7 +3,7 @@
 # without clicking anything.
 
 # border*2
-BORDER=2
+BORDER=4
 main() {
   unset x y w h
   local active="$(xdotool getactivewindow)"
