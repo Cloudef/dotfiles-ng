@@ -10,9 +10,6 @@ BORDER=4
 WIDTH=$((1680-BORDER))
 HEIGHT=32
 
-# tmp
-WIDTH=1300
-
 # offset
 X=0
 Y=$((1050-HEIGHT-BORDER))
@@ -24,18 +21,18 @@ spawn() {
    while [[ ! -n "$wid" ]]; do
       wid="$(xdotool search --classname stalonetray | head -1)"
    done
-   xdotool windowunmap $wid
-   xdotool windowmove $wid $X $Y
    xdotool windowsize $wid $WIDTH $HEIGHT
+   xdotool windowmove $wid $X $Y
+   xdotool windowunmap $wid
 }
 
 # toggle
 toggle() {
    local visible="$(xdotool search --onlyvisible --classname stalonetray 2>/dev/null)"
    [[ ! -n "$visible" ]] && {
-      xdotool windowmove $wid $X $Y
       xdotool windowsize $wid $WIDTH $HEIGHT
       xdotool windowmap $wid
+      xdotool windowmove $wid $X $Y
       xdotool windowraise $wid
    } || {
       xdotool windowunmap $wid

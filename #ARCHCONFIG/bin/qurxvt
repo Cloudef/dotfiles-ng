@@ -10,10 +10,6 @@ BORDER=4
 WIDTH=$((1680-BORDER))
 HEIGHT=300
 
-# tmp
-WIDTH=1500
-HEIGHT=900
-
 # offset
 X=0
 Y=0
@@ -22,18 +18,18 @@ Y=0
 spawn() {
    curxvt -name qurxvt -geometry 1x1+0+0
    wid="$(xdotool search --classname qurxvt | head -1)"
-   xdotool windowraise $wid
-   xdotool windowmove $wid $X $Y
    xdotool windowsize $wid $WIDTH $HEIGHT
+   xdotool windowmove $wid $X $Y
+   xdotool windowraise $wid
 }
 
 # toggle
 toggle() {
    local visible="$(xdotool search --onlyvisible --classname qurxvt 2>/dev/null)"
    [[ ! -n "$visible" ]] && {
-      xdotool windowmove $wid $X $Y
       xdotool windowsize $wid $WIDTH $HEIGHT
       xdotool windowmap $wid
+      xdotool windowmove $wid $X $Y
       xdotool windowraise $wid
    } || {
       xdotool windowunmap $wid
