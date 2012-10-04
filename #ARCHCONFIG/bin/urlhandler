@@ -1,6 +1,6 @@
 #!/bin/sh
 # Common url handler
-# urxvt uses this, dwb it's binded to ctrl+y
+# termite uses this, dwb it's binded to ctrl+y
 
 # $@ = Get domain from url
 domain() {

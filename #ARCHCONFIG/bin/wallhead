@@ -1,0 +1,13 @@
+#!/bin/sh
+# Set head wallpaper, workaround broken --save in nitrogen
+# $1 = head
+# $2 = wallpaper
+
+sed "/^\[xin_$1\]/,/^$/d" "$XDG_CONFIG_HOME/nitrogen/bg-saved.cfg" > "/tmp/bg-saved.cfg"
+mv "/tmp/bg-saved.cfg" "$XDG_CONFIG_HOME/nitrogen/bg-saved.cfg"
+nitrogen --head=$1 --set-auto "$2"
+echo "[xin_$1]"         >> "$XDG_CONFIG_HOME/nitrogen/bg-saved.cfg"
+echo "file=$2"          >> "$XDG_CONFIG_HOME/nitrogen/bg-saved.cfg"
+echo "mode=4"           >> "$XDG_CONFIG_HOME/nitrogen/bg-saved.cfg"
+echo "bgcolor=#000000"  >> "$XDG_CONFIG_HOME/nitrogen/bg-saved.cfg"
+echo ""                 >> "$XDG_CONFIG_HOME/nitrogen/bg-saved.cfg"

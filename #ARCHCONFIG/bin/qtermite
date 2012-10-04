@@ -1,7 +1,7 @@
 #!/bin/sh
-# Urxvt quake console
+# Termite quake console
 #
-# needs: urxvt, xdotool
+# needs: termite, xdotool
 
 # border width * 2
 BORDER=4
@@ -16,8 +16,10 @@ Y=0
 
 # spawn
 spawn() {
-   curxvt -name qurxvt -geometry 1x1+0+0
-   wid="$(xdotool search --classname qurxvt | head -1)"
+   termite --name qtermite --class qtermite --geometry 1x1+0+0 &
+   while [[ ! -n "$wid" ]]; do
+      wid="$(xdotool search --classname qtermite | tail -1)"
+   done
    xdotool windowsize $wid $WIDTH $HEIGHT
    xdotool windowmove $wid $X $Y
    xdotool windowraise $wid
@@ -25,7 +27,8 @@ spawn() {
 
 # toggle
 toggle() {
-   local visible="$(xdotool search --onlyvisible --classname qurxvt 2>/dev/null)"
+   local wid="$@"
+   local visible="$(xdotool search --onlyvisible --classname qtermite 2>/dev/null | tail -1)"
    [[ ! -n "$visible" ]] && {
       xdotool windowsize $wid $WIDTH $HEIGHT
       xdotool windowmap $wid
@@ -38,8 +41,8 @@ toggle() {
 
 # main
 main() {
-   local wid="$(xdotool search --classname qurxvt 2>&1 | head -1)"
+   local wid="$(xdotool search --classname qtermite 2>&1 | tail -1)"
    [[ "$wid" == *BadWindow* ]] && exit
-   [[ ! -n "$wid" ]] && { spawn; } || toggle
+   [[ ! -n "$wid" ]] && { spawn; } || toggle "$wid"
 }
 main $@

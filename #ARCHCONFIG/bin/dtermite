@@ -1,11 +1,11 @@
 #!/bin/sh
-# dtach a urxvt client
-# only allow one urxvt session by default
+# dtach a termite client
+# only allow one termite session by default
 #
 # needs: dtach
-# optional: urxvt
+# optional: termite
 
-[[ -n "$TERMINAL" ]] || TERMINAL="urxvt"
+[[ -n "$TERMINAL" ]] || TERMINAL="termite"
 
 # error
 error() { echo "$@" 1>&2; exit 1; }
@@ -38,14 +38,14 @@ create() {
 # $1: name of dtach
 # $2: program to run
 main() {
-   local SOCKET_DIR="/tmp/durxvt"
+   local SOCKET_DIR="/tmp/dtermite"
    local PIDFILE="$SOCKET_DIR/$1.pid"
    local SOCKET="$SOCKET_DIR/$1.sck"
    [[ -d "$SOCKET_DIR" ]] || mkdir "$SOCKET_DIR"
    [[ -d "$SOCKET_DIR" ]] || error "no socket directory"
 
    # comment this line to allow multiple
-   # urxvt sessions
+   # termite sessions
    [[ -e "$PIDFILE" ]] && check_pid $PIDFILE
 
    [[ -e "$SOCKET" ]]    && { attach "$1" "$SOCKET" "$PIDFILE"; return; }

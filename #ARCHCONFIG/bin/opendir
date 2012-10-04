@@ -1,4 +1,5 @@
 #!/bin/sh
 # Directory opener called from linopen
 
-sh -c "cd $@ && urxvtc"
+[[ -n "$TERMINAL" ]] || TERMINAL="termite"
+sh -c "cd $@ && $TERMINAL &"

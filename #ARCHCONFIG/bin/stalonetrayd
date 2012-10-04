@@ -28,6 +28,7 @@ spawn() {
 
 # toggle
 toggle() {
+   local wid="$@"
    local visible="$(xdotool search --onlyvisible --classname stalonetray 2>/dev/null)"
    [[ ! -n "$visible" ]] && {
       xdotool windowsize $wid $WIDTH $HEIGHT
@@ -43,6 +44,6 @@ toggle() {
 main() {
    local wid="$(xdotool search --classname stalonetray 2>&1 | head -1)"
    [[ "$wid" == *BadWindow* ]] && exit
-   [[ ! -n "$wid" ]] && { spawn; } || toggle
+   [[ ! -n "$wid" ]] && { spawn; } || toggle "$wid"
 }
 main $@
