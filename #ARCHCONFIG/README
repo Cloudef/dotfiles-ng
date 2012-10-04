@@ -73,16 +73,13 @@ Fonts:
    Sets defaults for arguments which was not passed
    to the wrapper. (fonts, colors)
 
-/arch/bin/curxvt: urxvtd && urxvtc helper
-   Spawn new urxvtc terminal. Starts urxvtd automatically, if it's not running.
-
-/arch/bin/durxvt: dtach for urxvt
-   Run only one instance of urxvt with the program running dtached. If you
-   close the urxvt and run durxvt with same arguments again, the session will
+/arch/bin/dtermite: dtach for termite
+   Run only one instance of termite with the program running dtached. If you
+   close the termite and run dtermite with same arguments again, the session will
    continue where it left.
 
-/arch/bin/qurxvt: quake urxvt
-   Quake styled urxvt console, binded to 'tilde' in monsterwm.
+/arch/bin/qtermite: quake termite
+   Quake styled termiet console, binded to 'tilde' in monsterwm.
 
 /arch/bin/extract: archive extraction
    Extracts various file archives.

@@ -21,7 +21,7 @@ check_pid() {
 # $2: socket file
 # $3: pid file
 attach() {
-   $TERMINAL -title "$1" -name "$1" -e dtach -a "$2" &
+   $TERMINAL --class "$1" --name "$1" -e "dtach -a \"$2\"" &
    echo "$!" > "$3"
 }
 
@@ -31,8 +31,8 @@ attach() {
 # $3: socket file
 # $4: pid file
 create() {
-   $TERMINAL -title "$1" -name "$1" -e dtach -c "$3" "$2" &
-   echo "$1" > "$4"
+   $TERMINAL --class "$1" --name "$1" -e "dtach -c \"$3\" \"$2\"" &
+   echo "$!" > "$4"
 }
 
 # $1: name of dtach
@@ -46,7 +46,7 @@ main() {
 
    # comment this line to allow multiple
    # termite sessions
-   [[ -e "$PIDFILE" ]] && check_pid $PIDFILE
+   [[ -e "$PIDFILE" ]] && check_pid "$PIDFILE"
 
    [[ -e "$SOCKET" ]]    && { attach "$1" "$SOCKET" "$PIDFILE"; return; }
    [[ ! -e "$PIDFILE" ]] && { create "$1" "$2" "$SOCKET" "$PIDFILE"; return; }
