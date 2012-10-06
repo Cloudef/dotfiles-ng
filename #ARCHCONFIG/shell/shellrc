@@ -84,7 +84,7 @@ echo "AUR packages and other related reside in /arch\n"
 
 #########################################
 # Change prompt name                    #
-# NOTE: oh-my-zsh themes need to        #
+# NOTE: prezto themes need to           #
 # be modified to work with PROMPT_TITLE #
 #########################################
 function tname() {
