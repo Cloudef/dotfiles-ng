@@ -17,7 +17,7 @@ Y=0
 # spawn
 spawn() {
    termite --name qtermite --class qtermite --geometry $WIDTHx$HEIGHT+$X+$Y &
-   sleep 0.2
+   sleep 0.5
    while [[ ! -n "$wid" ]]; do
       wid="$(xdotool search --classname qtermite | tail -1)"
    done
