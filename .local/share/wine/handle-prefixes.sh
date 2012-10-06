@@ -37,9 +37,17 @@ manage_prefix()
       cp "$f" "$WINEPREFIX/drive_c/windows/Fonts/"
    done
 
+   # Remove symlinks from user directory
+   for f in "$WINEPREFIX/drive_c/users/$(whoami)/"*; do
+      [[ -L "$f" ]] && [[ -d "$f" ]] && {
+         echo -e "\t+ Removing symlink $(basename "$f")"
+         rm "$f"; mkdir "$f";
+      }
+   done
+
    # Symlink mydocs
    [[ -d "$WINEPREFIX/drive_c/users/$(whoami)/My Documents" ]] && {
-        echo -e "\t+ Symlinking mydocs path"
+        echo -e "\t+ Symlinking \"My Documents\" to \"$MYDOCS\""
         rm -r "$WINEPREFIX/drive_c/users/$(whoami)/My Documents"
         ln -s "$MYDOCS" "$WINEPREFIX/drive_c/users/$(whoami)/My Documents"
    }
