@@ -31,6 +31,11 @@ manage_prefix()
    done
    }
 
+   # Create /mnt/storage symlink to D:
+   echo -e "\t+ Symlinking D: to /mnt/storage"
+   [[ -L "$WINEPREFIX/dosdevices/d:" ]] && rm "$WINEPREFIX/dosdevices/d:"
+   ln -s "/mnt/storage" "$WINEPREFIX/dosdevices/d:"
+
    # Copy fonts to prefix
    for f in "$ROOTDIR/fonts/"*; do
       echo -e "\t+ Copying font: $(basename "$f")"
@@ -63,8 +68,12 @@ call_if_exists()
       return
    }
 
+   [[ -f "$WINEPREFIX/LANG" ]] && {
+      export LC_ALL="$(cat "$WINEPREFIX/LANG")"
+   }
+
    # run
-   $@
+   exec "$@"
 }
 
 main()
