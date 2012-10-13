@@ -33,23 +33,23 @@ function prompt_hack_setup {
    autoload -Uz add-zsh-hook
    add-zsh-hook precmd prompt_hack_precmd
 
-   zstyle ':prezto:module:editor' completing '%B%F{red}...%f%b'
-   zstyle ':prezto:module:editor:keymap:primary' overwrite ' %F{red}F%f'
-   zstyle ':prezto:module:editor:keymap' alternate ' %F{yellow}<%f%B%F{red}<%f%b%F{red}<%f '
-   zstyle ':prezto:module:git' action ':%%B%F{yellow}%s%f%%b'
-   zstyle ':prezto:module:git' added ' %%B%F{green}+%f%%b'
-   zstyle ':prezto:module:git' ahead ' %%B%F{yellow}A%f%%b'
-   zstyle ':prezto:module:git' behind ' %%B%F{yellow}B%f%%b'
-   zstyle ':prezto:module:git' branch ':%F{red}%b%f'
-   zstyle ':prezto:module:git' commit ':%F{green}%.7c%f'
-   zstyle ':prezto:module:git' deleted ' %%B%F{red}X%f%%b'
-   zstyle ':prezto:module:git' modified ' %%B%F{red}変%f%%b'
-   zstyle ':prezto:module:git' position ':%F{green}%p%f'
-   zstyle ':prezto:module:git' renamed ' %%B%F{magenta}R%f%%b'
-   zstyle ':prezto:module:git' stashed ' %%B%F{cyan}*%f%%b'
-   zstyle ':prezto:module:git' unmerged ' %%B%F{yellow}合%f%%b'
-   zstyle ':prezto:module:git' untracked ' %%B%F{white}僥%f%%b'
-   zstyle ':prezto:module:git' info \
+   zstyle ':prezto:module:editor:info:completing' format '%B%F{red}...%f%b'
+   zstyle ':prezto:module:editor:info:keymap:primary:overwrite' format ' %F{red}F%f'
+   zstyle ':prezto:module:editor:info:keymap:alternate' format ' %F{yellow}<%f%B%F{red}<%f%b%F{red}<%f '
+   zstyle ':prezto:module:git:info:action' format ':%%B%F{yellow}%s%f%%b'
+   zstyle ':prezto:module:git:info:added' format ' %%B%F{green}+%f%%b'
+   zstyle ':prezto:module:git:info:ahead' format ' %%B%F{yellow}A%f%%b'
+   zstyle ':prezto:module:git:info:behind' format ' %%B%F{yellow}B%f%%b'
+   zstyle ':prezto:module:git:info:branch' format ':%F{red}%b%f'
+   zstyle ':prezto:module:git:info:commit' format ':%F{green}%.7c%f'
+   zstyle ':prezto:module:git:info:deleted' format ' %%B%F{red}X%f%%b'
+   zstyle ':prezto:module:git:info:modified' format ' %%B%F{red}変%f%%b'
+   zstyle ':prezto:module:git:info:position' format ':%F{green}%p%f'
+   zstyle ':prezto:module:git:info:renamed' format ' %%B%F{magenta}R%f%%b'
+   zstyle ':prezto:module:git:info:stashed' format ' %%B%F{cyan}*%f%%b'
+   zstyle ':prezto:module:git:info:unmerged' format ' %%B%F{yellow}合%f%%b'
+   zstyle ':prezto:module:git:info:untracked' format ' %%B%F{white}僥%f%%b'
+   zstyle ':prezto:module:git:info:keys' format \
       'prompt'  ' %F{cyan}git%f$(coalesce "%b" "%p" "%c")%s' \
       'rprompt' '%F{green}%A%B%S%a%d%m%r%U%u'
 
