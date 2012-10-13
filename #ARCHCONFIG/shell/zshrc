@@ -57,6 +57,9 @@ zstyle ':prezto:*:*' case-sensitive 'no'
 # Color output (auto set to 'no' on dumb terminals).
 zstyle ':prezto:*:*' color 'yes'
 
+# Use trapd00r's LS_COLORS, so disable prezto one
+zstyle ':prezto:module:utility:ls' color 'no'
+
 # don't show $PWD in ../
 zstyle ':completion:*' ignore-parents 'pwd'
 

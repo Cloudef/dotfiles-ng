@@ -61,7 +61,7 @@ source "/arch/toolsched/toolsched-env"
 
 # LS_COLORS
 # https://github.com/trapd00r/LS_COLORS
-eval $( dircolors -b /arch/shell/LS_COLORS )
+eval $(dircolors -b "/arch/shell/LS_COLORS")
 
 # Welcome text
 echo "Welcome to lolified Arch Linux"
