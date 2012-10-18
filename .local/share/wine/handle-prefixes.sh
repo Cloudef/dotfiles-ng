@@ -6,6 +6,13 @@
 ROOTDIR="$XDG_DATA_HOME/wine"
 MYDOCS="$ROOTDIR/mydocs"
 
+setupenv()
+{
+   [[ -f "$WINEPREFIX/LANG" ]] && {
+      export LC_ALL="$(cat "$WINEPREFIX/LANG")"
+   }
+}
+
 rmdevice()
 {
    echo -e "\t- Removing dos device: $(basename "$p")"
@@ -15,6 +22,7 @@ rmdevice()
 manage_prefix()
 {
    echo ":: Managing: $(basename "$WINEPREFIX")"
+   setupenv
 
    # Apply registry fixes
    for r in "$ROOTDIR/regs/"*; do
@@ -68,11 +76,8 @@ call_if_exists()
       return
    }
 
-   [[ -f "$WINEPREFIX/LANG" ]] && {
-      export LC_ALL="$(cat "$WINEPREFIX/LANG")"
-   }
-
    # run
+   setupenv
    exec "$@"
 }
 
