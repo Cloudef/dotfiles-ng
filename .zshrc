@@ -12,6 +12,7 @@ source "$HOME/lib/anime/envanime"
 
 export __GL_SYNC_TO_VBLANK=1
 export __GL_SYNC_DISPLAY_DEVICE=DFP-0
+export __GL_THREADED_OPTIMIZATIONS=0
 
 # wine related
 export WINEDIR="$XDG_DATA_HOME/wine"
