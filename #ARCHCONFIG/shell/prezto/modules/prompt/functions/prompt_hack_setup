@@ -53,7 +53,7 @@ function prompt_hack_setup {
       'prompt'  ' %F{cyan}git%f$(coalesce "%b" "%p" "%c")%s' \
       'rprompt' '%F{green}%A%B%S%a%d%m%r%U%u'
 
-   RPROMPT='${editor_info[keymap]}${editor_info[overwrite]}%(?:: %f)${VIM:+" %B%F{green}V%f%b"}%F{green}[${git_info[rprompt]}%(?, %F{green}(⌐■_■), %F{yellow}%?%F{red}（╯°□°）╯ ┻━┻ )%f'
+   RPROMPT='${editor_info[keymap]}${editor_info[overwrite]}%(?:: %f)${VIM:+" %B%F{green}V%f%b"}%F{green}[${git_info[rprompt]}%(?, %F{green}(⌐■_■), %F{yellow}%?%F{red}（•_•）)%f'
    SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 }
 
