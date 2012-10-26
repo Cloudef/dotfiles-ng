@@ -12,7 +12,7 @@ main() {
 
    # select seed
    fromf="$(find $_ANIME_SEED -maxdepth 1 -mindepth 1 -type f -exec basename {} \; | \
-      grep -v ".ass" | grep -v ".srt")"
+      grep -v "\.ass" | grep -v "\.srt")"
    fromd="$(find "$_ANIME_SEED" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)"
    from="$(echo -e "$fromf\n$fromd" | dmenu -i -l 20 -p mvanime)"
    [[ -n "$from" ]] || return
