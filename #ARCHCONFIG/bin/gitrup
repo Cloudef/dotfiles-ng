@@ -9,8 +9,9 @@ main() {
       [[ -d "$i" ]]      || continue
       [[ -d "$i/.git" ]] || continue
       pushd "$i" &> /dev/null
-      echo "-!- Updating $(basename $i)"
+      echo "-!- Updating $(basename "$i")"
       git pull
+      git submodule update --init --recursive
       echo ""
       popd &> /dev/null
    done
