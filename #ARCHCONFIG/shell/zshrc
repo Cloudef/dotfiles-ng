@@ -78,7 +78,7 @@ zstyle ':prezto:module:syntax-highlighting' highlighters \
 
 [[ -d "$ZDOTDIR/.zprezto" ]] && {
 
-[[ "$(whoami)" == "root" ]] && {
+[[ "$(whoami)" == "root" ]] || [[ "$TERM" == "linux" ]] && {
 
 # Set the Oh My Zsh modules to load (browse modules).
 # The order matters.
