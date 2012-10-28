@@ -22,7 +22,9 @@ function prompt_hack_precmd {
    [[ "$TERM" == "linux" ]] || [[ -n "$PROMPT_TITLE" ]] || \
       echo -ne "\033]0;${PWD}\007"
 
-   PROMPT="%F{white}%1~%f${git_info:+${(e)git_info[prompt]}} ${_HCK_CUSTOM}%(!.%B%F{red}#%f%b.%B%F{green}]%f%b) "
+   echo ""
+   echo "\e[0;33m.$(whoami)\e[0;37m//\e[0;32m$(uname -n) :: \e[0;36m${PWD}"
+   PROMPT="~%f${git_info:+${(e)git_info[prompt]}} ${_HCK_CUSTOM}%(!.%B%F{red}#%f%b.%B%F{green}]%f%b) "
 }
 
 function prompt_hack_setup {
