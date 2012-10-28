@@ -23,8 +23,8 @@ function prompt_hack_precmd {
       echo -ne "\033]0;${PWD}\007"
 
    echo ""
-   echo "\e[0;33m.$(whoami)\e[0;37m//\e[0;32m$(uname -n) :: \e[0;36m${PWD}"
-   PROMPT="~%f${git_info:+${(e)git_info[prompt]}} ${_HCK_CUSTOM}%(!.%B%F{red}#%f%b.%B%F{green}]%f%b) "
+   echo "─┬─ \e[0;33m.$(whoami)\e[0;37m//\e[0;32m$(uname -n) :: \e[0;36m${PWD}"
+   PROMPT=" └─%f${git_info:+${(e)git_info[prompt]}} ${_HCK_CUSTOM}%(!.%B%F{red}#%f%b.%B%F{green}]%f%b) "
 }
 
 function prompt_hack_setup {
@@ -55,7 +55,7 @@ function prompt_hack_setup {
       'prompt'  ' %F{cyan}git%f$(coalesce "%b" "%p" "%c")%s' \
       'rprompt' '%F{green}%A%B%S%a%d%m%r%U%u'
 
-   RPROMPT='${editor_info[keymap]}${editor_info[overwrite]}%(?:: %f)${VIM:+" %B%F{green}V%f%b"}%F{green}[${git_info[rprompt]}%(?, %F{green}(⌐■_■), %F{yellow}%?%F{red}（•_•）)%f'
+   RPROMPT='${editor_info[keymap]}${editor_info[overwrite]}%(?:: %f)${VIM:+" %B%F{green}V%f%b"}%F{green}${git_info[rprompt]}%(?, %F{green}─, %F{yellow}%?%F{red} ─)%f'
    SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 }
 
