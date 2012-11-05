@@ -205,23 +205,6 @@ elfcompress() {
    rm /tmp/unpack.header
 }
 
-##################################################
-## Convert ISO to splitted WBFS to use with Wii ##
-##################################################
-wiisplit()
-{
-   [[ -n "$@" ]] || {
-      echo "usage: wiisplit [ISO file]"
-      return
-   }
-   [[ -f "$@" ]] || {
-      echo "'$1' is not a valid file"
-      return
-   }
-
-   wbfs_file "$@"
-}
-
 ######################################
 ## Open file inside git tree on vim ##
 ######################################
