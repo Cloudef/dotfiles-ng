@@ -5,6 +5,7 @@
 
 " {{{ Pathogen plugin
 source /arch/vim/pathogen.vim
+set nocompatible                 " non Vi compatible
 call pathogen#infect("/arch/vim/bundle")
 call pathogen#infect()
 call pathogen#helptags()
@@ -26,7 +27,6 @@ endif
 " {{{ Vim's own settings
 colorscheme colorshot            " modified slate theme
 set background=dark              " dark background
-set nocompatible                 " non Vi compatible
 set completeopt-=preview         " disable scratch buffer
 set showcmd                      " show command information
 set foldmethod=marker            " allow marking folds
