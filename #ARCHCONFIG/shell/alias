@@ -35,7 +35,6 @@ alias u='sudo pacmatic -Syu'
 alias um='udevil --umount'
 
 # mpd client aliases
-alias m='ncmpc'
 alias lm='lolimpd'
 
 # view image in clipboard
