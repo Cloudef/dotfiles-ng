@@ -13,7 +13,7 @@ call pathogen#helptags()
 " }}}
 " {{{ Misc
 " system stuff
-set term=$TERM                   " SSH woes
+set term=xterm
 if $TERM != "linux"              " if we are not in TTY
    set t_Co=256                  " set 256 colors \o/
 endif
