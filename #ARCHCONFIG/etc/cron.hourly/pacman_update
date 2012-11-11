@@ -13,7 +13,7 @@
 # What this script does is, that it syncs
 # a new temporari database to /tmp and
 # symlinks your local database there as well
-# and just runs -Qu on this temporary database.
+# and just runs -Sy  on this temporary database.
 #
 # You can then obtain the update count from
 # userspace bu doing 'pacman -Qu --dbpath /tmp/.pacman_updates'
