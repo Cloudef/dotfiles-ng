@@ -27,8 +27,8 @@ schedule = low_diskspace,5,60,close_low_diskspace=2500M
 schedule = anime_torrent,10,10,"load_start=/mnt/anime/torrent/*.torrent,d.set_directory=/mnt/anime/seed"
 schedule = anime_torrent2,10,10,"load_start=/mnt/storage/anime/torrent/*.torrent,d.set_directory=/mnt/storage/anime/seed"
 schedule = anime_torrent3,10,10,"load_start=/mnt/東方/anime/torrent/*.torrent,d.set_directory=/mnt/東方/anime/seed"
+schedule = anime_torrent4,10,10,"load_start=/mnt/storage2/anime/torrent/*.torrent,d.set_directory=/mnt/storage2/anime/seed"
 schedule = storage_torrent,10,10,"load_start=/mnt/storage/torrent/*.torrent,d.set_directory=/mnt/storage"
-schedule = music_torrent,10,10,"load_start=/mnt/storage/music/torrent/*.torrent,d.set_directory=/mnt/storage/music"
 schedule = storage_torrent2,10,10,"load_start=/mnt/東方/torrent/*.torrent,d.set_directory=/mnt/東方"
 
 #
