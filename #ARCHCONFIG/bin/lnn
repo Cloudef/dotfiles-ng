@@ -1,7 +1,5 @@
 #!/bin/sh
-# Creates symbolic link to the same
-# directory as target, works with
-# multiple targets and wildcards.
+# Creates symbolic links to multiple targets.
 
 usage() {
    echo "usage: $(basename $0) <files>"
@@ -12,9 +10,8 @@ main() {
    [[ -n "$1" ]] || usage
    while [[ "$1" ]]; do
       [[ -e "$1" ]] && {
-         folder="$(dirname "$1")"
          file="$(basename "$1")"
-         ln -s "$1" "${folder}/${file} (link)"
+         ln -s "$1" "${file} (link)"
       }
       shift || break
    done
