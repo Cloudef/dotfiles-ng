@@ -8,7 +8,7 @@
 main() {
    local ARGS=
    local FONT=
-   [[ "$@" != *-fn ]] && FONT="terminus 14"
+   [[ "$@" != *-fn ]] && FONT="terminus 11"
    [[ "$@" != *-nb ]] && ARGS="$ARGS -nb #161616"
    [[ "$@" != *-nf ]] && ARGS="$ARGS -nf #FF950E"
    [[ "$@" != *-sb ]] && ARGS="$ARGS -sb #444444"
