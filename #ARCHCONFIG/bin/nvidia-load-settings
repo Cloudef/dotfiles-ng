@@ -33,5 +33,9 @@ main() {
       value="$(echo "$value" | sed "s/$HOSTNAME//")"
       "$NVIDIA_SETTINGS_BINARY" -a "$value"
    done
+
+   # Finally set some good settings
+   "$NVIDIA_SETTINGS_BINARY" -a InitialPixmapPlacement=2
+   "$NVIDIA_SETTINGS_BINARY" -a GlyphCache=1
 }
 main $@
