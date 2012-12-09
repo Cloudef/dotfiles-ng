@@ -23,6 +23,9 @@ alias :w='echo this is a shell, not vim.'
 alias :wq=:w
 alias :q='exit'
 
+# bell alias
+alias bell='echo \\007\\c'
+
 # pacmatic wrapper
 alias pacman='pacmatic'
 alias q='/usr/bin/pacman -Q'
