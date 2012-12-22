@@ -49,10 +49,6 @@ export GDK_USE_XFT=1
 export CCACHE_PATH="/usr/bin"
 export CCACHE_DIR="/arch/ccache"
 
-# Vim as less
-VLESS="$(find /usr/share/vim -name 'less.sh')"
-[[ -n "$VLESS" ]] && alias less="$VLESS"
-
 # Source passwd enviroiment
 source "/arch/passwd/libpasswd-env"
 

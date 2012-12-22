@@ -18,6 +18,13 @@ alias mv='mv -v'
 alias rm='rm -v'
 alias ln='ln -v'
 
+# less with ansi escapes
+alias less='less -R'
+
+# Quick vim less alias
+local VLESS="$(find /usr/share/vim -name 'less.sh')"
+[[ -n "$VLESS" ]] && alias vl="$VLESS"
+
 # vim support
 alias :w='echo this is a shell, not vim.'
 alias :wq=:w
