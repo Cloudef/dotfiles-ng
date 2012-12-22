@@ -21,7 +21,7 @@ alias ln='ln -v'
 # less with ansi escapes
 alias less='less -R'
 
-# Quick vim less alias
+# quick vim less alias
 local VLESS="$(find /usr/share/vim -name 'less.sh')"
 [[ -n "$VLESS" ]] && alias vl="$VLESS"
 
@@ -47,11 +47,18 @@ alias um='udevil --umount'
 # mpd client aliases
 alias lm='lolimpd'
 
+# vidir alias
+alias vd='vidir'
+
 # view image in clipboard
 alias cim='loliclip -b image/png > /tmp/clipboard.png && { sxiv /tmp/clipboard.png; rm /tmp/clipboard.png; }'
 
-# shorter sudo
-alias -- +='sudo'
-
 # get extrenal ip
 alias extip='curl -s http://icanhazip.com'
+
+# shortcuts
+alias -- +='sudo'
+alias -- -='less'
+alias   \?='egrep'
+alias    ~='sed'
+alias    @='cat'
