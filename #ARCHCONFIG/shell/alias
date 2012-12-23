@@ -25,21 +25,8 @@ alias less='less -R'
 local VLESS="$(find /usr/share/vim -name 'less.sh')"
 [[ -n "$VLESS" ]] && alias vl="$VLESS"
 
-# vim support
-alias :w='echo this is a shell, not vim.'
-alias :wq=:w
-alias :q='exit'
-
 # bell alias
 alias bell='echo \\007\\c'
-
-# pacmatic wrapper
-alias pacman='pacmatic'
-alias q='/usr/bin/pacman -Q'
-alias r='sudo pacmatic -Rsn'
-alias s='sudo pacmatic -S'
-alias ss='sspacman'
-alias u='sudo pacmatic -Syu'
 
 # unmount wrapper
 alias um='udevil --umount'
@@ -55,6 +42,19 @@ alias cim='loliclip -b image/png > /tmp/clipboard.png && { sxiv /tmp/clipboard.p
 
 # get extrenal ip
 alias extip='curl -s http://icanhazip.com'
+
+# vim support
+alias  :w='echo this is a shell, not vim.'
+alias :wq=:w
+alias  :q='exit'
+
+# pacmatic wrapper
+alias pacman='pacmatic'
+alias      q='/usr/bin/pacman -Q'
+alias      r='sudo pacmatic -Rsn'
+alias      s='sudo pacmatic -S'
+alias    ssp='sspacman'
+alias      u='sudo pacmatic -Syu'
 
 # shortcuts
 alias -- +='sudo'
