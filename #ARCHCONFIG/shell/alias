@@ -33,6 +33,7 @@ alias um='udevil --umount'
 
 # mpd client aliases
 alias lm='lolimpd'
+alias  m='lolimpdnu'
 
 # vidir alias
 alias vd='vidir'
