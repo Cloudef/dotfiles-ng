@@ -1,16 +1,12 @@
 #!/bin/sh
 export _XINIT_WM="${@-"monsterwm"}"
-_MONITOR_WIDTH=1680
-_STATUS_HEIGHT=18
-_STATUS_FONT="terminus:8"
 
 # autostart
 autostart() {
    # wait for wm
    while ! killall -0 $_XINIT_WM; do sleep 1; done
    # start devmon
-   devmon --unmount-all
-   devmon &
+   (devmon --unmount-all; devmon) &
    # nitrogen
    nitrogen --restore
    # start stalonetray daemon
@@ -32,31 +28,22 @@ autokill() {
    # kill stalonetray
    killall stalonetray
    # kill devmon
-   killall devmon
    devmon --unmount-all
+   killall devmon
 }
 
 # monsterwm bar
 monsterwm_bar() {
    local ff="/tmp/monsterwm.fifo"
-   local pagerw=460
-   local statusw=$((_MONITOR_WIDTH-pagerw))
-
-   pgrep -x "^monsterpager" > /dev/null || {
-      monsterpager "$ff" 0 | \
-         dzen2 -h $_STATUS_HEIGHT -y 0 -w $pagerw -ta l -fn $_STATUS_FONT -e -p &
-   }
-
    pgrep -x "^monsterstatus" > /dev/null || {
-      monsterstatus | \
-         dzen2 -h $_STATUS_HEIGHT -y 0 -x $pagerw -w $statusw -ta r -fn $_STATUS_FONT -e -p &
+      monsterstatus "$ff" | bar &
    }
 }
 
 # special route for monsterwm
 monsterwm_init() {
    local ff="/tmp/monsterwm.fifo"
-   monsterwm_bar
+   rm "$ff"; monsterwm_bar
    while [[ ! -p "$ff" ]]; do sleep 1; done; sleep 1
    exec monsterwm | tee -a "$ff" &> /dev/null
    [[ -p "$ff" ]] && rm "$ff"
@@ -82,6 +69,7 @@ export XMODIFIERS=@im='uim'
 export QT_IM_MODULE='uim'
 uim-xim &> /dev/null &
 
+xset +fp /usr/share/fonts/local
 xset r rate 350 45
 xset s off
 xset -dpms
