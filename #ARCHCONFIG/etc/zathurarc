@@ -1,0 +1,22 @@
+# general
+set font "terminus 8"
+set adjust-open width
+
+# colors
+set highlight-color           "#FD971F"
+set highlight-active-color    "#F92672"
+set statusbar-bg              "#000000"
+set statusbar-fg              "#F92672"
+set inputbar-bg               "#000000"
+set inputbar-fg               "#F92672"
+set tabbar-fg                 "#FEFEFE"
+set tabbar-bg                 "#000000"
+set tabbar-focus-fg           "#F92672"
+set tabbar-focus-bg           "#000000"
+set default-bg                "#000000"
+set default-fg                "#FEFEFE"
+set completion-bg             "#000000"
+set completion-fg             "#FEFEFE"
+set completion-highlight-bg   "#000000"
+set completion-highlight-fg   "#F92672"
+set completion-group-bg       "#000000"
