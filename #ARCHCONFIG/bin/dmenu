@@ -8,11 +8,11 @@
 main() {
    local ARGS=
    local FONT=
-   [[ "$@" != *-fn ]] && FONT="clean 8"
-   [[ "$@" != *-nb ]] && ARGS="$ARGS -nb #161616"
-   [[ "$@" != *-nf ]] && ARGS="$ARGS -nf #FF950E"
-   [[ "$@" != *-sb ]] && ARGS="$ARGS -sb #444444"
-   [[ "$@" != *-sf ]] && ARGS="$ARGS -sf #FF950E"
+   [[ "$@" != *-fn ]] && FONT="terminus 9"
+   [[ "$@" != *-nb ]] && ARGS="$ARGS -nb #1A1A1A"
+   [[ "$@" != *-nf ]] && ARGS="$ARGS -nf #EFEFEF"
+   [[ "$@" != *-sb ]] && ARGS="$ARGS -sb #1A1A1A"
+   [[ "$@" != *-sf ]] && ARGS="$ARGS -sf #F92672"
    [[ -n "$FONT" ]] && {
       /usr/bin/dmenu -fn "$FONT" $ARGS "$@"; return;
    } || { /usr/bin/dmenu $ARGS "$@"; return; }
