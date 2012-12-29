@@ -76,28 +76,28 @@ branch=pyro.extended=,"schedule = bind_auto_scale,0,0,\"ui.bind_key=download_lis
 
 # Colors
 ui.color.alarm.set=""
-ui.color.focus.set="reverse"
-ui.color.footer.set="white on black"
+ui.color.focus.set="red"
+ui.color.footer.set="red"
 ui.color.incomplete.set="yellow"
-ui.color.info.set="white"
-ui.color.label.set="blue"
-ui.color.leeching.set="bold bright yellow"
+ui.color.info.set="red"
+ui.color.label.set="white"
+ui.color.leeching.set="yellow"
 ui.color.queued.set="magenta"
-ui.color.seeding.set="bold bright green"
-ui.color.title.set="white on black"
+ui.color.seeding.set="green"
+ui.color.title.set="red"
 
 # 256 color tweak
 ui.color.complete.set=41
 ui.color.stopped.set=33
 ui.color.even.set="on 234"
-ui.color.odd.set="on 232"
+ui.color.odd.set="on 233"
 ui.color.progress0.set=196
 ui.color.progress20.set=202
 ui.color.progress40.set=213
 ui.color.progress60.set=214
 ui.color.progress80.set=226
 ui.color.progress100.set=41
-ui.color.progress120.set="bold bright green"
+ui.color.progress120.set="green"
 
 # ASCII glyphs
 ui.style.ratio.set=0
