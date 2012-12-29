@@ -1,4 +1,57 @@
-input, textarea, select {
+/* dark theme firendly text input and text areas */
+input[type=text], textarea {
   background-color: #000  !important;
-  color:#fff !important;
+  color: #fff !important;
+}
+
+/* dark theme friendly password fields */
+input[type=password] {
+   background-color: #000 !important;
+   color: red !important;
+}
+
+/* dark theme friendly input buttons */
+input[type=button], input[type=submit], button {
+   background-color: #000 !important;
+   color: red !important;
+   border-width: 2px !important;
+   border-color: gray !important;
+   border-style: solid !important;
+}
+
+/* dark theme friendly file uploads */
+input[type=file] {
+   background-color: #000 !important;
+   color: red !important;
+   padding: 0 !important;
+}
+
+/* dark theme friendly select components */
+select {
+   -webkit-appearance: button !important;
+   -webkit-border-radius: 0px !important;
+   -webkit-padding-start: 2px !important;
+   -webkit-user-select: none !important;
+   background-color: #000 !important;
+   color: red !important;
+   border-color: gray !important;
+   font-size: inherit !important;
+   margin: 0 2px 0 0 !important;
+   overflow: hidden !important;
+   padding-top: 3px !important;
+   padding-bottom: 4px !important;
+   text-overflow: ellipsis !important;
+   border-right-width: 8px !important;
+   white-space: nowrap !important;
+}
+
+/* nyaa.eu specific */
+.inputsearchterm {
+  background-color: #000  !important;
+  color: #fff !important;
+  padding-top: 2px !important;
+  padding-bottom: 3px !important;
+  border-width: 2px !important;
+  border-color: gray !important;
+  border-style: solid !important;
 }
