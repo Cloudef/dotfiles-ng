@@ -2,7 +2,7 @@
 export _XINIT_WM="${@-"monsterwm"}"
 _MONITOR_WIDTH=1680
 _STATUS_HEIGHT=18
-_STATUS_FONT="terminus:11"
+_STATUS_FONT="terminus:8"
 
 # autostart
 autostart() {
