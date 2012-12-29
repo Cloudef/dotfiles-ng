@@ -1,0 +1,7 @@
+include ~/.newsbeuter/colors/colorshot.theme
+browser open
+auto-reload yes
+reload-time 15
+reload-threads 2
+refresh-on-startup yes
+feedlist-title-format     " Feeds"
