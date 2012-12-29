@@ -1,0 +1,4 @@
+#!/bin/sh
+# workaround:
+# calling termite -e vim dwb_uri directly doesn't seem to work for some reason.
+termite -e "vim $@"
