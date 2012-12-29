@@ -35,11 +35,8 @@ select {
    background-color: #000 !important;
    color: red !important;
    border-color: gray !important;
-   font-size: inherit !important;
    margin: 0 2px 0 0 !important;
    overflow: hidden !important;
-   padding-top: 3px !important;
-   padding-bottom: 4px !important;
    text-overflow: ellipsis !important;
    border-right-width: 8px !important;
    white-space: nowrap !important;
