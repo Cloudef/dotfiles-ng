@@ -12,11 +12,11 @@ input[type=password] {
 
 /* dark theme friendly input buttons */
 input[type=button], input[type=submit], button {
-   background-color: #000 !important;
-   color: red !important;
-   border-width: 2px !important;
-   border-color: gray !important;
-   border-style: solid !important;
+   background-color: #000;
+   color: red;
+   border-width: 2px;
+   border-color: gray;
+   border-style: solid;
 }
 
 /* dark theme friendly file uploads */
