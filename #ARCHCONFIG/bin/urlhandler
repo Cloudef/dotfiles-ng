@@ -11,8 +11,7 @@ domain() {
 main() {
    case "$(domain "$@")" in
       *youtube.com)
-         stream="$(youtube-dl -f 18 -g "$@")"
-         mplayer -really-quiet -cache 10000 -cache-min 10 -loop 0 "$stream" &> /dev/null
+         mplayer -really-quiet -loop 0 "$(youtube-dl -f 18 -g "$@")" &> /dev/null
       ;;
       *nicovideo.jp)
          nicoplay "$@" &> /dev/null
