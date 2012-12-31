@@ -17,7 +17,7 @@ Y=$((1050-HEIGHT-BORDER))
 # spawn
 spawn() {
    local wid=
-   /usr/bin/stalonetray -bg "#000000" -i 32 --sticky --skip-taskbar --no-shrink &
+   /usr/bin/stalonetray -bg "#000000" -i 28 --sticky --skip-taskbar --no-shrink &
    sleep 0.5
    while [[ ! -n "$wid" ]]; do
       wid="$(xdotool search --classname stalonetray | head -1)"
