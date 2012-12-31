@@ -1,0 +1,5 @@
+gtk-theme-name = "Boje-Red"
+gtk-font-name = "terminus 8"
+gtk-auto-mnemonics = 1
+GtkRange::slider_width = 0
+GtkRange::stepper_size = 0

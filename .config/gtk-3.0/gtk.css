@@ -1,0 +1,5 @@
+// disable scrollbars
+* {
+  -GtkRange-slider-width: 0;
+  -GtkRange-stepper-size: 0;
+}
