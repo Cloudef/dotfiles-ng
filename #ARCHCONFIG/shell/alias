@@ -32,8 +32,9 @@ alias bell='echo \\007\\c'
 alias um='udevil --umount'
 
 # mpd client aliases
-alias lm='lolimpd'
-alias  m='lolimpdnu'
+alias  lm='lolimpd'
+alias   m='lolimpdnu'
+alias lmr='sort -R /tmp/lolimpdnu.cache | head -n1 | sed "s/.*\t//" | xargs lolimpd play'
 
 # vidir alias
 alias vd='vidir'
