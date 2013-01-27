@@ -15,14 +15,10 @@ In addition I use these repositories (and pacakges):
    [repo-ck]: http://repo-ck.com/$arch
       - linux-ck-corex
       - nvidia-ck-corex
-   [pnsft-pur]: http://downloads.sourceforge.net/project/pnsft-aur/pur/$arch
-      - uim-mozc-ut
 
 GTK3 is needed by dwb.
    - GTK2 is buggy without composite extension
       - Composite extension causes tearing with Xv
-      - Providing packages to gtk3-minimal and gtk2-minimal in /arch/pkg/pkgbuild
-         - disables colord, libcups, etc..
 uim-mozc depends on Qt
    - However can be safely removed with -dd qt
 
@@ -34,16 +30,6 @@ Reminders?
    You have job, remember to sleep.
 
 \\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
-
-X Font setup:
-   ! XFT
-   Xft.autohint:1
-   Xft.lcdfilter:lcddefault
-   Xft.hintstyle:hintslight
-   Xft.hinting:1
-   Xft.antialias:1
-   Xft.dpi:96
-   Xft.rgba:rgb
 
 Additionally to these, I'm using the infinality patches (in /arch/pkg/pkgbuild)
 and custom fontconfig rule which is in '/arch/etc/fonts/conf.d'.
