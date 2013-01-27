@@ -36,6 +36,9 @@ alias  lm='lolimpd'
 alias   m='lolimpdnu'
 alias lmr='sort -R /tmp/lolimpdnu.cache | head -n1 | sed "s/.*\t//" | xargs lolimpd play'
 
+# neat git log
+alias sgl='git log --decorate --pretty=oneline --abbrev-commit --graph'
+
 # vidir alias
 alias vd='vidir'
 
