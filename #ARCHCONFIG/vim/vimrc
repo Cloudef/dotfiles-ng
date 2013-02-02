@@ -172,11 +172,8 @@ if has('conceal')
   set conceallevel=2 concealcursor=i
 endif
 " }}}
-" {{{ NeoComplCache_Clang plugin
-let g:neocomplcache_clang_use_library = 1
-let g:neocomplcache_clang_macros = 1
-let g:neocomplcache_clang_auto_options = ".clang_complete, path"
-let g:neocomplcache_max_list = 300
+" {{{ GLSL plugin
+au BufNewFile,BufRead *.frag,*.vert,*.fp,*.vp,*.glsl setf glsl
 " }}}
 
 " }}}
