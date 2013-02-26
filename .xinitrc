@@ -56,13 +56,6 @@ pgrep -x "^$_XINIT_WM" > /dev/null && { monsterwm_bar; exit 0; }
 # dirty bits below
 #
 
-if [ -d /etc/X11/xinit/xinitrc.d ]; then
-   for f in /etc/X11/xinit/xinitrc.d/*; do
-      [ -x "$f" ] && . "$f"
-   done
-   unset f
-fi
-
 # UIM
 export GTK_IM_MODULE='uim'
 export XMODIFIERS=@im='uim'
