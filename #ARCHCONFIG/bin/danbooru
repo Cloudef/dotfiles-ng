@@ -119,7 +119,7 @@ LOCK_FILE="$TMP_DIR/lock"
 # Danbooru API root
 DANBOORU_ROOT="http://danbooru.donmai.us"
 
-# Danbooru user && password
+# Danbooru user && api key
 source "/arch/passwd/libpasswd-sh"
 DANBOORU_USER="$(_passwd_get_user "danbooru")"
 DANBOORU_API_KEY="$(_passwd_get_pass "danbooru")"
