@@ -95,7 +95,7 @@ DANBOORU_LIMIT_DIMENSIONS=()
 
 # Filter tags
 # Posts which match one of these tags will not be downloaded
-DANBOORU_TAG_FILTER=("yaoi" "tiger_&_bunny boys_love" "shounen-ai")
+DANBOORU_TAG_FILTER=("yaoi" "tiger_&_bunny" "boys_love" "shounen-ai")
 
 # Tag match
 # Only posts which match one of these tags will be downloaded
