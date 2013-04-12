@@ -129,7 +129,7 @@ CURL_AGENT="Mozilla/4.73 [en] (X11; U; Linux 2.2.15 i686)"
 
 # Depencies for this script
 # Perl is used for url encoding tags
-BIN_DEPS="curl jshon awk perl"
+BIN_DEPS="curl jshon perl"
 VERBOSE=0
 
 error()
