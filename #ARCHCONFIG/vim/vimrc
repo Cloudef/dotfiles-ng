@@ -120,7 +120,7 @@ nmap <C-e> :tabNext<CR>
 imap <C-e> <Esc><C-e>a
 
 " C-c = copy to XA_CLIPBOARD using xsel
-vmap <C-c> :<Esc>`>a<CR><Esc>mx`<i<CR><Esc>my'xk$v'y!tee >(loliclip -c)<CR>u
+vmap <C-c> :<Esc>`>a<CR><Esc>mx`<i<CR><Esc>my'xk$v'y!tee >(loliclip -ci)<CR>u
 
 " toggle folds with space
 nnoremap <space> za
