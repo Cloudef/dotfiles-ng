@@ -306,12 +306,12 @@ check_picture()
    local ARTIST=
    local MATCH=
 
-   [[ "$1" ]] || return
-   [[ "$2" ]] || return
+   [[ -n "$1" ]] || return
+   [[ -n "$2" ]] || return
 
    # Check if this is already downloaded
    if [[ -d "$LOCAL_STORE/$2" ]]; then
-      if [[ "$(find "$LOCAL_STORE/*/$2" -type f -name "$(basename $1)" | sed 1q)" ]]; then
+      if [[ -n "$(find "$LOCAL_STORE/*/$2" -type f -name "$(basename $1)" | sed 1q)" ]]; then
          echo "exist [$(basename $1)]: $6"
          return
       fi
@@ -325,7 +325,7 @@ check_picture()
    done
 
    # If no match in cache, get from danbooru
-   if [[ ! "$MATCH" ]]; then
+   if [[ ! -n "$MATCH" ]]; then
       [[ $VERBOSE -eq 0 ]] || echo "remote artist lookup"
       for ETAG in $3; do
          [[ -n "$(check_ignore "$ETAG")" ]] && continue
