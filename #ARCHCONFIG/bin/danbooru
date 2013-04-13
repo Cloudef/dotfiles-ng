@@ -30,14 +30,26 @@
 #
 # If you are calling this script in for loop, you should call sleep each iteration.
 
-# Local directory where to store the pictures
-# Images are stored in following format
-#
-# $LOCAL_STORE/$ARTIST/$RATING/$IMAGE
-#
-# eg.
-# /danbooru/Rib_y(uhki)/safe/12401290395023.jpg"
+# Local directory where to store the posts
 LOCAL_STORE="/mnt/storage/pictures/danbooru"
+
+# Directory structure for storing posts
+# Following keys can be used:
+#  %extension: file extension (.jpg, .png, ...)
+#  %artist:    artist of the post
+#  %rating:    rating of the post (safe, questionable, explicit)
+#  %postid:    id of the post
+#  %pool:      pool of the post (replaced as 'nopool' when post has no pool)
+#  %md5:       md5 of the post
+#
+# Example of default format:
+# /danbooru/Rib_y(uhki)/safe/dd192a8639f36f3fa38e551d0f24d73c.jpg"
+#
+# Duplicate detection breaks, if you change this after crawling
+#
+# Use -v flag to doublecheck that your filepaths looks sane
+# This script does no sanity checking to this
+LOCAL_FORMAT="%artist/%rating/%md5.%extension"
 
 # Filename expression
 # Set characters which you want stripped from filename, eg, if you use fat32.
@@ -247,29 +259,57 @@ check_ignore()
    grep -wF "$@" "$IGNORE_DB" | head -n1
 }
 
+# $1 = Post JSON
+# $2 = Artist
+# Returns target from configured format
+#  %extension: file extension (.jpg, .png, ...)
+#  %artist:    artist of the post
+#  %rating:    rating of the post (safe, questionable, explicit)
+#  %postid:    id of the post
+#  %pool:      pool of the post (replaced as 'nopool' when post has no pool)
+#  %md5:       md5 of the post
+target_from_format()
+{
+   local JSON="$1"
+   local ARTIST="$2"
+   [[ -n "$JSON" ]] || return
+
+   ID="$(echo "$JSON" | jshon -e "id" -u)"
+   MD5="$(echo "$JSON" | jshon -e "md5" -u)"
+   EXT="$(echo "$JSON" | jshon -e "file_ext" -u)"
+   POOL="$(echo "$JSON" | jshon -e "pool_string" -u)"
+   RATING="$(echo "$JSON" | jshon -e "rating" -u)"
+   RATING="$(rating_str "$RATING")"
+   [[ -n "$POOL"   ]] || POOL="nopool"
+   [[ -n "$ARTIST" ]] || ARTIST="noartist"
+
+   TARGET="$(echo "$LOCAL_FORMAT" |\
+      sed "s/%extension/$EXT/;s/%artist/$ARTIST/;s/%rating/$RATING/;s/%postid/$ID/;s/%pool/$POOL/;s/%md5/$MD5/")"
+   TARGET=$(echo -n "$TARGET" | sed "$FILENAME_EXP") # Replace illegal characters.
+   echo "$LOCAL_STORE/$TARGET"
+}
+
 # $1 = URL
-# $2 = Rating
-# $3 = Artist
-# $4 = Touch date
-# $5 = JSON
+# $2 = Touch date
+# $3 = JSON
+# $4 = Target
 # Download picture
 store_picture()
 {
-   # Artist
-   local ARTIST="$3"
-   ARTIST=$(echo -n "$ARTIST" | sed 's/^ *//;s/[ .]*$//') # Strip leading spaces and trailing spaces / periods.
-   ARTIST=$(echo -n "$ARTIST" | sed "$FILENAME_EXP")      # Replace illegal characters.
+   local URL="$1"
+   local DATE="$2"
+   local JSON="$3"
+   local TARGET="$4"
 
-   # Target
-   local BASE="$(basename "$1")"
-   local TARGET="$LOCAL_STORE/$ARTIST/$2/$BASE"
+   # Temp target
+   local BASE="$(basename "$URL")"
    local TEMP="$TMP_DIR/$BASE"
 
    # Download to $TEMP and move after finished to
    # destination to avoid partial downloads
-   echo "==> [D] $1"
+   echo "==> [D] $URL"
    echo "     => $TARGET"
-   curl -s -o "$TEMP" "$1"
+   curl -s -o "$TEMP" "$URL"
 
    # Download failed
    [[ -f "$TEMP" ]] || return
@@ -283,41 +323,39 @@ store_picture()
    }
 
    # mkdir
-   mkdir -p "$LOCAL_STORE/$ARTIST/$2"
+   mkdir -p "$(dirname $TARGET)"
 
    # Move to destination
    mv "$TEMP" "$TARGET"
-   [[ -n "$4" ]] && touch -c -d "$4" "$TARGET"
-   echo "$5" > "${TARGET%.*}.json"
+   [[ -n "$DATE" ]] && touch -c -d "$DATE" "$TARGET"
+   echo "$JSON" > "${TARGET%.*}.json"
 }
 
 # $1 = URL
-# $2 = Rating
+# $2 = Danbooru URL
 # $3 = Tags
 # $4 = Touch date
 # $5 = JSON
-# $6 = DURL
 # Stores the picture
 check_picture()
 {
+   local URL="$1"
+   local DURL="$2"
+   local TAGS="$3"
+   local DATE="$4"
+   local JSON="$5"
+
    local RESULT=
    local ARTIST=
    local MATCH=
 
-   [[ -n "$1" ]] || return
-   [[ -n "$2" ]] || return
-
-   # Check if this is already downloaded
-   if [[ -d "$LOCAL_STORE/$2" ]]; then
-      if [[ -n "$(find "$LOCAL_STORE/*/$2" -type f -name "$(basename $1)" | sed 1q)" ]]; then
-         echo "exist [$(basename $1)]: $6"
-         return
-      fi
-   fi
+   [[ -n "$URL"  ]] || return
+   [[ -n "$DURL" ]] || return
+   [[ -n "$JSON" ]] || return
 
    # Check cache second
    [[ $VERBOSE -eq 0 ]] || echo "local artist lookup"
-   for ETAG in $3; do
+   for ETAG in $TAGS; do
       ARTIST="$(check_artist "$ETAG")"
       [[ -n "$ARTIST" ]] && { MATCH="$ETAG"; break; }
    done
@@ -325,7 +363,7 @@ check_picture()
    # If no match in cache, get from danbooru
    if [[ ! -n "$MATCH" ]]; then
       [[ $VERBOSE -eq 0 ]] || echo "remote artist lookup"
-      for ETAG in $3; do
+      for ETAG in $TAGS; do
          [[ -n "$(check_ignore "$ETAG")" ]] && continue
          RESULT="$(get_json "artists" "search\[name\]=$(urlencode "$ETAG")")"
          [[ -n "$RESULT" ]] || { cache_ignore "$ETAG"; continue; }
@@ -347,13 +385,24 @@ check_picture()
 
    # Check that artist lookup succeed
    if [[ ! -n "$ARTIST" ]]; then
-      echo "[!!] failed to crawl artist: $6"
+      echo "[!!] failed to crawl artist: $DURL"
       [[ $DANBOORU_NO_ARTIST -eq 1 ]] || return
-      ARTIST="unknown"
+      ARTIST="noartist"
+   else
+      ARTIST=$(echo -n "$ARTIST" | sed 's/ //g') # Strip all spaces
+   fi
+
+   # Check if file already exists
+   TARGET="$(target_from_format "$JSON" "$ARTIST")"
+   [[ $VERBOSE -eq 0 ]] || echo ":: TARGET IS: $TARGET"
+   [[ -n "$TARGET" ]] || return
+   if [[ -f "$TARGET" ]]; then
+      echo "[!] exist [$(basename $TARGET)]: $DURL"
+      return
    fi
 
    # Download picture to disk
-   store_picture "$1" "$2" "$ARTIST" "$4" "$5" &
+   store_picture "$URL" "$DATE" "$JSON" "$TARGET" &
 }
 
 # Main
@@ -529,7 +578,7 @@ main()
       fi
 
       # Check picture
-      check_picture "$URL" "$(rating_str "$RATING")" "$TAGS" "$CREATED_AT" "$JSON"
+      check_picture "$URL" "$DURL" "$TAGS" "$CREATED_AT" "$JSON"
 
       # Wait for forks
       while [[ $(jobs -p | wc -l) -gt $FORK_LIMIT ]]; do
