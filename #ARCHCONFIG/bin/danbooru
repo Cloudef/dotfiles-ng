@@ -147,10 +147,8 @@ error_no_unlock()
 
 check_deps()
 {
-   for i in $BIN_DEPS; do
-      which $i > /dev/null
-      [[ $? -ne 0 ]] && error_no_unlock "Missing depency: $i"
-   done
+   hash $BIN_DEPS
+   [[ $? -eq 0 ]] || error_no_unlock "Depencies missing! Bail out..."
 }
 
 # Lock
