@@ -359,7 +359,7 @@ check_picture()
 # Main
 main()
 {
-   # get rid of the verbose argument
+   # Get rid of the verbose argument
    [[ $VERBOSE -eq 0 ]] || shift 1
 
    local RESULT=
