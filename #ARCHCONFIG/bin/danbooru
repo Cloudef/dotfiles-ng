@@ -2,10 +2,24 @@
 # Crawl danbooru for pictures
 #
 
+# USAGE
+# -----
+# danbooru (-v) (-r) (-s) [page] [tags] [limit]
+#  -v: verbose output
+#  -r: recrawl posts (updates json, updates location if needed)
+#  -s: don't fork (sets FORK_LIMIT to 1)
+#
+# Following are only relevant when no -r is specified:
+#  [page]: page number to crawl in danbooru
+#  [tags]: tags/metatags for searching
+#  [limit]: limit results per page
+
 # -- Sun Apr 14 07:49:45 UTC 2013
 # Artist information is now provided in Danbooru API!
 # The caching code and crawling code for artist is now removed.
 # You can remove ignore.db and artist.db.
+#
+# I also removed %pool formatting as it would just use pool ids not the name
 
 # -- Fri Apr 12 18:36:21 UTC 2013
 # Danbooru API changed!
@@ -37,7 +51,6 @@ LOCAL_STORE="/mnt/storage/pictures/danbooru"
 #  %artist:    artist of the post
 #  %rating:    rating of the post (safe, questionable, explicit)
 #  %postid:    id of the post
-#  %pool:      pool of the post (replaced as 'nopool' when post has no pool)
 #  %md5:       md5 of the post
 #
 # Example of default format:
@@ -101,10 +114,12 @@ DANBOORU_TAG_MATCH=()
 
 # Filter pools
 # Posts which match one of these pools will not be downloaded
+# NOTE: This array takes pool ids!
 DANBOORU_POOL_FILTER=()
 
 # Pool match
 # Only posts which match one of these pools will be downloaded
+# NOTE: This array takes pool ids!
 DANBOORU_POOL_MATCH=()
 
 # Limit the number of sub processes for download
@@ -128,7 +143,10 @@ CURL_AGENT="Mozilla/4.73 [en] (X11; U; Linux 2.2.15 i686)"
 # Depencies for this script
 # Perl is used for url encoding tags
 BIN_DEPS="curl jshon perl"
+
+# Arguments
 VERBOSE=0
+RECRAWL=0
 
 error()
 {
@@ -181,8 +199,10 @@ sigint()
 usage()
 {
    for i in $@; do
-      [[ "$i" != "-h" ]] && [[ "$i" != "--help" ]] || error_no_unlock "$(basename "$0") (-v) [page] [tags] [limit]"
+      [[ "$i" != "-h" ]] && [[ "$i" != "--help" ]] || error_no_unlock "$(basename "$0") (-v) (-r) (-s) [page] [tags] [limit]"
       [[ "$i" != "-v" ]]                           || VERBOSE=1
+      [[ "$i" != "-r" ]]                           || RECRAWL=1
+      [[ "$i" != "-s" ]]                           || FORK_LIMIT=1
    done
 }
 
@@ -194,10 +214,13 @@ urlencode()
 }
 
 # $1 = API URL
-# $2 = URL Arguments
+# $2 = URL Arguments (optional)
 get_json()
 {
-   curl -s --user-agent "$CURL_AGENT" "$DANBOORU_ROOT/$1.json?$2&login=$DANBOORU_USER&api_key=$DANBOORU_API_KEY"
+   [[ -n "$2" ]] &&
+      curl -s --user-agent "$CURL_AGENT" "$DANBOORU_ROOT/$1.json?$2&login=$DANBOORU_USER&api_key=$DANBOORU_API_KEY"
+   [[ -n "$2" ]] ||
+      curl -s --user-agent "$CURL_AGENT" "$DANBOORU_ROOT/$1.json?login=$DANBOORU_USER&api_key=$DANBOORU_API_KEY"
 }
 
 # $1 = JSON rating
@@ -215,7 +238,6 @@ rating_str()
 #  %artist:    artist of the post
 #  %rating:    rating of the post (safe, questionable, explicit)
 #  %postid:    id of the post
-#  %pool:      pool of the post (replaced as 'nopool' when post has no pool)
 #  %md5:       md5 of the post
 target_from_format()
 {
@@ -226,16 +248,15 @@ target_from_format()
    ID="$(echo "$JSON" | jshon -e "id" -u)"
    MD5="$(echo "$JSON" | jshon -e "md5" -u)"
    EXT="$(echo "$JSON" | jshon -e "file_ext" -u)"
-   POOL="$(echo "$JSON" | jshon -e "pool_string" -u)"
    ARTISTS=($(echo "$JSON" | jshon -e "tag_string_artist" -u))
    ARTIST="${ARTISTS[0]}"
    RATING="$(echo "$JSON" | jshon -e "rating" -u)"
    RATING="$(rating_str "$RATING")"
-   [[ -n "$POOL"   ]] || POOL="nopool"
+   [[ -n "$RATING" ]] || return
    [[ -n "$ARTIST" ]] || ARTIST="noartist"
 
    TARGET="$(echo "$LOCAL_FORMAT" |\
-      sed "s/%extension/$EXT/;s/%artist/$ARTIST/;s/%rating/$RATING/;s/%postid/$ID/;s/%pool/$POOL/;s/%md5/$MD5/")"
+      sed "s/%extension/$EXT/;s/%artist/$ARTIST/;s/%rating/$RATING/;s/%postid/$ID/;s/%md5/$MD5/")"
    TARGET=$(echo -n "$TARGET" | sed "$FILENAME_EXP") # Replace illegal characters.
    echo "$LOCAL_STORE/$TARGET"
 }
@@ -300,7 +321,7 @@ check_picture()
 
    # Check if file already exists
    TARGET="$(target_from_format "$JSON")"
-   [[ $VERBOSE -eq 0 ]] || echo ":: TARGET IS: $TARGET"
+   [[ $VERBOSE -eq 0 ]] || echo ":: TARGET: $TARGET"
    [[ -n "$TARGET" ]] || return
    if [[ -f "$TARGET" ]]; then
       echo "[!] exist [$(basename $TARGET)]: $DURL"
@@ -308,33 +329,41 @@ check_picture()
    fi
 
    # Download picture to disk
-   store_picture "$URL" "$DATE" "$JSON" "$TARGET" &
+   [[ $FORK_LIMIT -gt 1 ]] && store_picture "$URL" "$DATE" "$JSON" "$TARGET" &
+   [[ $FORK_LIMIT -gt 1 ]] || store_picture "$URL" "$DATE" "$JSON" "$TARGET"
 }
 
 # Main
 main()
 {
-   # Get rid of the verbose argument
-   [[ $VERBOSE -eq 0 ]] || shift 1
-
    local RESULT=
    local LIMIT="${3-100}"
    local PAGE="${1-1}"
    local PTAGS="$(urlencode "$2")"
    local OK=0
 
-   # Trap SIGINT
-   trap sigint SIGINT
+   if [[ $VERBOSE -eq 0 ]]; then
+      echo "[F] $DANBOORU_ROOT/posts.json?page=$PAGE&limit=$LIMIT&tags=$PTAGS"
+      echo ""
+   fi
 
-   [[ $VERBOSE -eq 0 ]] || echo "$DANBOORU_ROOT/posts.json?page=$PAGE&limit=$LIMIT&tags=$PTAGS"
    RESULT="$(get_json "posts" "page=$PAGE&limit=$LIMIT&tags=$PTAGS")"
    JSONCNT=$(echo "$RESULT" | jshon -l)
 
    for i in $(seq 0 $((JSONCNT-1))); do
+      # Check if we are throttled
+      if [[ "$RESULT" == "421 User Throttled" ]]; then
+         echo "[!!] danbooru has throttled you"
+         break
+      fi
+
+      # Fetch post JSON
       JSON="$(echo "$RESULT" | jshon -e $i 2>/dev/null)"
       [[ -n "$JSON" ]] || error "[!] No results.."
 
       # Parse stuff we need
+      ID="$(echo "$JSON" | jshon -e "id" -u)"
+      [[ -n "$ID" ]] || continue
       PENDING="$(echo "$JSON" | jshon -e "is_deleted" -u)"
       BANNED="$(echo "$JSON" | jshon -e "is_banned" -u)"
       DELETED="$(echo "$JSON" | jshon -e "is_deleted" -u)"
@@ -349,14 +378,25 @@ main()
       HEIGHT="$(echo "$JSON" | jshon -e "image_height" -u)"
       PARENT="$(echo "$JSON" | jshon -e "parent_id" -u)"
       TAGS="$(echo "$JSON" | jshon -e "tag_string" -u)"
-      POOL="$(echo "$JSON" | jshon -e "pool_string" -u)"
-      ID="$(echo "$JSON" | jshon -e "id" -u)"
+      POOLS="$(echo "$JSON" | jshon -e "pool_string" -u)"
       MD5="$(echo "$JSON" | jshon -e "md5" -u)"
       EXT="$(echo "$JSON" | jshon -e "file_ext" -u)"
       URL="$DANBOORU_ROOT/data/$MD5.$EXT"
       DURL="$DANBOORU_ROOT/posts/$ID"
       ARTISTS=($(echo "$JSON" | jshon -e "tag_string_artist" -u))
       ARTIST="${ARTISTS[0]}"
+
+      # Verbose output
+      if [[ $VERBOSE -eq 1 ]]; then
+         echo ""
+         echo ":: ID: $IDS[$i]"
+         echo ":: URL: $URL"
+         echo ":: DURL: $DURL"
+         echo ":: EXT: $EXT"
+         echo ":: MD5: $MD5"
+         [[ -n "$ARTIST" ]] && echo ":: ARTIST: $ARTIST"
+         [[ -n "$POOLS" ]] && echo ":: POOLS: $POOLS"
+      fi
 
       # Check artist
       OK=1
@@ -413,10 +453,13 @@ main()
 
       # Check pool
       OK=1; BPOOL=""
-      for EPOOL in "${DANBOORU_POOL_FILTER[@]}"; do
-         [[ "$EPOOL" != "$POOL" ]] && continue
-         OK=0; BPOOL="$EPOOL"
-         break
+      for POOL in "${POOLS[@]}"; do
+         for EPOOL in "${DANBOORU_POOL_FILTER[@]}"; do
+            [[ "pool:$EPOOL" != "$POOL" ]] && continue
+            OK=0; BPOOL="$EPOOL"
+            break
+         done
+         [[ $OK -eq 0 ]] && break
       done
 
       if [[ $OK -eq 0 ]]; then
@@ -425,9 +468,14 @@ main()
       fi
 
       OK=1;
-      for EPOOL in "${DANBOORU_POOL_MATCH[@]}"; do
-         [[ "$EPOOL" != "$POOL" ]] && { OK=0; continue; }
-         OK=1; break
+      for POOL in "${POOLS[@]}"; do
+         FOUND=0
+         for EPOOL in "${DANBOORU_POOL_MATCH[@]}"; do
+            [[ "pool:$EPOOL" != "$POOL" ]] && { OK=0; continue; }
+            OK=1; FOUND=1
+            break
+         done
+         [[ $FOUND -eq 1 ]] && break
       done
 
       if [[ $OK -eq 0 ]]; then
@@ -474,34 +522,159 @@ main()
          continue
       fi
 
-      if [[ $VERBOSE -eq 1 ]]; then
-         echo "ID: $IDS[$i]"
-         echo "MD5: $MD5"
-         echo "URL: $URL"
-         echo "DURL: $DURL"
-         echo "EXT: $EXT"
-         echo "POOL: $POOL"
-         echo ""
-      fi
-
       # Check picture
       check_picture "$URL" "$DURL" "$CREATED_AT" "$JSON"
 
       # Wait for forks
       while [[ $(jobs -p | wc -l) -gt $FORK_LIMIT ]]; do
+         [[ $VERBOSE -eq 1 ]] && echo "[I] fork limit hit, waiting: ($(jobs -p | wc -l))"
          sleep 1
       done
    done
 
    # Wait for subprocesses
+   [[ $VERBOSE -eq 1 ]] && [[ $i -gt 1 ]] && echo ""
    while [[ $(jobs -p | wc -l) -gt 1 ]]; do
+      [[ $VERBOSE -eq 1 ]] && echo "[I] waiting for jobs ($(jobs -p | wc -l))"
       sleep 1
    done
 }
 
-# Lets do it
+# $1 = Path to json file
+# Recrawl image using the data from JSON
+recrawl_picture()
+{
+   local JSONF="$1"
+   local JSON=
+
+   # Find and remove bad posts
+   ID="$(jshon -F "$JSONF" -e "id" -u)"
+   if [[ ! -n "$ID" ]]; then
+      echo ""
+      echo "[!!] bad json file: $JSONF"
+      rm "${JSONF%.*}."*
+      return
+   fi
+
+   # Store stuff from old json
+   OEXT="$(jshon -F "$JSONF" -e "file_ext" -u)"
+   OMD5="$(jshon -F "$JSONF" -e "md5" -u)"
+   DURL="$DANBOORU_ROOT/posts/$ID"
+   JSON="$(get_json "posts/$ID")"
+   [[ -n "$JSON" ]] || return
+
+   # Check if we are throttled
+   if [[ "$JSON" == "421 User Throttled" ]]; then
+      echo "[!!] danbooru has throttled you"
+      return
+   fi
+
+   # Data we might like to recrawl
+   ID="$(echo "$JSON" | jshon -e "id" -u)"
+
+   # Failed to get ID
+   # Fetch failed, or user throttled
+   [[ -n "$ID" ]] || return
+
+   CREATED_AT="$(echo "$JSON" | jshon -e "created_at" -u)"
+   RATING="$(echo "$JSON" | jshon -e "rating" -u)"
+   POOL="$(echo "$JSON" | jshon -e "pool_string" -u)"
+   MD5="$(echo "$JSON" | jshon -e "md5" -u)"
+   EXT="$(echo "$JSON" | jshon -e "file_ext" -u)"
+   URL="$DANBOORU_ROOT/data/$MD5.$EXT"
+   ARTISTS=($(echo "$JSON" | jshon -e "tag_string_artist" -u))
+   ARTIST="${ARTISTS[0]}"
+
+   # Get target
+   OTARGET="${JSONF%.*}.$OEXT"
+   TARGET="$(target_from_format "$JSON")"
+
+   # Verbose output
+   if [[ $VERBOSE -eq 1 ]]; then
+      echo ""
+      echo ":: ID: $ID"
+      echo ":: URL: $URL"
+      echo ":: DURL: $DURL"
+      echo ":: JSON: $JSONF"
+      echo ":: EXT: $EXT"
+      echo ":: MD5: $MD5"
+      [[ -n "$ARTIST" ]] && echo ":: ARTIST: $ARTIST"
+      [[ -n "$POOL" ]] && echo ":: POOL: $POOL"
+      echo ":: TARGET: $TARGET"
+   fi
+
+   # Update the json file
+   echo "$JSON" > "$JSONF"
+
+   # Handle conflicts!
+   if [[ "$OMD5" != "$MD5" ]]; then
+      # MD5 differs
+      echo "[!] md5 differs: $DURL"
+      store_picture "$URL" "$CREATED_AT" "$JSON" "$TARGET"
+      if [[ -f "$TARGET" ]] && [[ "$TARGET" != "$OTARGET" ]]; then
+         rm "$OTARGET"
+         rm "${OTARGET%.*}.json"
+      fi
+   elif [[ "$OTARGET" != "$TARGET" ]]; then
+      # Target differs
+      echo "==> [M] $OTARGET"
+      echo "     => $TARGET"
+      mkdir -p "$(dirname $TARGET)"
+      mv "$OTARGET" "$TARGET"
+      mv "${OTARGET%.*}.json" "${TARGET%.*}.json"
+   fi
+
+   # Update created at
+   [[ -n "$CREATED_AT" ]] && [[ -f "$TARET" ]] && touch -c -d "$CREATED_AT" "$TARGET"
+}
+
+# Recrawl images (updates .json and updates location if needed)
+recrawl()
+{
+   echo "[I] recrawling from: $LOCAL_STORE"
+
+   # Recrawl local posts
+   find "$LOCAL_STORE" -name "*.json" | while read i; do
+      [[ $VERBOSE -eq 0 ]] && echo "[C] $i"
+      [[ $FORK_LIMIT -gt 1 ]] && { (recrawl_picture "$i" &); sleep 1; } # Sleep, so we don't hammer servers
+      [[ $FORK_LIMIT -gt 1 ]] || recrawl_picture "$i"
+      while [[ $(jobs -p | wc -l) -gt $FORK_LIMIT ]]; do
+         [[ $VERBOSE -eq 1 ]] && echo "[I] fork limit hit, waiting: ($(jobs -p | wc -l))"
+         sleep 1
+      done
+   done
+
+   # Wait for subprocesses
+   [[ $VERBOSE -eq 1 ]] && [[ $i -gt 1 ]] && echo ""
+   while [[ $(jobs -p | wc -l) -gt 1 ]]; do
+      [[ $VERBOSE -eq 1 ]] && echo "[I] waiting for jobs ($(jobs -p | wc -l))"
+      sleep 1
+   done
+
+   # Remove all empty directories
+   echo "[I] removing all empty directories"
+   find "$LOCAL_STORE" -type d -empty -delete;
+}
+
+# Init
 check_deps
 usage $@
+
+# Get rid of the recrawl argument
+[[ $RECRAWL -eq 0 ]] || shift 1
+
+# Get rid of the verbose argument
+[[ $VERBOSE -eq 0 ]] || shift 1
+
+# Create lock file
 lock
-main $@
+
+# Trap SIGINT
+trap sigint SIGINT
+
+# Perform action
+[[ $RECRAWL -eq 0 ]] && main $@
+[[ $RECRAWL -eq 1 ]] && recrawl $@
+
+# Unlock lock file
 unlock
