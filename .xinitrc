@@ -62,6 +62,10 @@ export XMODIFIERS=@im='uim'
 export QT_IM_MODULE='uim'
 uim-xim &> /dev/null &
 
+# Wacom
+xsetwacom --set 11 MapToOutput "1680x1050+0+0"
+xsetwacom --set 12 MapToOutput "1680x1050+0+0"
+
 xset +fp /usr/share/fonts/local
 xset r rate 350 45
 xset s off
