@@ -2,14 +2,15 @@
 # Crawl danbooru for pictures
 #
 
+# -- Sun Apr 14 07:49:45 UTC 2013
+# Artist information is now provided in Danbooru API!
+# The caching code and crawling code for artist is now removed.
+# You can remove ignore.db and artist.db.
+
 # -- Fri Apr 12 18:36:21 UTC 2013
 # Danbooru API changed!
 # Still no artist information in post json...
 # This script is not compatible with old danbooru storage format anymore.
-#
-# artists.db format changed again, to store only artist name.
-# We only accept artists which name match the tag exactly,
-# to avoid issues where tag was guessed as artist (ex. panties)
 #
 # More filtering options also provided.
 # .meta and .tags files no longer exists, instead .json file is provided!
@@ -21,9 +22,6 @@
 # Uses JSON API instead of crawling HTML.
 # Much fool proof and allows more control.
 # Also it won't bloat your directory with lots of images, that slows down various file browsers.
-#
-# The script does lots of caching since crawling always web is slow.
-# So while you run the script few times, it starts getting faster.
 
 # Limit requests
 # Why? See: http://danbooru.donmai.us/forum/show/72300
@@ -54,18 +52,6 @@ LOCAL_FORMAT="%artist/%rating/%md5.%extension"
 # Filename expression
 # Set characters which you want stripped from filename, eg, if you use fat32.
 FILENAME_EXP='s/[][%\+\\\"\*;:\?\|<>,=]/_/g'
-
-# Artist database
-# Since danbooru API allows no easy way to get artist from post,
-# it needs to be crawled, and this is _really_ slow.
-#
-# We can workaround it by keeping local artist cache, which will speed up things eventually.
-ARTIST_DB="$LOCAL_STORE/artist.db"
-
-# Ignore database
-# Another speedup method!
-# Stores all tags here that are not linked to any artist
-IGNORE_DB="$LOCAL_STORE/ignore.db"
 
 # Rating to download
 # s = Only download safe posts
@@ -223,44 +209,7 @@ rating_str()
    [[ "$@" != "e" ]] || echo "explicit"
 }
 
-# $1 = Artist name
-# Caches artist to DB file
-cache_artist()
-{
-   [[ -n "$@" ]] || return
-   [[ $VERBOSE -eq 1 ]] && echo "caching artist: $@"
-   echo "$1 $2" >> "$ARTIST_DB"
-}
-
-# $1 = Artist name
-# Return artist, if matching artist is found from artist cache
-check_artist()
-{
-   [[ -n "$@"         ]] || return
-   [[ -f "$ARTIST_DB" ]] || return
-   grep -wF "$@" "$ARTIST_DB" | head -n1
-}
-
-# $1 = Tag
-# Caches tag to ignore file
-cache_ignore()
-{
-   [[ -n "$@" ]] || return
-   [[ $VERBOSE -eq 1 ]] && echo "caching ignore tag: $@"
-   echo "$@" >> "$IGNORE_DB"
-}
-
-# $1 = Matching tag
-# Return tag, if matching tag is found from ignore cache
-check_ignore()
-{
-   [[ -n "$@"         ]] || return
-   [[ -f "$IGNORE_DB" ]] || return
-   grep -wF "$@" "$IGNORE_DB" | head -n1
-}
-
 # $1 = Post JSON
-# $2 = Artist
 # Returns target from configured format
 #  %extension: file extension (.jpg, .png, ...)
 #  %artist:    artist of the post
@@ -278,6 +227,8 @@ target_from_format()
    MD5="$(echo "$JSON" | jshon -e "md5" -u)"
    EXT="$(echo "$JSON" | jshon -e "file_ext" -u)"
    POOL="$(echo "$JSON" | jshon -e "pool_string" -u)"
+   ARTISTS=($(echo "$JSON" | jshon -e "tag_string_artist" -u))
+   ARTIST="${ARTISTS[0]}"
    RATING="$(echo "$JSON" | jshon -e "rating" -u)"
    RATING="$(rating_str "$RATING")"
    [[ -n "$POOL"   ]] || POOL="nopool"
@@ -333,67 +284,22 @@ store_picture()
 
 # $1 = URL
 # $2 = Danbooru URL
-# $3 = Tags
-# $4 = Touch date
-# $5 = JSON
+# $3 = Touch date
+# $3 = JSON
 # Stores the picture
 check_picture()
 {
    local URL="$1"
    local DURL="$2"
-   local TAGS="$3"
-   local DATE="$4"
-   local JSON="$5"
-
-   local RESULT=
-   local ARTIST=
-   local MATCH=
+   local DATE="$3"
+   local JSON="$4"
 
    [[ -n "$URL"  ]] || return
    [[ -n "$DURL" ]] || return
    [[ -n "$JSON" ]] || return
 
-   # Check cache second
-   [[ $VERBOSE -eq 0 ]] || echo "local artist lookup"
-   for ETAG in $TAGS; do
-      ARTIST="$(check_artist "$ETAG")"
-      [[ -n "$ARTIST" ]] && { MATCH="$ETAG"; break; }
-   done
-
-   # If no match in cache, get from danbooru
-   if [[ ! -n "$MATCH" ]]; then
-      [[ $VERBOSE -eq 0 ]] || echo "remote artist lookup"
-      for ETAG in $TAGS; do
-         [[ -n "$(check_ignore "$ETAG")" ]] && continue
-         RESULT="$(get_json "artists" "search\[name\]=$(urlencode "$ETAG")")"
-         [[ -n "$RESULT" ]] || { cache_ignore "$ETAG"; continue; }
-         [[ "$RESULT" != "[]" ]] && {
-            JSONCNT=$(echo "$RESULT" | jshon -l)
-            for i in $(seq 0 $((JSONCNT-1))); do
-               ACTIVE="$(echo "$RESULT" | jshon -e $i -e "is_active" -u 2>/dev/null)"
-               [[ "$ACTIVE" == "true" ]] || continue
-               CARTIST="$(echo "$RESULT" | jshon -e $i -e "name" -u 2>/dev/null)"
-               [[ "$CARTIST" == "$ETAG" ]] || continue
-               ARTIST="$CARTIST"
-               cache_artist "$ARTIST"
-               break;
-            done
-            [[ -n "$ARTIST" ]] && break || cache_ignore "$ETAG" # found
-         } || cache_ignore "$ETAG"
-      done
-   fi
-
-   # Check that artist lookup succeed
-   if [[ ! -n "$ARTIST" ]]; then
-      echo "[!!] failed to crawl artist: $DURL"
-      [[ $DANBOORU_NO_ARTIST -eq 1 ]] || return
-      ARTIST="noartist"
-   else
-      ARTIST=$(echo -n "$ARTIST" | sed 's/ //g') # Strip all spaces
-   fi
-
    # Check if file already exists
-   TARGET="$(target_from_format "$JSON" "$ARTIST")"
+   TARGET="$(target_from_format "$JSON")"
    [[ $VERBOSE -eq 0 ]] || echo ":: TARGET IS: $TARGET"
    [[ -n "$TARGET" ]] || return
    if [[ -f "$TARGET" ]]; then
@@ -444,16 +350,17 @@ main()
       PARENT="$(echo "$JSON" | jshon -e "parent_id" -u)"
       TAGS="$(echo "$JSON" | jshon -e "tag_string" -u)"
       POOL="$(echo "$JSON" | jshon -e "pool_string" -u)"
-      ARTISTCNT="$(echo "$JSON" | jshon -e "tag_count_artist" -u)"
       ID="$(echo "$JSON" | jshon -e "id" -u)"
       MD5="$(echo "$JSON" | jshon -e "md5" -u)"
       EXT="$(echo "$JSON" | jshon -e "file_ext" -u)"
       URL="$DANBOORU_ROOT/data/$MD5.$EXT"
       DURL="$DANBOORU_ROOT/posts/$ID"
+      ARTISTS=($(echo "$JSON" | jshon -e "tag_string_artist" -u))
+      ARTIST="${ARTISTS[0]}"
 
       # Check artist
       OK=1
-      [[ $ARTISTCNT -eq 0 ]] && [[ $DANBOORU_NO_ARTIST -eq 0 ]] && OK=0
+      [[ -n "$ARTIST" ]] || { [[ $DANBOORU_NO_ARTIST -eq 0 ]] && OK=0; }
 
       if [[ $OK -eq 0 ]]; then
          echo "[!] no artist: $DURL"
@@ -462,7 +369,7 @@ main()
 
       # Check parent
       OK=1
-      [[ "$PARENT" != "null" ]] && [[ $DANBOORU_ONLY_PARENT -eq 1 ]] && OK=0
+      [[ "$PARENT" == "null" ]] || { [[ $DANBOORU_ONLY_PARENT -eq 1 ]] && OK=0; }
 
       if [[ $OK -eq 0 ]]; then
          echo "[!] block parent [$PARENT]: $DURL"
@@ -578,7 +485,7 @@ main()
       fi
 
       # Check picture
-      check_picture "$URL" "$DURL" "$TAGS" "$CREATED_AT" "$JSON"
+      check_picture "$URL" "$DURL" "$CREATED_AT" "$JSON"
 
       # Wait for forks
       while [[ $(jobs -p | wc -l) -gt $FORK_LIMIT ]]; do
