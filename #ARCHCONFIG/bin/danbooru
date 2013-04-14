@@ -325,6 +325,7 @@ check_picture()
    [[ -n "$TARGET" ]] || return
    if [[ -f "$TARGET" ]]; then
       echo "[!] exist [$(basename $TARGET)]: $DURL"
+      [[ -f "${TARGET%.*}.json" ]] || echo "$JSON" > "${TARGET%.*}.json"
       return
    fi
 
@@ -607,7 +608,12 @@ recrawl_picture()
    echo "$JSON" > "$JSONF"
 
    # Handle conflicts!
-   if [[ "$OMD5" != "$MD5" ]]; then
+   if [[ "$OTARGET" != "$TARGET" ]] && [[ -f "$TARGET" ]]; then
+      # Target already exists?
+      echo "[!] target exists: $TARGET"
+      rm "$OTARGET"
+      rm "${OTARGET%.*}.json"
+   elif [[ "$OMD5" != "$MD5" ]]; then
       # MD5 differs
       echo "[!] md5 differs: $DURL"
       store_picture "$URL" "$CREATED_AT" "$JSON" "$TARGET"
@@ -622,10 +628,11 @@ recrawl_picture()
       mkdir -p "$(dirname $TARGET)"
       mv "$OTARGET" "$TARGET"
       mv "${OTARGET%.*}.json" "${TARGET%.*}.json"
+      [[ -f "$TARGET" ]] && [[ -n "$CREATED_AT" ]] && touch -c -d "$CREATED_AT" "$TARGET"
+   else
+      # Update created at
+      [[ -f "$TARGET" ]] && [[ -n "$CREATED_AT" ]] && touch -c -d "$CREATED_AT" "$TARGET"
    fi
-
-   # Update created at
-   [[ -n "$CREATED_AT" ]] && [[ -f "$TARET" ]] && touch -c -d "$CREATED_AT" "$TARGET"
 }
 
 # Recrawl images (updates .json and updates location if needed)
