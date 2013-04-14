@@ -641,8 +641,12 @@ recrawl()
 {
    echo "[I] recrawling from: $LOCAL_STORE"
 
+   # Filter recrawling to pattern
+   PATTERN="*"
+   [[ -n "$@" ]] && PATTERN="*$@*"
+
    # Recrawl local posts
-   find "$LOCAL_STORE" -name "*.json" | while read i; do
+   find "$LOCAL_STORE" -path "$PATTERN" -name "*.json" | while read i; do
       [[ $VERBOSE -eq 0 ]] && echo "[C] $i"
       [[ $FORK_LIMIT -gt 1 ]] && { (recrawl_picture "$i" &); sleep 1; } # Sleep, so we don't hammer servers
       [[ $FORK_LIMIT -gt 1 ]] || recrawl_picture "$i"
