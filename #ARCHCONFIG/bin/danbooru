@@ -665,7 +665,7 @@ recrawl()
 
    # Remove all empty directories
    echo "[I] removing all empty directories"
-   find "$LOCAL_STORE" -type d -empty -delete;
+   find "$LOCAL_STORE" -path "$PATTERN" -type d -empty -delete;
 }
 
 # Init
