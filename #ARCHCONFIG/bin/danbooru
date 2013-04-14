@@ -559,7 +559,6 @@ recrawl_picture()
 
    # Store stuff from old json
    OEXT="$(jshon -F "$JSONF" -e "file_ext" -u)"
-   OMD5="$(jshon -F "$JSONF" -e "md5" -u)"
    DURL="$DANBOORU_ROOT/posts/$ID"
    JSON="$(get_json "posts/$ID")"
    [[ -n "$JSON" ]] || return
@@ -589,6 +588,8 @@ recrawl_picture()
    # Get target
    OTARGET="${JSONF%.*}.$OEXT"
    TARGET="$(target_from_format "$JSON")"
+   OMD5="$(md5sum "$OTARGET")"
+   OMD5="${OMD5%% *}"
 
    # Verbose output
    if [[ $VERBOSE -eq 1 ]]; then
