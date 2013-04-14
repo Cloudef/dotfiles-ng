@@ -4,7 +4,7 @@
 
 # USAGE
 # -----
-# danbooru (-v) (-r) (-s) [page] [tags] [limit]
+# danbooru [-v] [-r] [-s] [<page> [limit]] tags ...
 #  -v: verbose output
 #  -r: recrawl posts (updates json, updates location if needed)
 #  -s: don't fork (sets FORK_LIMIT to 1)
@@ -13,6 +13,8 @@
 #  [page]: page number to crawl in danbooru
 #  [tags]: tags/metatags for searching
 #  [limit]: limit results per page
+#
+# If -r is specified, you can filter recrawling to specific location as argument
 
 # -- Sun Apr 14 07:49:45 UTC 2013
 # Artist information is now provided in Danbooru API!
@@ -198,7 +200,7 @@ sigint()
 usage()
 {
    for i in $@; do
-      [[ "$i" != "-h" ]] && [[ "$i" != "--help" ]] || error_no_unlock "$(basename "$0") (-v) (-r) (-s) [page] [tags] [limit]"
+      [[ "$i" != "-h" ]] && [[ "$i" != "--help" ]] || error_no_unlock "$(basename "$0") [-v] [-r] [-s] [<page> [limit]] tags ..."
       [[ "$i" != "-v" ]]                           || VERBOSE=1
       [[ "$i" != "-r" ]]                           || RECRAWL=1
       [[ "$i" != "-s" ]]                           || FORK_LIMIT=1
@@ -248,7 +250,7 @@ target_from_format()
    ID="$(echo "$JSON" | jshon -e "id" -u)"
    MD5="$(echo "$JSON" | jshon -e "md5" -u)"
    EXT="$(echo "$JSON" | jshon -e "file_ext" -u)"
-   POOLS="$(echo "$JSON" | jshon -e "pool_string" -u)"
+   POOLS=($(echo "$JSON" | jshon -e "pool_string" -u))
    POOL="$(echo "${POOLS[0]}" | sed 's/^pool://')"
    ARTISTS=($(echo "$JSON" | jshon -e "tag_string_artist" -u))
    ARTIST="${ARTISTS[0]}"
@@ -341,12 +343,16 @@ check_picture()
 main()
 {
    local RESULT=
-   local LIMIT="${3-100}"
-   local PAGE="${1-1}"
-   local PTAGS="$(urlencode "$2")"
    local OK=0
+   local PAGE=1
+   local LIMIT=100
 
-   if [[ $VERBOSE -eq 0 ]]; then
+   # Parse arguments
+   [[ "$1" =~ ^[0-9]+$ ]] && { PAGE="$1"; shift 1; }
+   [[ "$1" =~ ^[0-9]+$ ]] && { LIMIT="$1"; shift 1; }
+   local PTAGS="$(urlencode "$@")"
+
+   if [[ $VERBOSE -eq 1 ]]; then
       echo "[F] $DANBOORU_ROOT/posts.json?page=$PAGE&limit=$LIMIT&tags=$PTAGS"
       echo ""
    fi
@@ -382,7 +388,7 @@ main()
       HEIGHT="$(echo "$JSON" | jshon -e "image_height" -u)"
       PARENT="$(echo "$JSON" | jshon -e "parent_id" -u)"
       TAGS="$(echo "$JSON" | jshon -e "tag_string" -u)"
-      POOLS="$(echo "$JSON" | jshon -e "pool_string" -u)"
+      POOLS=($(echo "$JSON" | jshon -e "pool_string" -u))
       MD5="$(echo "$JSON" | jshon -e "md5" -u)"
       EXT="$(echo "$JSON" | jshon -e "file_ext" -u)"
       URL="$DANBOORU_ROOT/data/$MD5.$EXT"
@@ -399,7 +405,7 @@ main()
          echo ":: EXT: $EXT"
          echo ":: MD5: $MD5"
          [[ -n "$ARTIST" ]] && echo ":: ARTIST: $ARTIST"
-         [[ -n "$POOLS" ]] && echo ":: POOLS: $POOLS"
+         [[ -n "$POOLS" ]] && echo ":: POOLS: ${POOLS[@]}"
       fi
 
       # Check artist
