@@ -18,8 +18,6 @@
 # Artist information is now provided in Danbooru API!
 # The caching code and crawling code for artist is now removed.
 # You can remove ignore.db and artist.db.
-#
-# I also removed %pool formatting as it would just use pool ids not the name
 
 # -- Fri Apr 12 18:36:21 UTC 2013
 # Danbooru API changed!
@@ -51,6 +49,7 @@ LOCAL_STORE="/mnt/storage/pictures/danbooru"
 #  %artist:    artist of the post
 #  %rating:    rating of the post (safe, questionable, explicit)
 #  %postid:    id of the post
+#  %pool:      pool id of the post
 #  %md5:       md5 of the post
 #
 # Example of default format:
@@ -238,6 +237,7 @@ rating_str()
 #  %artist:    artist of the post
 #  %rating:    rating of the post (safe, questionable, explicit)
 #  %postid:    id of the post
+#  %pool:      pool id of the post
 #  %md5:       md5 of the post
 target_from_format()
 {
@@ -248,15 +248,18 @@ target_from_format()
    ID="$(echo "$JSON" | jshon -e "id" -u)"
    MD5="$(echo "$JSON" | jshon -e "md5" -u)"
    EXT="$(echo "$JSON" | jshon -e "file_ext" -u)"
+   POOLS="$(echo "$JSON" | jshon -e "pool_string" -u)"
+   POOL="$(echo "${POOLS[0]}" | sed 's/^pool://')"
    ARTISTS=($(echo "$JSON" | jshon -e "tag_string_artist" -u))
    ARTIST="${ARTISTS[0]}"
    RATING="$(echo "$JSON" | jshon -e "rating" -u)"
    RATING="$(rating_str "$RATING")"
    [[ -n "$RATING" ]] || return
    [[ -n "$ARTIST" ]] || ARTIST="noartist"
+   [[ -n "$POOL"   ]] || POOL="nopool"
 
    TARGET="$(echo "$LOCAL_FORMAT" |\
-      sed "s/%extension/$EXT/;s/%artist/$ARTIST/;s/%rating/$RATING/;s/%postid/$ID/;s/%md5/$MD5/")"
+      sed "s/%extension/$EXT/;s/%artist/$ARTIST/;s/%rating/$RATING/;s/%postid/$ID/;s/%pool/$POOL/;s/%md5/$MD5/")"
    TARGET=$(echo -n "$TARGET" | sed "$FILENAME_EXP") # Replace illegal characters.
    echo "$LOCAL_STORE/$TARGET"
 }
