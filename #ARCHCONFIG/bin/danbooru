@@ -153,12 +153,14 @@ error()
 {
    unlock
    echo "$@"
+   test -z "`jobs -p`" || kill -9 `jobs -p` &> /dev/null
    exit 1
 }
 
 error_no_unlock()
 {
    echo "$@"
+   test -z "`jobs -p`" || kill -9 `jobs -p` &> /dev/null
    exit 1
 }
 
@@ -358,6 +360,7 @@ main()
    fi
 
    RESULT="$(get_json "posts" "page=$PAGE&limit=$LIMIT&tags=$PTAGS")"
+   [[ "$RESULT" == "403 Forbidden" ]] && error "[!!] username or API key is wrong"
    JSONCNT=$(echo "$RESULT" | jshon -l)
 
    for i in $(seq 0 $((JSONCNT-1))); do
@@ -573,10 +576,7 @@ recrawl_picture()
    [[ -n "$JSON" ]] || return
 
    # Check if we are throttled
-   if [[ "$JSON" == "421 User Throttled" ]]; then
-      echo "[!!] danbooru has throttled you"
-      return
-   fi
+   [[ "$JSON" == "421 User Throttled" ]] && error "[!!] danbooru has throttled you"
 
    # Data we might like to recrawl
    ID="$(echo "$JSON" | jshon -e "id" -u)"
@@ -653,6 +653,11 @@ recrawl()
    # Filter recrawling to pattern
    PATTERN="*"
    [[ -n "$@" ]] && PATTERN="*$@*"
+
+   # Test credentials before recrawling
+   RESULT="$(get_json "posts" "page=1&limit=1")"
+   [[ "$RESULT" == "403 Forbidden" ]] && error "[!!] username or API key is wrong"
+   [[ "$RESULT" == "421 User Throttled" ]] && error "[!!] danbooru has throttled you"
 
    # Recrawl local posts
    find "$LOCAL_STORE" -path "$PATTERN" -name "*.json" | while read i; do
