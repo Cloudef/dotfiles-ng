@@ -7,10 +7,10 @@ download_rate = 0
 upload_rate   = 500
 
 # peer limits
-min_peers            = 5
-max_peers            = 10
-min_peers_seed       = 5
-max_peers_seed       = 10
+min_peers            = 40
+max_peers            = 100
+min_peers_seed       = 10
+max_peers_seed       = 50
 
 # ram limits
 max_memory_usage = 1800M
@@ -36,8 +36,7 @@ schedule = storage_torrent2,10,10,"load_start=/mnt/東方/torrent/*.torrent,d.se
 #
 
 # general network
-max_uploads          = 10
-max_uploads_global   = 10
+max_uploads          = 15
 port_range           = 49164-49164
 port_random          = no
 
