@@ -7,7 +7,7 @@
 # danbooru [-v] [-r] [-s] [<page> [limit]] tags ...
 #  -v: verbose output
 #  -r: recrawl posts (updates json, updates location if needed)
-#  -s: don't fork (sets FORK_LIMIT to 1)
+#  -s: don't fork (sets DANBOORU_FORK_LIMIT to 1)
 #
 # Following are only relevant when no -r is specified:
 #  [page]: page number to crawl in danbooru
@@ -42,8 +42,8 @@
 #
 # If you are calling this script in for loop, you should call sleep each iteration.
 
-# Local directory where to store the posts
-LOCAL_STORE="/mnt/storage/pictures/danbooru"
+# Directory where to store the posts
+DANBOORU_STORE="/mnt/storage/pictures/danbooru"
 
 # Directory structure for storing posts
 # Following keys can be used:
@@ -61,11 +61,11 @@ LOCAL_STORE="/mnt/storage/pictures/danbooru"
 #
 # Use -v flag to doublecheck that your filepaths looks sane
 # This script does no sanity checking to this
-LOCAL_FORMAT="%artist/%rating/%md5.%extension"
+DANBOORU_FORMAT="%artist/%rating/%md5.%extension"
 
 # Filename expression
 # Set characters which you want stripped from filename, eg, if you use fat32.
-FILENAME_EXP='s/[][%\+\\\"\*;:\?\|<>,=]/_/g'
+DANBOORU_FILENAME_EXP='s/[][%\+\\\"\*;:\?\|<>,=]/_/g'
 
 # Rating to download
 # s = Only download safe posts
@@ -123,23 +123,34 @@ DANBOORU_POOL_FILTER=()
 # NOTE: This array takes pool ids!
 DANBOORU_POOL_MATCH=()
 
-# Limit the number of sub processes for download
-FORK_LIMIT=20
+# Danbooru user && api key
+DANBOORU_USER=""
+DANBOORU_API_KEY=""
 
-# Lock file
-TMP_DIR="/tmp/danbooru"
-LOCK_FILE="$TMP_DIR/lock"
+# You can remove this if block
+if [[ -f "/arch/passwd/libpasswd-sh" ]]; then
+   source "/arch/passwd/libpasswd-sh"
+   DANBOORU_USER="$(_passwd_get_user "danbooru")"
+   DANBOORU_API_KEY="$(_passwd_get_pass "danbooru")"
+fi
+
+# Curl agent
+DANBOORU_CURL_AGENT="Mozilla/4.73 [en] (X11; U; Linux 2.2.15 i686)"
 
 # Danbooru API root
 DANBOORU_ROOT="http://danbooru.donmai.us"
 
-# Danbooru user && api key
-source "/arch/passwd/libpasswd-sh"
-DANBOORU_USER="$(_passwd_get_user "danbooru")"
-DANBOORU_API_KEY="$(_passwd_get_pass "danbooru")"
+# Limit the number of sub processes for download
+DANBOORU_FORK_LIMIT=20
 
-# Curl agent
-CURL_AGENT="Mozilla/4.73 [en] (X11; U; Linux 2.2.15 i686)"
+# Source configuration, if such exists
+# You can override the stuff above in this configuration file
+[[ -n "$DANBOORU_CONFIG" ]] || DANBOORU_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config/danbooru.conf}"
+[[ -f "$DANBOORU_CONFIG" ]] && source "$DANBOORU_CONFIG"
+
+# Lock file
+TMP_DIR="/tmp/danbooru"
+LOCK_FILE="$TMP_DIR/lock"
 
 # Depencies for this script
 # Perl is used for url encoding tags
@@ -205,7 +216,7 @@ usage()
       [[ "$i" != "-h" ]] && [[ "$i" != "--help" ]] || error_no_unlock "$(basename "$0") [-v] [-r] [-s] [<page> [limit]] tags ..."
       [[ "$i" != "-v" ]]                           || VERBOSE=1
       [[ "$i" != "-r" ]]                           || RECRAWL=1
-      [[ "$i" != "-s" ]]                           || FORK_LIMIT=1
+      [[ "$i" != "-s" ]]                           || DANBOORU_FORK_LIMIT=1
    done
 }
 
@@ -221,9 +232,9 @@ urlencode()
 get_json()
 {
    [[ -n "$2" ]] &&
-      curl -s --user-agent "$CURL_AGENT" "$DANBOORU_ROOT/$1.json?$2&login=$DANBOORU_USER&api_key=$DANBOORU_API_KEY"
+      curl -s --user-agent "$DANBOORU_CURL_AGENT" "$DANBOORU_ROOT/$1.json?$2&login=$DANBOORU_USER&api_key=$DANBOORU_API_KEY"
    [[ -n "$2" ]] ||
-      curl -s --user-agent "$CURL_AGENT" "$DANBOORU_ROOT/$1.json?login=$DANBOORU_USER&api_key=$DANBOORU_API_KEY"
+      curl -s --user-agent "$DANBOORU_CURL_AGENT" "$DANBOORU_ROOT/$1.json?login=$DANBOORU_USER&api_key=$DANBOORU_API_KEY"
 }
 
 # $1 = JSON rating
@@ -262,10 +273,10 @@ target_from_format()
    [[ -n "$ARTIST" ]] || ARTIST="noartist"
    [[ -n "$POOL"   ]] || POOL="nopool"
 
-   TARGET="$(echo "$LOCAL_FORMAT" |\
+   TARGET="$(echo "$DANBOORU_FORMAT" |\
       sed "s/%extension/$EXT/;s/%artist/$ARTIST/;s/%rating/$RATING/;s/%postid/$ID/;s/%pool/$POOL/;s/%md5/$MD5/")"
-   TARGET=$(echo -n "$TARGET" | sed "$FILENAME_EXP") # Replace illegal characters.
-   echo "$LOCAL_STORE/$TARGET"
+   TARGET=$(echo -n "$TARGET" | sed "$DANBOORU_FILENAME_EXP") # Replace illegal characters.
+   echo "$DANBOORU_STORE/$TARGET"
 }
 
 # $1 = URL
@@ -337,8 +348,8 @@ check_picture()
    fi
 
    # Download picture to disk
-   [[ $FORK_LIMIT -gt 1 ]] && store_picture "$URL" "$DATE" "$JSON" "$TARGET" &
-   [[ $FORK_LIMIT -gt 1 ]] || store_picture "$URL" "$DATE" "$JSON" "$TARGET"
+   [[ $DANBOORU_FORK_LIMIT -gt 1 ]] && store_picture "$URL" "$DATE" "$JSON" "$TARGET" &
+   [[ $DANBOORU_FORK_LIMIT -gt 1 ]] || store_picture "$URL" "$DATE" "$JSON" "$TARGET"
 }
 
 # Main
@@ -362,6 +373,7 @@ main()
    RESULT="$(get_json "posts" "page=$PAGE&limit=$LIMIT&tags=$PTAGS")"
    [[ "$RESULT" == "403 Forbidden" ]] && error "[!!] username or API key is wrong"
    JSONCNT=$(echo "$RESULT" | jshon -l)
+   [[ $JSONCNT -eq 0 ]] && error "[!!] failed to retieve posts from: $DANBOORU_ROOT/posts.json"
 
    for i in $(seq 0 $((JSONCNT-1))); do
       # Check if we are throttled
@@ -539,7 +551,7 @@ main()
       check_picture "$URL" "$DURL" "$CREATED_AT" "$JSON"
 
       # Wait for forks
-      while [[ $(jobs -p | wc -l) -gt $FORK_LIMIT ]]; do
+      while [[ $(jobs -p | wc -l) -gt $DANBOORU_FORK_LIMIT ]]; do
          [[ $VERBOSE -eq 1 ]] && echo "[I] fork limit hit, waiting: ($(jobs -p | wc -l))"
          sleep 1
       done
@@ -648,7 +660,7 @@ recrawl_picture()
 # Recrawl images (updates .json and updates location if needed)
 recrawl()
 {
-   echo "[I] recrawling from: $LOCAL_STORE"
+   echo "[I] recrawling from: $DANBOORU_STORE"
 
    # Filter recrawling to pattern
    PATTERN="*"
@@ -658,13 +670,15 @@ recrawl()
    RESULT="$(get_json "posts" "page=1&limit=1")"
    [[ "$RESULT" == "403 Forbidden" ]] && error "[!!] username or API key is wrong"
    [[ "$RESULT" == "421 User Throttled" ]] && error "[!!] danbooru has throttled you"
+   JSONCNT=$(echo "$RESULT" | jshon -l)
+   [[ $JSONCNT -eq 0 ]] && error "[!!] failed to retieve posts from: $DANBOORU_ROOT/posts.json"
 
    # Recrawl local posts
-   find "$LOCAL_STORE" -path "$PATTERN" -name "*.json" | while read i; do
+   find "$DANBOORU_STORE" -path "$PATTERN" -name "*.json" | while read i; do
       [[ $VERBOSE -eq 0 ]] && echo "[C] $i"
-      [[ $FORK_LIMIT -gt 1 ]] && { (recrawl_picture "$i" &); sleep 1; } # Sleep, so we don't hammer servers
-      [[ $FORK_LIMIT -gt 1 ]] || recrawl_picture "$i"
-      while [[ $(jobs -p | wc -l) -gt $FORK_LIMIT ]]; do
+      [[ $DANBOORU_FORK_LIMIT -gt 1 ]] && { (recrawl_picture "$i" &); sleep 1; } # Sleep, so we don't hammer servers
+      [[ $DANBOORU_FORK_LIMIT -gt 1 ]] || recrawl_picture "$i"
+      while [[ $(jobs -p | wc -l) -gt $DANBOORU_FORK_LIMIT ]]; do
          [[ $VERBOSE -eq 1 ]] && echo "[I] fork limit hit, waiting: ($(jobs -p | wc -l))"
          sleep 1
       done
@@ -679,7 +693,7 @@ recrawl()
 
    # Remove all empty directories
    echo "[I] removing all empty directories"
-   find "$LOCAL_STORE" -path "$PATTERN" -type d -empty -delete;
+   find "$DANBOORU_STORE" -path "$PATTERN" -type d -empty -delete;
 }
 
 # Init
