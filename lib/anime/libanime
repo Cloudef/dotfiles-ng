@@ -43,7 +43,7 @@ _anime_get_f() {
    [[ -f "$_LIBANIME_CACHE/$md5.afil" ]] && { grep -i "$name" "$_LIBANIME_CACHE/$md5.afil"; return; } ||
    locate -d "$_LIBANIME_DB" "$db" | __anime_base_f | \
       egrep -v "\.srt|\.ass|\.sfv" | \
-      sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[- ]*//g;s/[- ]*$//;s/v[0-9]//;s/  .*//' | \
+      sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[- ]*//g;s/[- ]*$//;s/v[0-9]//;s/  ?*/ /' | \
       perl -p -e 's/^\n//g' | tee "$_LIBANIME_CACHE/$md5.afil" | grep -i "$name"
 }
 
@@ -55,7 +55,7 @@ _anime_get_d() {
    [[ -f "$_LIBANIME_CACHE/$md5.adir" ]] && { grep -i "$name" "$_LIBANIME_CACHE/$md5.adir"; return; } ||
    locate -d "$_LIBANIME_DB" "$db" | __anime_base_d | \
       egrep -v "\.srt|\.ass|\.sfv" | \
-      sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[- ]*//g;s/[- ]*$//;s/v[0-9]//;s/  .*//' | \
+      sed 's/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;;s/[_.]/ /g;s/^[- ]*//g;s/[- ]*$//;s/v[0-9]//;s/  ?*/ /' | \
       perl -p -e 's/^\n//g' | tee "$_LIBANIME_CACHE/$md5.adir" | grep -i "$name"
 }
 
