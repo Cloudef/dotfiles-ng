@@ -3,7 +3,7 @@
 # -- Applies registry fixes automatically
 #    from regs directory
 
-ROOTDIR="$XDG_DATA_HOME/wine"
+ROOTDIR="${XDG_DATA_HOME:-$HOME/.local/share}/wine"
 MYDOCS="$ROOTDIR/mydocs"
 
 setupenv()
