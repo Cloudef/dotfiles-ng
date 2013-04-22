@@ -1,2 +1,2 @@
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
-"VideoMemorySize"="512"
+"VideoMemorySize"="1024"
