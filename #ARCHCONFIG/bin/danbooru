@@ -273,6 +273,11 @@ target_from_format()
    [[ -n "$ARTIST" ]] || ARTIST="noartist"
    [[ -n "$POOL"   ]] || POOL="nopool"
 
+   # sanity artist
+   ARTIST="${ARTIST//\\/\\\\}"
+   ARTIST="${ARTIST////∕}"
+   ARTIST="${ARTIST//&/\&}"
+
    TARGET="$(echo "$DANBOORU_FORMAT" |\
       sed "s/%extension/$EXT/;s/%artist/$ARTIST/;s/%rating/$RATING/;s/%postid/$ID/;s/%pool/$POOL/;s/%md5/$MD5/")"
    TARGET=$(echo -n "$TARGET" | sed "$DANBOORU_FILENAME_EXP") # Replace illegal characters.
