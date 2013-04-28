@@ -213,7 +213,7 @@ vimo() {
    local gtdir=
    local cwd=$PWD
    git ls-files &>/dev/null || return # test if git
-   gtdir="$(git rev-parse --show-toplevel)"
+   gtdir="$(git rev-parse --show-toplevel )"
    [[ "$cwd" != "$gtdir" ]] && pushd "$gtdir" &> /dev/null # git root
    [[ -n "$@" ]] && { match="$(git ls-files | grep "$@")"; } ||
                       match="$(git ls-files)"
@@ -232,7 +232,7 @@ openo() {
    local gtdir=
    local cwd=$PWD
    git ls-files &>/dev/null || return # test if git
-   gtdir="$(git rev-parse --show-toplevel)"
+   gtdir="$(git rev-parse --show-toplevel )"
    [[ "$cwd" != "$gtdir" ]] && pushd "$gtdir" &> /dev/null # git root
    [[ -n "$@" ]] && { match="$(git ls-files | grep "$@")"; } ||
                       match="$(git ls-files)"
@@ -285,13 +285,13 @@ function greplib() {
       return
    }
 
-   [[ -n "$2" ]] || {
-      nm -a -o /usr/lib/*.so 2> /dev/null | grep $1
-      nm -a -o /usr/lib/*.a  2> /dev/null | grep $1
-   } || {
-      nm -a -o $2/*.so 2> /dev/null | grep $1
-      nm -a -o $2/*.a  2> /dev/null | grep $1
-   }
+   if [[ -n "$2" ]]; then
+      nm -a -o "$2/*.so" 2> /dev/null | grep "$1"
+      nm -a -o "$2/*.a"  2> /dev/null | grep "$1"
+   else
+      nm -a -o "/usr/lib/*.so" 2> /dev/null | grep "$1"
+      nm -a -o "/usr/lib/*.a"  2> /dev/null | grep "$1"
+   fi
 }
 
 ##############################
