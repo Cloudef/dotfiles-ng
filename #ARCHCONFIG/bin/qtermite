@@ -23,6 +23,7 @@ spawn() {
    done
    xdotool windowsize $wid $WIDTH $HEIGHT
    xdotool windowmove $wid $X $Y
+   xdotool windowsize $wid $WIDTH $HEIGHT
    xdotool windowraise $wid
 }
 
@@ -31,8 +32,8 @@ toggle() {
    local wid="$@"
    local visible="$(xdotool search --onlyvisible --classname qtermite 2>/dev/null | tail -1)"
    [[ ! -n "$visible" ]] && {
-      xdotool windowsize $wid $WIDTH $HEIGHT
       xdotool windowmap $wid
+      xdotool windowsize $wid $WIDTH $HEIGHT
       xdotool windowmove $wid $X $Y
       xdotool windowraise $wid
    } || {
