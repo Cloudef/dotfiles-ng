@@ -3,7 +3,7 @@
 " source this in your local .vimrc
 "
 
-set nocompatible                 " non Vi compatible
+set nocompatible " non Vi compatible
 
 " {{{ Pathogen plugin
 source /arch/vim/pathogen.vim
@@ -111,6 +111,9 @@ autocmd BufEnter * IndentGuidesEnable
 " }}}
 " {{{ GLSL plugin
 au BufNewFile,BufRead *.frag,*.vert,*.fp,*.vp,*.glsl setf glsl
+" }}}
+" {{{ YouCompleteMe
+let g:ycm_confirm_extra_conf = 0 " don't ask for confirmation
 " }}}
 
 " }}}
