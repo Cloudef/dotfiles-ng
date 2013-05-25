@@ -19,6 +19,8 @@ export WINEDIR="${XDG_DATA_HOME-$HOME/.local/share}/wine"
 export WINEPREFIX="$WINEDIR/prefixes/default"
 alias winedir="cd $WINEDIR"
 
+alias homurapolkka='mplayer -loop 0 "/mnt/storage/videos/【MMD】Go home Homura, you are drunk【ハピトリ】HD Version!-kwiuX2OAvJg.mp4"'
+
 alias dev="cd /mnt/storage/dev"
 alias ogl="cd /mnt/storage/dev/projektit/glhck"
 alias pkg="cd /arch/pkg"
