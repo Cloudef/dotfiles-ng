@@ -42,13 +42,16 @@ port_random          = no
 
 # general protocol
 dht                  = auto
-dht_port             = 49162
+dht_port             = 6881
 peer_exchange        = yes
 use_udp_trackers     = yes
 
 # general other
 encryption           = allow_incoming,try_outgoing,enable_retry
 check_hash           = no
+
+# Preallocate files; reduces defragmentation on filesystems.
+system.file_allocate.set = yes
 
 # pyroscope settings
 system.method.insert = pyro.extended, value|const, 1
