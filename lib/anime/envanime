@@ -31,7 +31,7 @@ __anime() {
 # helper function
 _anime_save_hist() {
    [[ "$(basename $SHELL)" == "zsh" ]] &&
-      print -s "anime $(cat $_ANIME_HISTORY | tail -n1)"
+      print -s "anime \"$(cat $_ANIME_HISTORY | tail -n1)\""
    [[ "$(basename $SHELL)" == "bash" ]] &&
-      history -s "anime $(cat $_ANIME_HISTORY | tail -n1)"
+      history -s "anime \"$(cat $_ANIME_HISTORY | tail -n1)\""
 }
