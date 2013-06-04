@@ -18,6 +18,17 @@ source "/arch/shell/shellrc"
 # prezto
 export PREZTO="/arch/shell/prezto"
 
+# temporary files
+if [[ ! -d "$TMPDIR" ]]; then
+   export TMPDIR="/tmp/$USER"
+   mkdir -p -m 700 "$TMPDIR"
+fi
+
+TMPPREFIX="${TMPDIR%/}/zsh"
+if [[ ! -d "$TMPPREFIX" ]]; then
+   mkdir -p "$TMPPREFIX"
+fi
+
 # other enviroiment crap
 typeset -gU cdpath fpath mailpath manpath path
 typeset -gUT INFOPATH infopath
@@ -43,7 +54,7 @@ done
 unset path_file
 
 # ssh-agent forwarding
-zstyle ':prezto:plugins:ssh-agent' forwarding 'on'
+zstyle ':prezto:plugins:ssh' forwarding 'on'
 
 # Set the key mapping style to 'emacs' or 'vi'.
 zstyle ':prezto:module:editor' keymap 'vi'
@@ -90,7 +101,7 @@ zstyle ':prezto:load' pmodule \
    'spectrum' \
    'utility' \
    'completion' \
-   'ssh-agent' \
+   'ssh' \
    'git' \
    'prompt'
 
@@ -107,7 +118,7 @@ zstyle ':prezto:load' pmodule \
    'spectrum' \
    'utility' \
    'completion' \
-   'ssh-agent' \
+   'ssh' \
    'git' \
    'syntax-highlighting' \
    'prompt'
