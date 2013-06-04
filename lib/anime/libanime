@@ -5,8 +5,7 @@
 
 CACHE_IGNORE_EGREP='\.srt|\.ass|\.sfv'
 CACHE_STORE_REGEX='s/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;s/[_.]/ /g;s/^[- ]*//g;s/[- ]*$//g;s/v[0-9]//;s/  ?*/ /g'
-CACHE_LOOKUP_REGEX='s/[!]/*/g;s/ \+ /*/g;s/ /*/g'
-CACHE_LOOKUP_SUFFIX='[^0-9().\[\]]'
+CACHE_LOOKUP_REGEX='s/ \([0-9]\w\)/?\1/g;s/[!]/*/g;s/ \+ /*/g;s/ /*/g'
 
 err() { echo "$@" 1>&2; exit 1; }
 
@@ -61,15 +60,15 @@ _anime_get_d() {
 _anime_lookup_f() {
    local db="$1"; local md5="$(__anime_hash "$db")";
    shift; local lookup="$(echo "$@" | sed "$CACHE_LOOKUP_REGEX")"
-   # echo "$db/*$lookup$CACHE_LOOKUP_SUFFIX*" 1>&2
-   locate -d "$_LIBANIME_DB" "$db/*$lookup$CACHE_LOOKUP_SUFFIX*" | grep -ve "$CACHE_IGNORE_EGREP" | head -n1
+   # echo "$db/*$lookup*" 1>&2
+   locate -d "$_LIBANIME_DB" "$db/*$lookup*" | grep -ve "$CACHE_IGNORE_EGREP" | tail -n1
 }
 
 # lookup anime from _get list (directories only)
 _anime_lookup_d() {
    local db="$1"; local md5="$(__anime_hash "$db")";
    shift; local lookup="$(echo "$@" | sed "$CACHE_LOOKUP_REGEX")"
-   locate -d "$_LIBANIME_DB" "$db/*$lookup$CACHE_LOOKUP_SUFFIX*" | grep -ve "$CACHE_IGNORE_EGREP" | head -n1
+   locate -d "$_LIBANIME_DB" "$db/*$lookup*" | grep -ve "$CACHE_IGNORE_EGREP" | tail -n1
 }
 
 # purge cache
