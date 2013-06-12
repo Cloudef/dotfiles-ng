@@ -1,0 +1,24 @@
+#!/bin/sh
+# paste to vpaste.net
+
+server1="http://ix.io"
+server2="http://vpaste.net"
+server="$server1"
+
+# ix.io
+[[ "$server" == "$server1" ]] && {
+   [[ -f "$1" ]] && out="$(curl -s -n -F "f:1=<$1" "$server")"
+   [[ -f "$1" ]] || out="$(curl -s -n -F 'f:1=<-' "$server")"
+}
+
+# paste failed, try next server
+[[ -n "$out" ]] || server="$server2"
+
+# vpaste.net
+[[ "$server" == "$server2" ]] && {
+   [[ -f "$1" ]] && out="$(curl -s -F "text=<$1" "$server/?$2")"
+   [[ -f "$1" ]] || out="$(curl -s -F 'text=<-' "$server/?$@")"
+}
+
+[[ -n "$out" ]] && echo "$out"
+[[ -n "$out" ]] || echo "-!- paste failed!"
