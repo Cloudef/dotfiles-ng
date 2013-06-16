@@ -3,11 +3,13 @@
 # -- Applies registry fixes automatically
 #    from regs directory
 
+DEFAULT_LC_ALL="$LC_ALL"
 ROOTDIR="${XDG_DATA_HOME:-$HOME/.local/share}/wine"
 MYDOCS="$ROOTDIR/mydocs"
 
 setupenv()
 {
+   export LC_ALL="$DEFAULT_LC_ALL"
    [[ -f "$WINEPREFIX/LANG" ]] && {
       export LC_ALL="$(cat "$WINEPREFIX/LANG")"
    }
@@ -43,6 +45,11 @@ manage_prefix()
    echo -e "\t+ Symlinking D: to /mnt/storage"
    [[ -L "$WINEPREFIX/dosdevices/d:" ]] && rm "$WINEPREFIX/dosdevices/d:"
    ln -s "/mnt/storage" "$WINEPREFIX/dosdevices/d:"
+
+   # Create /mnt/東方 symlink to E:
+   echo -e "\t+ Symlinking E: to /mnt/東方"
+   [[ -L "$WINEPREFIX/dosdevices/e:" ]] && rm "$WINEPREFIX/dosdevices/e:"
+   ln -s "/mnt/東方" "$WINEPREFIX/dosdevices/e:"
 
    # Copy fonts to prefix
    for f in "$ROOTDIR/fonts/"*; do
