@@ -16,22 +16,14 @@ check_pid() {
    kill -0 $PID &> /dev/null && { error "already running"; } || rm "$@"
 }
 
-# attach
-# $1: name of attach
-# $2: socket file
-# $3: pid file
-attach() {
-   $TERMINAL --class "$1" --name "$1" -e "dtach -a \"$2\"" &
-   echo "$!" > "$3"
-}
-
 # create new session
 # $1: name of session
 # $2: program to run
 # $3: socket file
 # $4: pid file
-create() {
-   $TERMINAL --class "$1" --name "$1" -e "dtach -c \"$3\" \"$2\"" &
+attach() {
+   $TERMINAL --class "$1" --name "$1" -e "dtach -A \"$3\" \"$2\"" &
+   echo "$4"
    echo "$!" > "$4"
 }
 
@@ -47,8 +39,6 @@ main() {
    # comment this line to allow multiple
    # termite sessions
    [[ -e "$PIDFILE" ]] && check_pid "$PIDFILE"
-
-   [[ -e "$SOCKET" ]]    && { attach "$1" "$SOCKET" "$PIDFILE"; return; }
-   [[ ! -e "$PIDFILE" ]] && { create "$1" "$2" "$SOCKET" "$PIDFILE"; return; }
+   attach "$1" "$2" "$SOCKET" "$PIDFILE";
 }
 main "$1" "$2"
