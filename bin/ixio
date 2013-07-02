@@ -1,5 +1,5 @@
 #!/bin/sh
-# paste to vpaste.net
+# paste to ixio or vpaste
 
 server1="http://ix.io"
 server2="http://vpaste.net"
