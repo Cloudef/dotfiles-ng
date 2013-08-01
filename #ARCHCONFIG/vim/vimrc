@@ -108,6 +108,7 @@ let g:indent_guides_guide_size=2  " size is 2 for guide
 hi IndentGuidesOdd  ctermbg=234   " odd color
 hi IndentGuidesEven ctermbg=235   " even color
 autocmd BufEnter * IndentGuidesEnable
+map <C-i> :IndentGuidesToggle<CR>
 " }}}
 " {{{ GLSL plugin
 au BufNewFile,BufRead *.frag,*.vert,*.fp,*.vp,*.glsl setf glsl
