@@ -115,6 +115,10 @@ au BufNewFile,BufRead *.frag,*.vert,*.fp,*.vp,*.glsl setf glsl
 " {{{ YouCompleteMe
 let g:ycm_confirm_extra_conf = 0 " don't ask for confirmation
 " }}}
+" {{{ DetectIndent
+let g:detectindent_preferred_expandtab = 1
+let g:detectindent_preferred_indent = 3
+" }}}
 
 " }}}
 " {{{ Keybindings
