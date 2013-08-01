@@ -123,7 +123,7 @@ nmap <C-e> :tabNext<CR>
 imap <C-e> <Esc><C-e>a
 
 " C-c = copy to XA_CLIPBOARD using loliclip
-vmap <C-c> :<Esc>`>a<CR><Esc>mx`<i<CR><Esc>my'xk$v'y!tee >(loliclip -ci)<CR>u
+xnoremap <silent> <C-c> "zy:call system('loliclip -ci', @z)<cr>
 
 " toggle folds with space
 nnoremap <space> za
