@@ -5,8 +5,6 @@ export _XINIT_WM="${@-"monsterwm"}"
 autostart() {
    # wait for wm
    while ! killall -0 $_XINIT_WM; do sleep 1; done
-   # start devmon
-   (devmon --unmount-all; devmon) &
    # nitrogen
    nitrogen --restore
    # start stalonetray daemon
@@ -27,9 +25,6 @@ autokill() {
    killall loliclip
    # kill stalonetray
    killall stalonetray
-   # kill devmon
-   devmon --unmount-all
-   killall devmon
 }
 
 # monsterwm bar
