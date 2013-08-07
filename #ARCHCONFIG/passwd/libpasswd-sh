@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # libpasswd access for shell scripts
 #
 # _passwd_get_user "<password file>" - to get user

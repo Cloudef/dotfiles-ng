@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # toolsched enviroiment file
 
 [[ "$PATH" == */arch/toolsched/bin* ]] || {

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Termite quake console
 #
 # needs: termite, xdotool

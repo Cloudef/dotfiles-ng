@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # toolsched library file
 
 schedtool="$(which schedtool 2>&1)"

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Walks through all the directories
 # in current working directory
 # and runs git pull on them if

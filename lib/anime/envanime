@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # anime enviroiment
 #
 # needs: mlocate

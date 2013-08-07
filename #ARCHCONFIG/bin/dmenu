@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # dmenu wrapper, assing some options
 # if they weren't given.
 #

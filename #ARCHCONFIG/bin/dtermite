@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # dtach a termite client
 # only allow one termite session by default
 #

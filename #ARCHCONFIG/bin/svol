@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Volume utility
 # Origin from dvol, nowadays it's without dzen
 # Handles some volume quirks, and can be used either with ALSA or OSSv4

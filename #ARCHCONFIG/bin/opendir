@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Directory opener called from linopen
 
 [[ -n "$TERMINAL" ]] || TERMINAL="termite"

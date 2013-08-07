@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Streams the nicovideo to mplayer
 #
 # Store your credentials in:

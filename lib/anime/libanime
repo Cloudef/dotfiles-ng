@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # common source file for anime functions
 #
 # needs: mlocate, sed, perl

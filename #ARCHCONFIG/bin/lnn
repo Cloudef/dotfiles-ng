@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Creates symbolic links to multiple targets.
 
 usage() {

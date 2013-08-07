@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # check pacman updates
 # the core of this script resides in
 # /etc/cron.d/hourly/pacman_update

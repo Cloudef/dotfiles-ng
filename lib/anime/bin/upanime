@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # update anime cache manually
 
 source "$_LIBANIME_ROOT/libanime"

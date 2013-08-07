@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # paste to ixio or vpaste
 
 server1="http://ix.io"
