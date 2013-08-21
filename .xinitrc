@@ -15,6 +15,8 @@ autostart() {
    irc; rss; torrent;
    # loliclip clipboard manager
    loliclip -d
+   # unclutter
+   unclutter -grab -root &
 }
 
 # kill leftovers
@@ -25,6 +27,8 @@ autokill() {
    killall loliclip
    # kill stalonetray
    killall stalonetray
+   # kill unclutter
+   killall unclutter
 }
 
 # monsterwm bar
