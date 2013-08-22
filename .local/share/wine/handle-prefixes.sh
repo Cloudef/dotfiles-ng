@@ -23,11 +23,24 @@ rmdevice()
 
 manage_prefix()
 {
-   echo ":: Managing: $(basename "$WINEPREFIX")"
+   baseprefix="$(basename "$WINEPREFIX")"
+   echo ":: Managing: $baseprefix"
    setupenv
+
+   # Init && Update prefix
+   wineboot -u 2> /dev/null
+
+   # Apply winetricks
+   for w in "$ROOTDIR/winetricks/"*; do
+      [[ "$w" == *@* ]] && [[ "$w" != *@"$baseprefix" ]] && continue
+      rw="$(echo "$w" | sed "s/@$baseprefix//")"
+      echo -e "\t+ Winetricks: $(basename "$rw")"
+      winetricks "$(basename "$rw")" 2> /dev/null
+   done
 
    # Apply registry fixes
    for r in "$ROOTDIR/regs/"*; do
+      [[ "$r" == *@* ]] && [[ "$r" != *@"$baseprefix".reg ]] && continue
       echo -e "\t+ Applying: $(basename "$r")"
       regedit "$r" 2> /dev/null
    done
