@@ -327,3 +327,11 @@ translate() {
    local URL="$(echo "$@" | perl -MURI::Escape -ne 'chomp;print uri_escape($_)')"
    curl -s -A "Mozilla" "http://translate.google.com/translate_a/t?client=t&ie=UTF-8&text=$URL&sl=ja&tl=en" | awk -F'"' '{print $2}'
 }
+
+#####################################
+## List unneeded header inclusions ##
+##     -r argument to remove       ##
+#####################################
+dehdr() {
+    CFLAGS="-Werror -Wfatal-errors" deheader "$@" | sed -n 's/.*: *remove *\(.*\) *from *\(.*\)/\2: \1/p'
+}
