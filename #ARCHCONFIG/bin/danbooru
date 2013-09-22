@@ -4,17 +4,21 @@
 
 # USAGE
 # -----
-# danbooru [-v] [-r] [-s] [<page> [limit]] tags ...
+# danbooru [-v] [-r] [-s] [<page/range> [limit]] tags ...
 #  -v: verbose output
 #  -r: recrawl posts (updates json, updates location if needed)
 #  -s: don't fork (sets DANBOORU_FORK_LIMIT to 1)
 #
 # Following are only relevant when no -r is specified:
-#  [page]: page number to crawl in danbooru
+#  [page/range]: page number or range to crawl in danbooru
 #  [tags]: tags/metatags for searching
 #  [limit]: limit results per page
 #
 # If -r is specified, you can filter recrawling to specific location as argument
+
+# -- Sun Sep 22 19:40:56 UTC 2013
+# Flash tag filtered by default
+# Possible to give page range in [page] argument (ex. 1-5)
 
 # -- Sun Apr 14 07:49:45 UTC 2013
 # Artist information is now provided in Danbooru API!
@@ -107,7 +111,7 @@ DANBOORU_LIMIT_DIMENSIONS=()
 
 # Filter tags
 # Posts which match one of these tags will not be downloaded
-DANBOORU_TAG_FILTER=("yaoi" "tiger_&_bunny" "boys_love" "shounen-ai")
+DANBOORU_TAG_FILTER=("yaoi" "tiger_&_bunny" "boys_love" "shounen-ai" "flash")
 
 # Tag match
 # Only posts which match one of these tags will be downloaded
@@ -213,7 +217,7 @@ sigint()
 usage()
 {
    for i in $@; do
-      [[ "$i" != "-h" ]] && [[ "$i" != "--help" ]] || error_no_unlock "$(basename "$0") [-v] [-r] [-s] [<page> [limit]] tags ..."
+      [[ "$i" != "-h" ]] && [[ "$i" != "--help" ]] || error_no_unlock "$(basename "$0") [-v] [-r] [-s] [<page/range> [limit]] tags ..."
       [[ "$i" != "-v" ]]                           || VERBOSE=1
       [[ "$i" != "-r" ]]                           || RECRAWL=1
       [[ "$i" != "-s" ]]                           || DANBOORU_FORK_LIMIT=1
@@ -357,25 +361,15 @@ check_picture()
    [[ $DANBOORU_FORK_LIMIT -gt 1 ]] || store_picture "$URL" "$DATE" "$JSON" "$TARGET"
 }
 
-# Main
-main()
+# Crawl
+crawl()
 {
-   local RESULT=
-   local OK=0
-   local PAGE=1
-   local LIMIT=100
-
-   # Parse arguments
-   [[ "$1" =~ ^[0-9]+$ ]] && { PAGE="$1"; shift 1; }
-   [[ "$1" =~ ^[0-9]+$ ]] && { LIMIT="$1"; shift 1; }
-   local PTAGS="$(urlencode "$@")"
-
    if [[ $VERBOSE -eq 1 ]]; then
-      echo "[F] $DANBOORU_ROOT/posts.json?page=$PAGE&limit=$LIMIT&tags=$PTAGS"
+      echo "[F] $DANBOORU_ROOT/posts.json?$@"
       echo ""
    fi
 
-   RESULT="$(get_json "posts" "page=$PAGE&limit=$LIMIT&tags=$PTAGS")"
+   RESULT="$(get_json "posts" "$@")"
    [[ "$RESULT" == "403 Forbidden" ]] && error "[!!] username or API key is wrong"
    JSONCNT=$(echo "$RESULT" | jshon -l)
    [[ $JSONCNT -eq 0 ]] && error "[!!] failed to retieve posts from: $DANBOORU_ROOT/posts.json"
@@ -560,6 +554,26 @@ main()
          [[ $VERBOSE -eq 1 ]] && echo "[I] fork limit hit, waiting: ($(jobs -p | wc -l))"
          sleep 1
       done
+   done
+}
+
+# Main
+main()
+{
+   local RESULT=
+   local OK=0
+   local LIMIT=100
+   local PAGE1=1
+   local PAGE2=1
+
+   # Parse arguments
+   [[ "$1" =~ ^[0-9]+$ ]]  && { PAGE1="$1"; PAGE2="$1"; shift 1; }
+   [[ "$1" =~ ^[0-9-]+$ ]] && { PAGE1="${1//-*/}"; PAGE2="${1//*-/}"; shift 1; }
+   [[ "$1" =~ ^[0-9]+$ ]]  && { LIMIT="$1"; shift 1; }
+   local PTAGS="$(urlencode "$@")"
+
+   for PAGE in $(seq $PAGE1 $PAGE2); do
+      crawl "page=$PAGE&limit=$LIMIT&tags=$PTAGS"
    done
 
    # Wait for subprocesses
