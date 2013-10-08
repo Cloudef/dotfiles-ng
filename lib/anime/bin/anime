@@ -52,7 +52,7 @@ main() {
 
    # play
    echo "playing: $file"
-   mplayer "$file" 1> /dev/null
+   mpv "$file" 1> /dev/null
 }
 main "$@"
 exit $?
