@@ -1,5 +1,5 @@
 #!/bin/bash
 # Replaces illegal FAT32 characters in $@
 
-[[ -d "$@" ]] || exit 1
+[[ -d "$@" ]] || { echo "usage: $(basename $0) <directory>"; exit 1; }
 find "$@" | while read -r f; do mv -i "$f" "${f//[:;*?\"<>|()\\]/_}"; done
