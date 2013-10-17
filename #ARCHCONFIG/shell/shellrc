@@ -32,6 +32,11 @@ export GDK_USE_XFT=1
 # Check if everything is broken
 [[ -z "$LANG" ]] && eval "$(locale)"
 
+# Set XDG variables
+[[ -n "$XDG_CACHE_HOME" ]] || export XDG_CACHE_HOME="$HOME/.cache"
+[[ -n "$XDG_CONFIG_HOME" ]] || export XDG_CONFIG_HOME="$HOME/.config"
+[[ -n "$XDG_DATA_HOME" ]] || export XDG_DATA_HOME="$HOME/.local/share"
+
 # Global override path
 # ($HOME/bin && /arch/bin)
 [[ "$PATH" == *$HOME/bin* ]] && [[ "$PATH" == */arch/bin* ]] ||
