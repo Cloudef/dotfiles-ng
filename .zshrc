@@ -21,6 +21,7 @@ alias winedir="cd $WINEDIR"
 
 alias mplayer=mpv
 alias homurapolkka='mpv -loop inf "/mnt/storage/videos/【MMD】Go home Homura, you are drunk【ハピトリ】HD Version!-kwiuX2OAvJg.mp4"'
+alias sxivbooru="sxiv -R /mnt/storage/pictures/danbooru"
 
 alias dev="cd /mnt/storage/dev"
 alias ogl="cd /mnt/storage/dev/projektit/glhck"
