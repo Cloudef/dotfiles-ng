@@ -27,7 +27,7 @@ main() {
    }
 
    # get index for anime from history
-   [[ -n "$@" ]] && index=$(echo -e "$match" | sed 's/^IMG:.*\t//' | grep -Fon "$hsanime" | cut -f1 -d: | head -n1)
+   [[ -n "$hsanime" ]] && index=$(echo -e "$match" | sed 's/^IMG:.*\t//' | grep -Fon "$hsanime" | cut -f1 -d: | head -n1)
    [[ -n "$index" ]] || index=1
 
    # output to dmenu
@@ -48,9 +48,9 @@ main() {
 }
 
 IFS=$'\n'
-[[ "$1" == "l" ]] && args=($(_anime_hist_get 1))
-if [[ -n "${args[@]}" ]]; then
-   hsanime="${args[1]}"
+args=($(_anime_hist_get 1))
+hsanime="${args[1]}"
+if [[ "$1" == "l" ]] && [[ -n "${args[@]}" ]]; then
    anime="$(echo ${args[1]} | sed 's/[0-9-]//g;s/[- ]*$//g;s/  ?*/ /g')"
    main -r "${args[0]}" "$anime"
 else
