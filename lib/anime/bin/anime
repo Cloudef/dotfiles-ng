@@ -36,7 +36,7 @@ main() {
    [[ -f "$file" ]] || return 1;
 
    # append to history
-   __anime_hist_store "$match"
+   _anime_hist_store "$match"
 
    # play
    echo "playing: $file"
@@ -44,7 +44,7 @@ main() {
 }
 
 IFS=$'\n'
-[[ "$1" == "l" ]] && args=($(__anime_hist_get 1))
+[[ "$1" == "l" ]] && args=($(_anime_hist_get 1))
 if [[ -n "${args[@]}" ]]; then
    anime="$(echo ${args[1]} | sed 's/[0-9]//g')"
    main -r "${args[0]}" "$anime"

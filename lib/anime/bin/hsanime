@@ -5,7 +5,7 @@
 source "$_LIBANIME_ROOT/libanime"
 
 let p=0
-__anime_hist_get $@ | while read i; do
+_anime_hist_get $@ | while read i; do
    [[ $p -eq 0 ]] && echo -n "anime -r \"$i\" "
    [[ $p -eq 1 ]] && echo "$i"
    let p=!p

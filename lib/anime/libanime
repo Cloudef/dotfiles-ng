@@ -9,35 +9,18 @@ CACHE_LOOKUP_REGEX='s/ \([0-9]\w\)/?\1/g;s/[!]/*/g;s/ \+ /*/g;s/ /*/g'
 
 err() { echo "$@" 1>&2; exit 1; }
 
+# get md5
+__anime_md5() {
+   md5="$(echo "$@" | md5sum)"
+   echo "${md5%% *}"
+}
+
 # get md5sum for path
 __anime_hash() {
    local bname="$@"; local md5=
    [[   -d "$bname" ]] && bname="$(echo "$bname" | sed 's/\/*$//')"
    [[ ! -d "$bname" ]] && bname="$(dirname "$bname")"
-   md5="$(echo "$bname" | md5sum)"
-   echo "${md5%% *}"
-}
-
-# store anime to history
-__anime_hist_store() {
-   local histline="$@ @=> $_ANIME_ROOT"
-   [[ "$histline" != "$(tail -n1 "$_ANIME_HISTORY")" ]] && echo "$histline" >> "$_ANIME_HISTORY"
-}
-
-# get anime from history (by index)
-__anime_hist_get() {
-   [[ -f "$_ANIME_HISTORY" ]] || return
-
-   if [[ $1 -gt 0 ]]; then
-      local line="$(tail -n$1 "$_ANIME_HISTORY" | head -n1)"
-      echo "${line/* @=> /}" # storage
-      echo "${line/ @=> */}" # anime
-   else
-      tac "$_ANIME_HISTORY" | while read line; do
-         echo "${line/* @=> /}" # storage
-         echo "${line/ @=> */}" # anime
-      done
-   fi
+   __anime_md5 "$bname"
 }
 
 # basename and echo files only
@@ -52,6 +35,30 @@ __anime_base_d() {
    while read fn; do
       [[ -d "$fn" ]] && basename "$fn"
    done
+}
+
+# store anime to history
+# $1 = anime
+_anime_hist_store() {
+   local histline="$@ @=> $_ANIME_ROOT"
+   [[ "$histline" != "$(tail -n1 "$_ANIME_HISTORY")" ]] && echo "$histline" >> "$_ANIME_HISTORY"
+}
+
+# get anime from history (by index)
+# returns: storage \n anime
+_anime_hist_get() {
+   [[ -f "$_ANIME_HISTORY" ]] || return
+
+   if [[ $1 -gt 0 ]]; then
+      local line="$(tail -n$1 "$_ANIME_HISTORY" | head -n1)"
+      echo "${line/* @=> /}" # storage
+      echo "${line/ @=> */}" # anime
+   else
+      tac "$_ANIME_HISTORY" | while read line; do
+         echo "${line/* @=> /}" # storage
+         echo "${line/ @=> */}" # anime
+      done
+   fi
 }
 
 # get anime list from location (files only)
