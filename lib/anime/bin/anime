@@ -1,5 +1,6 @@
 #!/bin/bash
 # watch anime
+# arg: l <- open episodes for last anime
 #
 # to save shell history do alias
 # in zsh:
@@ -11,12 +12,8 @@
 source "$_LIBANIME_ROOT/libanime"
 
 main() {
-   local ahist=
-   [[ "$1" == "-r" ]] && ahist=1
-
    # init
    _anime_init "$@"; shift $?
-   [[ $ahist -eq 1 ]] && ahist="-r $_ANIME_ROOT "
 
    # locate and filter
    local match1="$(_anime_get_f "$_ANIME_WATCHING" "$@")"
@@ -39,15 +36,18 @@ main() {
    [[ -f "$file" ]] || return 1;
 
    # append to history
-   [[ "$ahist$match" != "$(tail -n1 "$_ANIME_HISTORY")" ]] && echo "$ahist$match" >> "$_ANIME_HISTORY"
+   __anime_hist_store "$match"
 
    # play
    echo "playing: $file"
    mpv "$file" 1> /dev/null
 }
 
-if [[ "$1" == "l" ]]; then
-   main $(tail -n1 "$_ANIME_HISTORY" | sed 's/[0-9]//g')
+IFS=$'\n'
+[[ "$1" == "l" ]] && args=($(__anime_hist_get 1))
+if [[ -n "${args[@]}" ]]; then
+   anime="$(echo ${args[1]} | sed 's/[0-9]//g')"
+   main -r "${args[0]}" "$anime"
 else
    main "$@"
 fi

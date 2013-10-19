@@ -18,6 +18,28 @@ __anime_hash() {
    echo "${md5%% *}"
 }
 
+# store anime to history
+__anime_hist_store() {
+   local histline="$@ @=> $_ANIME_ROOT"
+   [[ "$histline" != "$(tail -n1 "$_ANIME_HISTORY")" ]] && echo "$histline" >> "$_ANIME_HISTORY"
+}
+
+# get anime from history (by index)
+__anime_hist_get() {
+   [[ -f "$_ANIME_HISTORY" ]] || return
+
+   if [[ $1 -gt 0 ]]; then
+      local line="$(tail -n$1 "$_ANIME_HISTORY" | head -n1)"
+      echo "${line/* @=> /}" # storage
+      echo "${line/ @=> */}" # anime
+   else
+      tac "$_ANIME_HISTORY" | while read line; do
+         echo "${line/* @=> /}" # storage
+         echo "${line/ @=> */}" # anime
+      done
+   fi
+}
+
 # basename and echo files only
 __anime_base_f() {
    while read fn; do
