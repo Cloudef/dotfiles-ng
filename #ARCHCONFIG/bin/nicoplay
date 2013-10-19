@@ -27,7 +27,7 @@ main() {
    mkfifo -m 666 /tmp/nicovideo.fifo
    nicowrap -g "$@" || return 1
    nicowrap -o /tmp/nicovideo.fifo "$@" &> /dev/null &
-   mpv -really-quiet -loop inf -cache 1024 /tmp/nicovideo.fifo
+   mpv -really-quiet -loop inf /tmp/nicovideo.fifo
    test -z "`jobs -p`" || kill -9 `jobs -p` &> /dev/null
    rm /tmp/nicovideo.fifo &> /dev/null
 }
