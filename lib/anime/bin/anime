@@ -26,8 +26,12 @@ main() {
       match="$match$match2"
    }
 
+   # get index for anime from history
+   [[ -n "$@" ]] && index=$(echo -e "$match" | sed 's/^IMG:.*\t//' | grep -Fon "$hsanime" | cut -f1 -d: | head -n1)
+   [[ -n "$index" ]] || index=1
+
    # output to dmenu
-   [[ $(echo -e "$match" | wc -l) -gt 1 ]] && match="$(echo -e "$match" | dmenu -i -l 20 -p "anime")"
+   [[ $(echo -e "$match" | wc -l) -gt 1 ]] && match="$(echo -e "$match" | dmenu -i -l 5 -si $index -is 153 -ia top -p "anime")"
    [[ -n "$match" ]] || return 1
 
    # create full path
@@ -46,6 +50,7 @@ main() {
 IFS=$'\n'
 [[ "$1" == "l" ]] && args=($(_anime_hist_get 1))
 if [[ -n "${args[@]}" ]]; then
+   hsanime="${args[1]}"
    anime="$(echo ${args[1]} | sed 's/[0-9]//g')"
    main -r "${args[0]}" "$anime"
 else

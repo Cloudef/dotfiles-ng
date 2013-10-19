@@ -3,8 +3,8 @@
 #
 # needs: mlocate, sed, perl
 
-CACHE_IGNORE_EGREP='\.srt|\.ass|\.sfv'
-CACHE_STORE_REGEX='s/\..\{3\}$//;s/\[[^]]*\]//g;s/([^)]*)//g;s/[_.]/ /g;s/^[- ]*//g;s/[- ]*$//g;s/v[0-9]//;s/  ?*/ /g'
+CACHE_IGNORE_EGREP='\.srt\|\.ass\|\.sfv'
+CACHE_STORE_REGEX='s/\..\{3\}$//;s/\[[^]]*\]/ /g;s/([^)]*)//g;s/[_.]/ /g;s/^[- ]*//g;s/[- ]*$//g;s/v[0-9]//;s/  ?*/ /g'
 CACHE_LOOKUP_REGEX='s/ \([0-9]\w\)/?\1/g;s/[!]/*/g;s/ \+ /*/g;s/ /*/g'
 
 err() { echo "$@" 1>&2; exit 1; }
@@ -41,14 +41,16 @@ __anime_base_d() {
 # $1 = anime
 _anime_hist_store() {
    local histline="$@ @=> $_ANIME_ROOT"
-   [[ "$histline" != "$(tail -n1 "$_ANIME_HISTORY")" ]] && echo "$histline" >> "$_ANIME_HISTORY"
+   [[ -n "$_ANIME_HISTORY" ]] || return
+   [[ "$histline" == "$(tail -n1 "$_ANIME_HISTORY")" ]] && return
+   echo "$histline" >> "$_ANIME_HISTORY"
+   [[ $_ANIME_HISTORY_MAX -gt 0 ]] && head -n$_ANIME_HISTORY_MAX "$_ANIME_HISTORY" | sponge "$_ANIME_HISTORY"
 }
 
 # get anime from history (by index)
 # returns: storage \n anime
 _anime_hist_get() {
    [[ -f "$_ANIME_HISTORY" ]] || return
-
    if [[ $1 -gt 0 ]]; then
       local line="$(tail -n$1 "$_ANIME_HISTORY" | head -n1)"
       echo "${line/* @=> /}" # storage
@@ -61,6 +63,12 @@ _anime_hist_get() {
    fi
 }
 
+# filter single filename
+# $1 = filename
+_anime_filter() {
+   basename "$@" | grep -ve "$CACHE_IGNORE_EGREP" | sed "$CACHE_STORE_REGEX" | perl -p -e 's/^\n//g'
+}
+
 # get anime list from location (files only)
 # $1 = directory to search
 # $2 = search term
@@ -69,6 +77,7 @@ _anime_get_f() {
    [[ -f "$_LIBANIME_CACHE/$md5.afil" ]] && { grep -i "$name" "$_LIBANIME_CACHE/$md5.afil"; return; } ||
    locate -d "$_LIBANIME_DB" "$db" | __anime_base_f | \
       grep -ve "$CACHE_IGNORE_EGREP" | sed "$CACHE_STORE_REGEX" | perl -p -e 's/^\n//g' | \
+      while read i; do echo -n "IMG:$_LIBANIME_THUMB/$(__anime_md5 "$i").png"; echo -ne "\t"; echo "$i"; done | \
       tee "$_LIBANIME_CACHE/$md5.afil" | grep -i "$name"
 }
 
@@ -155,9 +164,9 @@ _anime_init() {
       mkdir "$_LIBANIME_CACHE"
 
    # time to set correct variables
-   _ANIME_SEED="$_ANIME_ROOT/$_ANIME_SEED"
-   _ANIME_WATCHING="$_ANIME_ROOT/$_ANIME_WATCHING"
-   _ANIME_WATCHED="$_ANIME_ROOT/$_ANIME_WATCHED"
+   _ANIME_SEED="$_ANIME_ROOT/$_ANIME_SEED_DIR"
+   _ANIME_WATCHING="$_ANIME_ROOT/$_ANIME_WATCHING_DIR"
+   _ANIME_WATCHED="$_ANIME_ROOT/$_ANIME_WATCHED_DIR"
 
    # final checks
    [[ -d "$_ANIME_SEED" ]] ||

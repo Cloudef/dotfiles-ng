@@ -7,10 +7,12 @@
 export _LIBANIME_ROOT="$HOME/lib/anime"         # root path to this library
 export _LIBANIME_DB="$_LIBANIME_ROOT/locate.db" # locate.db for mlocate
 export _LIBANIME_CACHE="$_LIBANIME_ROOT/cache"  # .afil, .adir for regexped cache
-export _ANIME_SEED="seed"                       # seed directory
-export _ANIME_WATCHING="watching"               # watching directory
-export _ANIME_WATCHED="watched"                 # watched directory
-export _ANIME_HISTORY="/tmp/.animehist"         # history list
+export _LIBANIME_THUMB="$_LIBANIME_ROOT/thumb"  # thumbnails
+export _ANIME_HISTORY="$_LIBANIME_ROOT/history" # history list
+export _ANIME_HISTORY_MAX=100                   # max history
+export _ANIME_SEED_DIR="seed"                   # seed directory
+export _ANIME_WATCHING_DIR="watching"           # watching directory
+export _ANIME_WATCHED_DIR="watched"             # watched directory
 export _ANIME_ROOT="/mnt/anime"                 # root of your animus
 
 # setup PATH

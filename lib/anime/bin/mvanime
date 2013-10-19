@@ -14,26 +14,25 @@ main() {
    fromf="$(find $_ANIME_SEED -maxdepth 1 -mindepth 1 -type f -exec basename {} \; | \
       grep -v "\.ass" | grep -v "\.srt")"
    fromd="$(find "$_ANIME_SEED" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)"
-   from="$(echo -e "$fromf\n$fromd" | dmenu -i -l 20 -p mvanime)"
+   from="$(echo -e "$fromf\n$fromd" | dmenu -i -l 5 -p mvanime)"
    [[ -n "$from" ]] || return
    [[ -f "$_ANIME_SEED/$from" ]] && from="$_ANIME_SEED/$from"
    [[ -d "$_ANIME_SEED/$from" ]] && from="$_ANIME_SEED/$from"
    [[ ! -d "$from" ]] && [[ ! -f "$from" ]] && return
 
    # select destination
-   to="$(find "$_ANIME_WATCHING" "$_ANIME_WATCHED" -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | \
-      dmenu -i -l 20 -p "to")"
+   to="$(find "$_ANIME_WATCHING" "$_ANIME_WATCHED" -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | dmenu -i -l 5 -p "to")"
    [[ -n "$to" ]] || return
    [[ -d "$_ANIME_WATCHING/$to" ]] && { update="$_ANIME_WATCHING"; to="$_ANIME_WATCHING/$to"; }
    [[ -d "$_ANIME_WATCHED/$to"  ]] && { update="$_ANIME_WATCHED"; to="$_ANIME_WATCHED/$to"; }
    [[ ! -d "$to" ]] && [[ ! -f "$to" ]] && return
 
    # move
-   mv -v "$from" "$to" ||
-      return
+   mv -v "$from" "$to" || return
 
    # update caches
    echo "-!- updating cache"
    _anime_update "$update"
+   "$_LIBANIME_ROOT/bin/tbanime" -r "$_ANIME_ROOT" "$(_anime_filter "$from")" &> /dev/null
 }
 main "$@"

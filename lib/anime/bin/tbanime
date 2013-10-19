@@ -1,0 +1,57 @@
+#!/bin/bash
+# Create thumbnails for anime
+# arg: c <- clear all thumbnails
+
+source "$_LIBANIME_ROOT/libanime"
+
+# Signal handler
+sigint() {
+   # Kill all sub processes
+   test -z "`jobs -p`" || kill -9 `jobs -p` &> /dev/null
+   echo "$(basename "$0"): SIGINT"
+   exit 1
+}
+
+# $1 = int
+# $2 = out
+# $3 = name
+thumb() {
+   [[ -f "$2" ]] ||
+      ffmpeg -nostdin -ss 00:05:00 -i "$1" -vframes 1 -filter:v scale="153:86" "$2" &> /dev/null
+   [[ -f "$2" ]] ||
+      ffmpeg -nostdin -ss 00:00:20 -i "$1" -vframes 1 -filter:v scale="153:86" "$2" &> /dev/null
+   echo "$3"
+}
+
+main() {
+   _anime_init "$@"; shift $?
+
+   [[ -n "$_LIBANIME_THUMB" ]] || { echo "-!- No thumbnail cache directory specified"; return; }
+   [[ -d "$_LIBANIME_THUMB" ]] || { echo "-!- Thumbnail cache directory doesn't exist: $_LIBANIME_THUMB"; return; }
+   [[ "$@" == "c" ]] || [[ "$@" == "-c" ]] || [[ "$@" == "--clean" ]] && {
+      echo "-!- Clearing all thumbnails..."
+      rm "$_LIBANIME_THUMB/"*
+      echo "-!- Anime thumbnail cache cleared"
+      return
+   }
+
+   local FORK_LIMIT=3
+   _anime_get_f "$_ANIME_WATCHING" "$@" | sed 's/^IMG:.*\t//' | while read i; do
+      f="$(_anime_lookup_f "$_ANIME_WATCHING" "$i")"
+      img="$_LIBANIME_THUMB/$(__anime_md5 "$i").png"
+      thumb "$f" "$img" "$i" &
+      while [[ $(jobs -p | wc -l) -gt $FORK_LIMIT ]]; do sleep 1; done
+   done
+   while [[ $(jobs -p | wc -l) -gt 1 ]]; do sleep 1; done
+   _anime_get_f "$_ANIME_WATCHED" "$@" | sed 's/^IMG:.*\t//' | while read i; do
+      f="$(_anime_lookup_f "$_ANIME_WATCHED" "$i")"
+      img="$_LIBANIME_THUMB/$(__anime_md5 "$i").png"
+      thumb "$f" "$img" "$i" &
+      while [[ $(jobs -p | wc -l) -gt $FORK_LIMIT ]]; do sleep 1; done
+   done
+   while [[ $(jobs -p | wc -l) -gt 1 ]]; do sleep 1; done
+}
+
+# Trap SIGINT
+trap sigint SIGINT
+main "$@"
