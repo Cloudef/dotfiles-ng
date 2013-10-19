@@ -333,5 +333,13 @@ translate() {
 ##     -r argument to remove       ##
 #####################################
 dehdr() {
-    CFLAGS="-Werror -Wfatal-errors" deheader "$@" | sed -n 's/.*: *remove *\(.*\) *from *\(.*\)/\2: \1/p'
+   CFLAGS="-Werror -Wfatal-errors" deheader "$@" | sed -n 's/.*: *remove *\(.*\) *from *\(.*\)/\2: \1/p'
+}
+
+#######################
+## GCC Scratchpad :) ##
+#######################
+gcctest() {
+   local includes='#include <stdio.h>\n#include <string.h>'
+   (echo -e "$includes"; echo "void main(){$@}") | gcc -std=c99 -xc -o /tmp/gcctest - && { /tmp/gcctest; rm -f /tmp/gcctest; }
 }
