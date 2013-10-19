@@ -1,14 +1,12 @@
 #!/bin/bash
 # watch anime
 #
-# to save history do alias
+# to save shell history do alias
 # in zsh:
-#     alias anime='print -s "$(_anime)"'
+#     alias anime='print -s "$(/path/to/this/script)"'
 # in bash:
-#     alias anime='history -s "$(_anime)"'
+#     alias anime='history -s "$(/path/to/this/script)"'
 #
-# otherwise just alias to _anime or rename
-# this shell script.
 
 source "$_LIBANIME_ROOT/libanime"
 
@@ -18,8 +16,7 @@ main() {
 
    # init
    _anime_init "$@"; shift $?
-   [[ $ahist -eq 1 ]] && ahist="-r \"$_ANIME_ROOT\" " ||
-      ahist=""
+   [[ $ahist -eq 1 ]] && ahist="-r $_ANIME_ROOT "
 
    # locate and filter
    local match1="$(_anime_get_f "$_ANIME_WATCHING" "$@")"
@@ -33,10 +30,7 @@ main() {
    }
 
    # output to dmenu
-   if [[ $(echo -e "$match" | wc -l) -gt 1 ]]; then
-      match="$(echo -e "$match" | dmenu -i -l 20 -p "anime")"
-      orig="" # save the selected to history
-   fi
+   [[ $(echo -e "$match" | wc -l) -gt 1 ]] && match="$(echo -e "$match" | dmenu -i -l 20 -p "anime")"
    [[ -n "$match" ]] || return 1
 
    # create full path
@@ -45,14 +39,15 @@ main() {
    [[ -f "$file" ]] || return 1;
 
    # append to history
-   [[ -n "$orig" ]]
-   [[ -n "$orig" ]] &&
-      { echo "$ahist$orig"  >> "$_ANIME_HISTORY"; } ||
-      { echo "$ahist$match" >> "$_ANIME_HISTORY"; }
+   [[ "$ahist$match" != "$(tail -n1 "$_ANIME_HISTORY")" ]] && echo "$ahist$match" >> "$_ANIME_HISTORY"
 
    # play
    echo "playing: $file"
    mpv "$file" 1> /dev/null
 }
-main "$@"
-exit $?
+
+if [[ "$1" == "l" ]]; then
+   main $(tail -n1 "$_ANIME_HISTORY" | sed 's/[0-9]//g')
+else
+   main "$@"
+fi

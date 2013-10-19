@@ -1,0 +1,11 @@
+#!/bin/bash
+# show anime history
+# args: [number] to do basically head on this script
+
+source "$_LIBANIME_ROOT/libanime"
+
+if [[ $1 -gt 0 ]]; then
+   (echo -n "anime "; tail -n$1 "$_ANIME_HISTORY" | head -n1)
+else
+   tac "$_ANIME_HISTORY" | while read i; do echo "anime $i"; done
+fi
