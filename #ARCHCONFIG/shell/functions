@@ -339,7 +339,7 @@ dehdr() {
 #######################
 ## GCC Scratchpad :) ##
 #######################
-gcctest() {
+gcx() {
    local includes='#include <stdio.h>\n#include <string.h>'
-   (echo -e "$includes"; echo "void main(){$@}") | gcc -std=c99 -xc -o /tmp/gcctest - && { /tmp/gcctest; rm -f /tmp/gcctest; }
+   (echo -e "$includes"; echo "void main(){$@}") | gcc -std=c99 -xc -o /tmp/gcx - && { /tmp/gcx; rm -f /tmp/gcx; }
 }
