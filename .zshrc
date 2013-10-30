@@ -22,10 +22,13 @@ export WINEDIR="${XDG_DATA_HOME-$HOME/.local/share}/wine"
 export WINEPREFIX="$WINEDIR/prefixes/default"
 alias winedir="cd $WINEDIR"
 
+# other aliases
 alias mplayer=mpv
+alias qchmod="find . \( -type f -execdir chmod -v 644 {} \; \) -o \( -type d -execdir chmod -v 755 {} \; \)"
 alias homurapolkka='mpv -loop inf "/mnt/storage/videos/【MMD】Go home Homura, you are drunk【ハピトリ】HD Version!-kwiuX2OAvJg.mp4"'
 alias sxivbooru="sxiv -R /mnt/storage/pictures/danbooru"
 
+# directory aliases
 alias dev="cd /mnt/storage/dev"
 alias ogl="cd /mnt/storage/dev/projektit/glhck"
 alias pkg="cd /arch/pkg"
