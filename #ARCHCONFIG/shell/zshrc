@@ -91,7 +91,7 @@ zstyle ':prezto:module:syntax-highlighting' highlighters \
 
 [[ "$(whoami)" == "root" ]] || [[ "$TERM" == "linux" ]] && {
 
-# Set the Oh My Zsh modules to load (browse modules).
+# Set the prezto modules to load (browse modules).
 # The order matters.
 zstyle ':prezto:load' pmodule \
    'environment' \
@@ -107,7 +107,7 @@ zstyle ':prezto:load' pmodule \
 
 } || {
 
-# Set the Oh My Zsh modules to load (browse modules).
+# Set the prezto modules to load (browse modules).
 # The order matters.
 zstyle ':prezto:load' pmodule \
    'environment' \
