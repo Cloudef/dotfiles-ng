@@ -64,6 +64,7 @@ set laststatus=2                 " show the status always
 set suffixes=.bak,~,.swp,.o,.log " lower prioritory for tab completition
 set backup                       " backups are awesome
 set backupdir=$HOME/.vim/backup  " set backup directory
+set timeoutlen=50                " lower statusline timeout
 
 " hilight under cursor
 set cursorline                   " enable hilight
@@ -115,6 +116,38 @@ au BufNewFile,BufRead *.frag,*.vert,*.fp,*.vp,*.glsl setf glsl
 " }}}
 " {{{ YouCompleteMe
 let g:ycm_confirm_extra_conf = 0 " don't ask for confirmation
+" }}}
+" {{{ ListToggle
+let g:lt_location_list_toggle_map = '<C-l>'
+let g:lt_quickfix_list_toggle_map = '<C-q>'
+let g:lt_height = 5
+" }}}
+" {{{ Syntastic
+let g:syntastic_always_populate_loc_list = 1
+" }}}
+" {{{ Airline
+let g:airline#extensions#tabline#enabled = 1 " turn it on
+let g:airline#extensions#tabline#show_buffers = 0 " show only tabs like vim tabline
+
+if !exists('g:airline_symbols')
+   let g:airline_symbols = {}
+endif
+
+" unicode symbols
+let g:airline#extensions#tabline#left_sep = '▶'
+let g:airline#extensions#tabline#right_sep = '◀'
+let g:airline_left_sep = '»'
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '«'
+let g:airline_right_sep = '◀'
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.paste = 'Þ'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
 " }}}
 
 " }}}
@@ -169,9 +202,6 @@ nnoremap <silent> :8t :call SetTab(8)<CR>
 nnoremap <silent> :4t :call SetTab(4)<CR>
 nnoremap <silent> :3t :call SetTab(3)<CR>
 nnoremap <silent> :2t :call SetTab(2)<CR>
-
-" shortcut to YcmDiag (warnings && errors)
-nnoremap <silent> :errors :YcmDiag<CR>
 
 " strip non ascii characters from file
 nnoremap <silent> :strip :%s/[<C-V>128-<C-V>255<C-V>01-<C-V>31]//g<CR>
