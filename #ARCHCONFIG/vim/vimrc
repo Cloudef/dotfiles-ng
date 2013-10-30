@@ -64,7 +64,7 @@ set laststatus=2                 " show the status always
 set suffixes=.bak,~,.swp,.o,.log " lower prioritory for tab completition
 set backup                       " backups are awesome
 set backupdir=$HOME/.vim/backup  " set backup directory
-set timeoutlen=50                " lower statusline timeout
+set timeoutlen=500               " lower statusline timeout
 
 " hilight under cursor
 set cursorline                   " enable hilight
