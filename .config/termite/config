@@ -56,4 +56,9 @@ color13 = #BB4466
 color14 = #A3BABF
 color15 = #6C887A
 
+[hints]
+border = #F92672
+border_width = 2.0
+roundness = 0.0
+
 # vim: set filetype=dosini :
