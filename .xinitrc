@@ -73,6 +73,7 @@ setxkbmap fi
 xrdb -load $HOME/.Xresources
 xsetroot -cursor_name left_ptr
 setxkbmap -option terminate:ctrl_alt_bksp
+setxkbmap -option compose:rwin
 nvidia-load-settings &> /dev/null
 
 autostart &
