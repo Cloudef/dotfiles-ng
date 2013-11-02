@@ -17,6 +17,7 @@ input[type=button], input[type=submit], button {
    border-width: 2px;
    border-color: gray;
    border-style: solid;
+   font-family: sans-serif;
 }
 
 /* dark theme friendly file uploads */
