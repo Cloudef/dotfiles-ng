@@ -317,7 +317,7 @@ glc-encode() {
 #############################
 say() {
    local URL="$(echo "$@" | perl -MURI::Escape -ne 'chomp;print uri_escape($_)')"
-   mplayer -really-quiet "http://translate.google.com/translate_tts?ie=UTF-8&tl=JA&q=$URL" &> /dev/null
+   mpv -really-quiet "http://translate.google.com/translate_tts?ie=UTF-8&tl=JA&q=$URL" &> /dev/null
 }
 
 ######################################
