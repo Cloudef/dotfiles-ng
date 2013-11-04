@@ -44,7 +44,7 @@ Fonts:
    Slightly modified monsterwm setup. Status and pager are seperate C programs.
    For more, refer to the sources itself.
 
-/arch/pkg/pkgbuild/loliclip: clipboard manager
+/arch/pkg/pkgbuild/xcmenu-git: clipboard manager
    meta-c: access clipboard history
    meta-shift-c: access clipboard url history
    alt-shift-c: sync XA_PRIMARY to XA_CLIPBOARD

@@ -13,8 +13,8 @@ autostart() {
    redshift -l 62:22 -m vidmode &> /dev/null &
    # start irc, rss, torrent
    irc; rss; torrent;
-   # loliclip clipboard manager
-   loliclip -d
+   # xcmenu clipboard manager
+   xcmenu -d
    # unclutter
    unclutter -grab -root &
 }
@@ -24,7 +24,7 @@ autokill() {
    # kill redshift
    killall redshift
    # kill loliclip
-   killall loliclip
+   killall xcmenu
    # kill stalonetray
    killall stalonetray
    # kill unclutter

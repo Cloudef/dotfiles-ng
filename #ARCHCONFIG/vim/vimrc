@@ -156,8 +156,8 @@ let g:airline_symbols.whitespace = 'Ξ'
 nmap <C-e> :tabNext<CR>
 imap <C-e> <Esc><C-e>a
 
-" C-c = copy to XA_CLIPBOARD using loliclip
-xnoremap <silent> <C-c> "zy:call system('loliclip -ci', @z)<cr>
+" C-c = copy to XA_CLIPBOARD using xcmenu
+xnoremap <silent> <C-c> "zy:call system('xcmenu -ci', @z)<cr>
 
 " toggle folds with space
 nnoremap <space> za
