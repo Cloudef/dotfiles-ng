@@ -340,7 +340,7 @@ dehdr() {
 ## GCC Scratchpad :) ##
 #######################
 gcx() {
-   local includes='#include <stdio.h>\n#include <string.h>'
+   local includes='#include <stdio.h>\n#include <string.h>\n#include <math.h>'
    if [[ -n "$@" ]]; then
       (echo -e "$includes"; echo "void main(){$@}") | gcc -std=c99 -xc -o /tmp/gcx - && { /tmp/gcx; rm -f /tmp/gcx; }
    else
@@ -348,7 +348,7 @@ gcx() {
       [[ -f "/tmp/gcx2.c" ]] || return
       (echo -e "$includes"; echo -n "void main(){") > "/tmp/gcx1.c"
       (cat "/tmp/gcx1.c" "/tmp/gcx2.c"; echo "}") > "/tmp/gcx.c"
-      gcc -std=c99 -xc -o /tmp/gcx - < "/tmp/gcx.c" && { /tmp/gcx; rm -f /tmp/gcx; }
+      gcc -std=c99 -lm -xc -o /tmp/gcx - < "/tmp/gcx.c" && { /tmp/gcx; rm -f /tmp/gcx; }
       rm -f "/tmp/gcx.c" "/tmp/gcx1.c" "/tmp/gcx2.c" &> /dev/null
    fi
 }
