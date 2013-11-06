@@ -164,19 +164,21 @@ BIN_DEPS="curl jshon perl"
 VERBOSE=0
 RECRAWL=0
 
-error()
-{
-   unlock
-   echo "$@"
-   test -z "`jobs -p`" || kill -9 `jobs -p` &> /dev/null
-   exit 1
-}
-
 error_no_unlock()
 {
    echo "$@"
-   test -z "`jobs -p`" || kill -9 `jobs -p` &> /dev/null
+   [[ $VERBOSE -eq 1 ]] && [[ $i -gt 1 ]] && echo ""
+   while [[ $(jobs -p | wc -l) -gt 1 ]]; do
+      [[ $VERBOSE -eq 1 ]] && echo "[I] waiting for jobs ($(jobs -p | wc -l))"
+      sleep 1
+   done
    exit 1
+}
+
+error()
+{
+   unlock
+   error_no_unlock "$@"
 }
 
 check_deps()
