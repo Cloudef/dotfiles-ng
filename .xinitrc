@@ -23,7 +23,7 @@ autostart() {
 autokill() {
    # kill redshift
    killall redshift
-   # kill loliclip
+   # kill xcmenu
    killall xcmenu
    # kill stalonetray
    killall stalonetray

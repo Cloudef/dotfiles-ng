@@ -43,7 +43,7 @@ alias sgl='git log --decorate --pretty=oneline --abbrev-commit --graph'
 alias vd='vidir'
 
 # view image in clipboard
-alias cim='loliclip -b image/png > /tmp/clipboard.png && { sxiv /tmp/clipboard.png; rm /tmp/clipboard.png; }'
+alias cim='xcmenu -b image/png > /tmp/clipboard.png && { sxiv /tmp/clipboard.png; rm /tmp/clipboard.png; }'
 
 # get extrenal ip
 alias extip='curl -s http://icanhazip.com'
