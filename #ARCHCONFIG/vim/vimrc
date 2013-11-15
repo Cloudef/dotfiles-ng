@@ -129,6 +129,7 @@ let g:lt_height = 5
 " }}}
 " {{{ Syntastic
 let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_python_checkers = ['pylint']
 " }}}
 " {{{ Airline
 let g:airline#extensions#tabline#enabled = 1 " turn it on
