@@ -340,7 +340,7 @@ dehdr() {
 ## GCC Scratchpad :) ##
 #######################
 gcx() {
-   local includes='#include <stdio.h>\n#include <string.h>\n#include <math.h>'
+   local includes='#include <stdio.h>\n#include <string.h>\n#include <math.h>\n#include <stdint.h>'
    if [[ -n "$@" ]]; then
       (echo -e "$includes"; echo "void main(){$@}") | gcc -std=c99 -xc -o /tmp/gcx - && { /tmp/gcx; rm -f /tmp/gcx; }
    else
