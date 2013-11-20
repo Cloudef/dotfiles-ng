@@ -55,6 +55,9 @@
 " color15 = #6C887A
 
 hi clear
+if exists('syntax_on')
+    syntax reset
+endif
 set bg=dark
 let colors_name = 'colorshot'
 
