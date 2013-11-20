@@ -13,7 +13,6 @@ call pathogen#helptags()
 " }}}
 " {{{ Misc
 " system stuff
-set term=xterm
 if $TERM != "linux"              " if we are not in TTY
    set t_Co=256                  " set 256 colors \o/
 endif
@@ -27,7 +26,6 @@ endif
 " }}}
 " {{{ Vim's own settings
 colorscheme colorshot            " modified slate theme
-set background=dark              " dark background
 set completeopt-=preview         " disable scratch buffer
 set cursorline                   " enable cursor highlight
 set showcmd                      " show command information
@@ -51,7 +49,6 @@ set smartcase                    " if uppercase letter, don't ignore
 set undolevels=1000              " undo levels
 set lazyredraw                   " don't redraw while executing macros
 set noerrorbells                 " no bells plz
-set shell=zsh                    " zsh!
 set showtabline=2                " show tabs always
 set backspace=indent,eol,start   " backspace behaviour (indent -> eol -> start)
 set cmdheight=2                  " avoid hit enter to continue
