@@ -75,6 +75,10 @@ hi cursorcolumn cterm=NONE ctermbg=234
 filetype on
 filetype plugin on
 filetype plugin indent on
+
+let c_gnu = 1
+let c_space_errors = 1
+let c_no_tab_space_error = 1
 syntax on
 
 " file encoding order
@@ -101,9 +105,6 @@ au FileType mail silent normal /--\s*$^MO^[gg/^$^Mj
 " {{{ CSyntaxPlus plugin
 au BufNewFile,BufRead *.{c,h} call CSyntaxPlus()
 " }}}
-" {{{ Powerline plugin
-let g:Powerline_symbols='unicode'
-" }}}
 " {{{ Largefile plugin
 let g:LargeFile = 10             " 10 mb file is large
 " }}}
@@ -128,11 +129,19 @@ let g:lt_quickfix_list_toggle_map = '<C-q>'
 let g:lt_height = 5
 " }}}
 " {{{ Syntastic
+let g:syntastic_error_symbol = '✘'
+let g:syntastic_warning_symbol = '⚠'
+let g:syntastic_style_error_symbol = '✘'
+let g:syntastic_style_warning_symbol = '⚠'
+let g:syntastic_check_on_wq = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_auto_loc_list = 2
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_python_checkers = ['pylint']
+let syntastic_full_redraws = 0
 " }}}
 " {{{ Airline
-let g:airline#extensions#tabline#enabled = 1 " turn it on
+let g:airline#extensions#tabline#enabled = 0 " disabled cause doesn't scroll like vim tab bar does
 let g:airline#extensions#tabline#show_buffers = 0 " show only tabs like vim tabline
 
 if !exists('g:airline_symbols')
@@ -265,6 +274,45 @@ augroup JumpCursorOnEdit
             \   unlet b:doopenfold |
             \ endif
 augroup END
+" }}}
+" {{{Custom tabline
+function SimpleTabLine()
+   let s = ''
+   for i in range(tabpagenr('$'))
+      " select the highlighting
+      if i + 1 == tabpagenr()
+         let s .= '%#TabLineSel#'
+      else
+         let s .= '%#TabLine#'
+      endif
+
+      " set the tab page number (for mouse clicks)
+      let s .= '%' . (i + 1) . 'T'
+      let s .= ' %{SimpleTabLabel(' . (i + 1) . ')} '
+   endfor
+
+   " after the last tab fill with TabLineFill and reset tab page nr
+   let s .= '%#TabLineFill#%T'
+   return s
+endfunction
+
+function SimpleTabLabel(n)
+   let label = ''
+   let buflist = tabpagebuflist(a:n)
+
+   for bufnr in buflist
+      if getbufvar(bufnr, "&modified")
+         let label = '+'
+         break
+      endif
+   endfor
+
+   let winnr = tabpagewinnr(a:n)
+   let fn = bufname(buflist[winnr - 1])
+   let lastSlash = strridx(fn, '/')
+   return label . strpart(fn, lastSlash + 1, strlen(fn))
+endfunction
+set tabline=%!SimpleTabLine()
 " }}}
 
 " vim: set ts=8 sw=3 tw=78 :

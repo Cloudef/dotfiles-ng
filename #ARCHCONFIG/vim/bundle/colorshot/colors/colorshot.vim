@@ -31,60 +31,72 @@
 " !white
 " *color7:  #DDEEDD
 " *color15: #6C887A
+"
+" Termite configuration
+"
+" foreground = #CACACA
+" foreground_bold = #ffffff
+" background = #121212
+" color0 = #1C1C1C
+" color1 = #D81860
+" color2 = #B7CE42
+" color3 = #FEA63C
+" color4 = #66AABB
+" color5 = #B7416E
+" color6 = #5E7175
+" color7 = #DDEEDD
+" color8 = #4D4D4D
+" color9 = #F00060
+" color10 = #BDE077
+" color11 = #FFE863
+" color12 = #AACCBB
+" color13 = #BB4466
+" color14 = #A3BABF
+" color15 = #6C887A
 
-set bg=dark
 hi clear
+set bg=dark
 let colors_name = 'colorshot'
 
 " General colors
-hi Normal      guifg=#F8F8F8 guibg=#12384B gui=NONE
-hi NonText     guifg=#A3FEFE gui=NONE ctermfg=blue
-
-hi Cursor      guifg=NONE guibg=#8BA7A7
-hi LineNr      guifg=#B0B3B9 gui=bold ctermfg=darkgray cterm=bold
-
-hi VertSplit   guifg=#F8F8F8 guibg=#0F2130 gui=NONE ctermfg=lightgray ctermbg=black cterm=NONE
-
-hi Visual      guibg=#B0C3DA ctermbg=cyan
-
-hi Title       guifg=#F1B356 guibg=NONE ctermfg=magenta ctermbg=NONE
-hi WildMenu    guifg=#0F2130 guibg=#B0B3B9 ctermfg=black ctermbg=lightgray
-hi ErrorMsg    guifg=#F8F8F8 guibg=#D22613 gui=bold ctermfg=lightgray ctermbg=darkred cterm=bold
-hi WarningMsg  guifg=#F4EF82 guibg=#0F2130 gui=bold ctermfg=yellow ctermbg=black cterm=bold
-
-hi ModeMsg     guifg=#B0B3B9 guibg=#0F2130 gui=bold ctermfg=lightgray ctermbg=black cterm=bold
+hi NonText     cterm=NONE ctermfg=blue      ctermbg=NONE
+hi LineNr      cterm=NONE ctermfg=darkgray  ctermbg=NONE
+hi VertSplit   cterm=NONE ctermfg=lightgray ctermbg=black
+hi Visual      cterm=NONE ctermfg=NONE      ctermbg=8
+hi Title       cterm=NONE ctermfg=magenta   ctermbg=NONE
+hi WildMenu    cterm=NONE ctermfg=black     ctermbg=lightgray
+hi ErrorMsg    cterm=NONE ctermfg=red       ctermbg=black
+hi WarningMsg  cterm=NONE ctermfg=3         ctermbg=black
+hi ModeMsg     cterm=NONE ctermfg=lightgray ctermbg=black
 
 if version >= 700 " Vim 7 specific colors
-   hi CursorLine  guibg=#0F2130 ctermbg=black cterm=NONE
+   hi CursorLine  cterm=NONE      ctermfg=NONE ctermbg=black
+   hi MatchParen  cterm=NONE      ctermfg=red  ctermbg=black
    hi! link CursorColumn CursorLine
-   hi MatchParen  guifg=#0F2130 guibg=#B0B3B9 ctermfg=black ctermbg=lightgray
-   hi Search      guifg=NONE guibg=NONE gui=inverse ctermfg=NONE ctermbg=NONE cterm=inverse
 endif
 
-hi Pmenu       guifg=#000000 guibg=#F8F8F8 ctermfg=black ctermbg=lightgray
-hi PmenuSbar   guifg=#8A95A7 guibg=#F8F8F8 gui=NONE ctermfg=darkcyan ctermbg=lightgray cterm=NONE
-hi PmenuThumb  guifg=#F8F8F8 guibg=#8A95A7 gui=NONE ctermfg=lightgray ctermbg=darkcyan cterm=NONE
+" Completion menu
+hi Pmenu       cterm=NONE ctermfg=white     ctermbg=black
+hi PmenuSel    cterm=NONE ctermfg=lightgray ctermbg=black
 
 " Tabs
-hi TabLine guifg=#F8F8F8  gui=NONE ctermfg=lightgray cterm=NONE
-hi TabLineFill guifg=#B0B3B9  ctermfg=darkgray
+hi TabLine     cterm=NONE ctermfg=255       ctermbg=238
+hi TabLineSel  cterm=NONE ctermfg=17        ctermbg=190
+hi TabLineFill cterm=NONE ctermfg=NONE      ctermbg=NONE
 
 " Syntax highlighting
-hi Comment  guifg=#2C9ADE gui=italic ctermfg=darkblue
-hi String   guifg=#7CDE53 ctermfg=darkgreen
-
-hi Keyword  guifg=#ffa705 ctermfg=darkmagenta
-hi PreProc  guifg=#f1994a ctermfg=magenta
-
-hi Todo     guifg=#abc4dd guibg=NONE ctermfg=cyan ctermbg=NONE
-hi Constant guifg=#fa6870 ctermfg=red
-
-hi Identifier  guifg=#f1994a ctermfg=magenta cterm=NONE
-hi Type        guifg=#f5f16e gui=NONE ctermfg=yellow
-hi Statement   guifg=#f1994a gui=NONE ctermfg=magenta
-
-hi Special     guifg=#84f796 ctermfg=green
-hi Delimiter   guifg=#f1994a gui=NONE ctermfg=magenta
+hi Comment     cterm=NONE      ctermfg=darkblue    ctermbg=NONE
+hi String      cterm=NONE      ctermfg=darkgreen   ctermbg=NONE
+hi Keyword     cterm=NONE      ctermfg=darkmagenta ctermbg=NONE
+hi PreProc     cterm=NONE      ctermfg=magenta     ctermbg=NONE
+hi Todo        cterm=underline ctermfg=red         ctermbg=NONE
+hi Constant    cterm=NONE      ctermfg=red         ctermbg=NONE
+hi Identifier  cterm=NONE      ctermfg=magenta     ctermbg=NONE
+hi Type        cterm=NONE      ctermfg=yellow      ctermbg=NONE
+hi Statement   cterm=NONE      ctermfg=magenta     ctermbg=NONE
+hi Special     cterm=NONE      ctermfg=green       ctermbg=NONE
+hi Delimiter   cterm=NONE      ctermfg=magenta     ctermbg=NONE
+hi Function    cterm=NONE      ctermfg=3           ctermbg=NONE
 
 hi  link Number         Constant
 hi! link StatusLine     VertSplit
@@ -94,7 +106,6 @@ hi! link MoreMsg        Special
 hi! link Folded         Normal
 
 hi link Operator        Delimiter
-hi Function	ctermfg=3
 hi link PmenuSel        PmenuThumb
 hi link Error           ErrorMsg
 hi link Conditional     Keyword
@@ -115,6 +126,14 @@ hi link Tag             Special
 hi link SpecialChar     Special
 hi link SpecialComment  Special
 hi link Debug           Special
+hi link cTodo           Todo
+
+" Syntastic
+hi link SyntasticErrorSign    ErrorMsg
+hi link SyntasticWarningSign  WarningMsg
+hi SignColumn                 cterm=NONE ctermfg=NONE ctermbg=NONE
+hi SyntasticErrorLine         cterm=NONE ctermfg=NONE ctermbg=black
+hi SyntasticWarningLine       cterm=NONE ctermfg=NONE ctermbg=black
 
 " Ruby
 hi link rubyClass             Keyword
@@ -142,7 +161,7 @@ hi link javaScriptNumber   Number
 
 " Objc
 hi link objcDirective      Type
-hi objcMethodName ctermfg=darkyellow guifg=#eceb00
+hi objcMethodName          cterm=NONE ctermfg=darkyellow ctermbg=NONE
 
 " CSS
 hi link cssBraces          Normal
@@ -154,15 +173,12 @@ hi link cssColor           Type
 hi link cssValueInteger    Type
 hi link cssValueNumber     Type
 hi link cssValueLength     Type
-hi cssPseudoClassId guifg=#eceb00 ctermfg=darkyellow
+hi cssPseudoClassId        cterm=NONE ctermfg=darkyellow ctermbg=NONE
 
-hi clear SpellBad
-hi SpellBad ctermfg=red term=underline cterm=underline
-hi clear SpellCap
-hi SpellCap term=underline cterm=underline
-hi clear SpellRare
-hi SpellRare term=underline cterm=underline
-hi clear SpellLocal
-hi SpellLocal term=underline cterm=underline
+" Spell checking
+hi SpellBad   cterm=underline ctermfg=red ctermbg=NONE
+hi SpellCap   cterm=underline ctermfg=3   ctermbg=NONE
+hi SpellRare  cterm=underline ctermfg=3   ctermbg=NONE
+hi SpellLocal cterm=underline ctermfg=3   ctermbg=NONE
 
-" vim: set ts=4 sw=4 tw=78 :
+" vim: set ts=8 sw=4 tw=78 :

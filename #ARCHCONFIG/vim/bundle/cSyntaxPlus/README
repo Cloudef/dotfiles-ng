@@ -1,0 +1,5 @@
+Some additional hilight for C language.
+Based on cSyntaxAfter.
+
+How to use?
+au BufNewFile,BufRead *.{c,h} call CSyntaxPlus()
