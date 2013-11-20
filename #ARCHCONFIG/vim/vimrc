@@ -29,6 +29,7 @@ colorscheme colorshot            " modified slate theme
 set completeopt-=preview         " disable scratch buffer
 set cursorline                   " enable cursor highlight
 set showcmd                      " show command information
+set noshowmode                   " we use airline
 set foldmethod=marker            " allow marking folds
 set showmatch                    " hilight search pattern
 set incsearch                    " incremental search
@@ -145,13 +146,9 @@ let g:airline_left_sep = '»'
 let g:airline_left_sep = '▶'
 let g:airline_right_sep = '«'
 let g:airline_right_sep = '◀'
-let g:airline_symbols.linenr = '␊'
-let g:airline_symbols.linenr = '␤'
 let g:airline_symbols.linenr = '¶'
 let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.paste = 'ρ'
 let g:airline_symbols.paste = 'Þ'
-let g:airline_symbols.paste = '∥'
 let g:airline_symbols.whitespace = 'Ξ'
 " }}}
 
@@ -162,7 +159,7 @@ nmap <C-e> :tabNext<CR>
 imap <C-e> <Esc><C-e>a
 
 " toggle paste mode (set pastetoggle doesn't refresh)
-nnoremap <silent> <F12> :set paste!<CR>h
+map <silent> <F12> :set invpaste<CR>
 
 " C-c = copy to XA_CLIPBOARD using xcmenu
 xnoremap <silent> <C-c> "zy:call system('xcmenu -ci', @z)<cr>
