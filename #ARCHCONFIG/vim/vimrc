@@ -29,29 +29,26 @@ endif
 colorscheme colorshot            " modified slate theme
 set background=dark              " dark background
 set completeopt-=preview         " disable scratch buffer
+set cursorline                   " enable cursor highlight
 set showcmd                      " show command information
 set foldmethod=marker            " allow marking folds
 set showmatch                    " hilight search pattern
 set incsearch                    " incremental search
+set scrolloff=1                  " 1 line offset from top-bottom
+set sidescrolloff=5              " 5 character offset from left-right
+set nowrap                       " don't wrap lines
 set virtualedit=all              " enable virtualedit (visual block)
-set autoindent                   " auto indentation
-set cindent                      " C indentation
 set expandtab                    " spaces not tabs
 set softtabstop=3                " indents
 set shiftwidth=3                 " more indents
-"set softtabstop=4               " alternative tab settings
-"set shiftwidth=4                " for various projects
-set pastetoggle=<F12>            " toggle paste mode
 set number                       " show line numbers
 set noswapfile                   " no swap files
+set updatecount=0                " we don't use swap files
 set wildmenu                     " enable wildmenu
-set wildmode=list:longest,full   " wildmenu mode
+set wildmode=longest:full,full   " wildmenu mode
 set ignorecase                   " ignore case in search
 set smartcase                    " if uppercase letter, don't ignore
-set autoread                     " reload file if it changed
 set undolevels=1000              " undo levels
-set updatecount=0                " we don't use swap files
-set ttyfast                      " yes we have a fast terminal connection
 set lazyredraw                   " don't redraw while executing macros
 set noerrorbells                 " no bells plz
 set shell=zsh                    " zsh!
@@ -64,18 +61,15 @@ set laststatus=2                 " show the status always
 set suffixes=.bak,~,.swp,.o,.log " lower prioritory for tab completition
 set backup                       " backups are awesome
 set backupdir=$HOME/.vim/backup  " set backup directory
-set timeoutlen=500               " lower statusline timeout
-
-" hilight under cursor
-set cursorline                   " enable hilight
-hi cursorline   cterm=NONE ctermbg=234
-hi cursorcolumn cterm=NONE ctermbg=234
+set ttimeout                     " key combination timeout
+set ttimeoutlen=50               " lower statusline timeout
 
 " this stuff is common sense
 filetype on
 filetype plugin on
 filetype plugin indent on
 
+" C syntax checking options
 let c_gnu = 1
 let c_space_errors = 1
 let c_no_tab_space_error = 1
@@ -90,7 +84,6 @@ set viminfo=%100,'100,/100,h,\"500,:100,n~/.viminfo
 " man page integration
 source $VIMRUNTIME/ftplugin/man.vim
 nmap K :Man <cword><CR>
-
 " }}}
 " {{{ Mutt settings
 autocmd BufNewFile,BufRead /tmp/mutt-* set filetype=mail
@@ -171,6 +164,9 @@ let g:airline_symbols.whitespace = 'Ξ'
 nmap <C-e> :tabNext<CR>
 imap <C-e> <Esc><C-e>a
 
+" toggle paste mode (set pastetoggle doesn't refresh)
+nnoremap <silent> <F12> :set paste!<CR>h
+
 " C-c = copy to XA_CLIPBOARD using xcmenu
 xnoremap <silent> <C-c> "zy:call system('xcmenu -ci', @z)<cr>
 
@@ -239,6 +235,19 @@ nnoremap <silent> :ml :call AppendModeline()<CR>
 "
 " some really useful autostart stuff below
 "
+" {{{Autocheck file changes
+set autoread
+augroup checktime
+   au!
+   if !has("gui_running")
+      autocmd BufEnter        * silent! checktime
+      autocmd CursorHold      * silent! checktime
+      autocmd CursorHoldI     * silent! checktime
+      autocmd CursorMoved     * silent! checktime
+      autocmd CursorMovedI    * silent! checktime
+   endif
+augroup END
+" }}}
 " {{{ Keep folds closed on insert mode
 autocmd InsertEnter * if !exists('w:last_fdm') | let w:last_fdm=&foldmethod | setlocal foldmethod=manual | endif
 autocmd InsertLeave,WinLeave * if exists('w:last_fdm') | let &l:foldmethod=w:last_fdm | unlet w:last_fdm | endif
@@ -275,7 +284,7 @@ augroup JumpCursorOnEdit
             \ endif
 augroup END
 " }}}
-" {{{Custom tabline
+" {{{Simple custom tabline
 function SimpleTabLine()
    let s = ''
    for i in range(tabpagenr('$'))
