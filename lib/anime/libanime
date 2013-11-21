@@ -44,7 +44,7 @@ _anime_hist_store() {
    [[ -n "$_ANIME_HISTORY" ]] || return
    [[ "$histline" == "$(tail -n1 "$_ANIME_HISTORY")" ]] && return
    echo "$histline" >> "$_ANIME_HISTORY"
-   [[ $_ANIME_HISTORY_MAX -gt 0 ]] && head -n$_ANIME_HISTORY_MAX "$_ANIME_HISTORY" | sponge "$_ANIME_HISTORY"
+   [[ $_ANIME_HISTORY_MAX -gt 0 ]] && tail -n$_ANIME_HISTORY_MAX "$_ANIME_HISTORY" | sponge "$_ANIME_HISTORY"
 }
 
 # get anime from history (by index)
