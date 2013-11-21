@@ -5,7 +5,7 @@ function! CSyntaxPlus()
    syn match  _Block    "[{}]"
    syn match  _IfBlock  "[()]"
    syn match  _Bracket  "[\[\]]"
-   syn match  _Operator display "[-+&|<>=!*\/~.,;:%&^?]" contains=cComment
+   syn match  _Operator display "[-+&|<>=!*\/~.,;:%&^?]" contains=cComment,cCommentL
    syn match  _Pointer  display "\w\+\s*->"  contains=_Operator
    syn match  _Struct   display "\w\+\s*[.]" contains=_Operator
    syn match  _Func     display "\w\+\s*("   contains=_IfBlock
