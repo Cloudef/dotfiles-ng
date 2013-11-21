@@ -61,6 +61,7 @@ set backup                       " backups are awesome
 set backupdir=$HOME/.vim/backup  " set backup directory
 set ttimeout                     " key combination timeout
 set ttimeoutlen=50               " lower statusline timeout
+set autoindent                   " indent to last identation
 
 " this stuff is common sense
 filetype on
