@@ -1,26 +1,25 @@
 #!/bin/bash
 # toolsched library file
 
-schedtool="$(which schedtool 2>&1)"
-ionice="$(which ionice 2>&1)"
+schedtool="$(which --skip-alias --skip-functions schedtool 2>&1)"
+ionice="$(which --skip-alias --skip-functions ionice 2>&1)"
 
 # Launch process
 toolsched_launch()
 {
    local cmd="$(basename $0)"
-   local scriptcmd="$(which $cmd 2>&1)"
    local command=
-   for i in $(which -a "$cmd" 2>&1); do
-      [[ "$i" != "$scriptcmd" ]] && {
+   for i in $(which --skip-alias --skip-functions -a "$cmd" 2>&1); do
+      if [[ "$i" != "$0" ]]; then
          command="$i"
          break
-      }
+      fi
    done
 
-   [[ -n "$command" ]] || {
-      echo "$cmd: command not found"
+   if [[ ! -n "$command" ]]; then
+      echo "$cmd: command not found [$command, $0]"
       exit 1
-   }
+   fi
 
    exec "$command" "$@"
    exit $?
