@@ -12,7 +12,7 @@ for SSD in "${SSDS[@]}"; do
       SCHED=/sys/block/$DEV_NAME/queue/scheduler
 
       if [[ -w $SCHED ]]; then
-         echo cfq > $SCHED
+         echo noop > $SCHED
       fi
    fi
 done
