@@ -98,6 +98,8 @@ zstyle ':prezto:load' pmodule \
    'terminal' \
    'editor' \
    'directory' \
+   'archive' \
+   'command-not-found' \
    'spectrum' \
    'utility' \
    'completion' \
@@ -115,6 +117,8 @@ zstyle ':prezto:load' pmodule \
    'editor' \
    'history' \
    'directory' \
+   'archive' \
+   'command-not-found' \
    'spectrum' \
    'utility' \
    'completion' \
