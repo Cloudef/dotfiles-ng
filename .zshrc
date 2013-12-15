@@ -10,6 +10,10 @@ source "/arch/shell/zshrc"
 source "$HOME/.private"
 source "$HOME/lib/anime/envanime"
 
+# unalias stuff we don't want
+unalias scp
+unalias sftp
+
 export __GL_SYNC_TO_VBLANK=1
 export __GL_SYNC_DISPLAY_DEVICE=DFP-0
 export __GL_THREADED_OPTIMIZATIONS=0
