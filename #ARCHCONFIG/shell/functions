@@ -38,70 +38,70 @@ f() {
 ################
 ## Smarter CD ##
 ################
-function goto() {
+goto() {
    [[ -d "$1" ]] && { cd "$1"; } || cd "$(dirname "$1")";
 }
 
 ####################
 ## Copy && Follow ##
 ####################
-function cpf() {
+cpf() {
    cp "$@" && goto "$_";
 }
 
 ####################
 ## Move && Follow ##
 ####################
-function mvf() {
+mvf() {
    mv "$@" && goto "$_";
 }
 
 #####################
 ## mkdir && follow ##
 #####################
-function mkcdr() {
+mkcdr() {
    mkdir -vp "$@" && cd "$_";
 }
 
 ##################
 ## Start daemon ##
 ##################
-function start() {
+sstart() {
    sudo systemctl start $@
 }
 
 #################
 ## Stop daemon ##
 #################
-function stop() {
+sstop() {
    sudo systemctl stop $@
 }
 
 ####################
 ## Restart daemon ##
 ####################
-function restart() {
+srestart() {
    sudo systemctl restart $@
 }
 
 ###################
 ## Enable daemon ##
 ###################
-function enable() {
+senable() {
    sudo systemctl enable $@
 }
 
 ####################
 ## Disable daemon ##
 ####################
-function disable() {
+sdisable() {
    sudo systemctl disable $@
 }
 
 ###################
 ## Daemon status ##
 ###################
-function status() {
+sstatus() {
    systemctl status $@
 }
 
@@ -127,21 +127,21 @@ memleak()
 ########################
 ## Create tar archive ##
 ########################
-function mktar() {
+mktar() {
    tar cvf  "${1%%/}.tar" "${1%%/}/";
 }
 
 ###########################
 ## Create tar.gz archive ##
 ###########################
-function mktgz() {
+mktgz() {
    tar cvzf "${1%%/}.tar.gz"  "${1%%/}/";
 }
 
 ############################
 ## Create tar.bz2 archive ##
 ############################
-function mktbz() {
+mktbz() {
    tar cvjf "${1%%/}.tar.bz2" "${1%%/}/";
 }
 
@@ -246,7 +246,7 @@ openo() {
 #######################
 ## Setup github repo ##
 #######################
-function mkgit() {
+mkgit() {
    local GITHUB="Cloudef"
    local dir="$1"
    local gitname="$2"
@@ -279,7 +279,7 @@ function mkgit() {
 ## Getting undefined references?  ##
 ## Grep your libs for symbols     ##
 ####################################
-function greplib() {
+greplib() {
    [[ -n "$1" ]] || {
       echo "usage : greplib [symbol] (lookup path)"
       return
