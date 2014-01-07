@@ -144,6 +144,9 @@ compdef pacmatic=pacman
 
 } # link if OK
 
+# gets defined from utility module, but we don't want this
+unfunction make
+
 # source functions and aliases
 source "/arch/shell/functions"
 source "/arch/shell/alias"
