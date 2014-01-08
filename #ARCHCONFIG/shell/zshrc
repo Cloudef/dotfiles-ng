@@ -158,6 +158,7 @@ source "/arch/shell/alias"
 # zsh options
 unsetopt correct # I can't see why people like this
                  # stop typing wrong silly people
+bindkey '\e'      send-break           # Cancel completion with ESC
 bindkey "\e[1~"   beginning-of-line    # Home
 bindkey "^A"      beginning-of-line    # CTRL+A
 bindkey "\e[4~"   end-of-line          # End
