@@ -147,6 +147,10 @@ compdef pacmatic=pacman
 # gets defined from utility module, but we don't want this
 unfunction make
 
+# load zcalc
+autoload -U zcalc
+alias zcalc='noglob zcalc'
+
 # source functions and aliases
 source "/arch/shell/functions"
 source "/arch/shell/alias"
