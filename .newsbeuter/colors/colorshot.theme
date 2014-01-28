@@ -5,9 +5,10 @@ highlight  article      "^Title: .*$"   color13   default  bold
 highlight  article      "^Author: .*$"  color5    default
 highlight  article      "^Link: .*$"    color6    default
 highlight  article      "^Date: .*$"    color4    default
-color      listnormal_unread            red       default bold
+color      listnormal_unread            red       default  bold
 color      listnormal                   color7    default
 color      listfocus                    red       default
+color      listfocus_unread             default   red      bold
 color      info                         color7    black
 color      article                      color246  default
 
