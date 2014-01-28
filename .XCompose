@@ -1,3 +1,4 @@
+<Multi_key> <period> <period>           : "…"   U2026           # HORIZONTAL ELLIPSIS
 <Multi_key> <o> <o> 		        : "•"	U2022		# BULLET
 <Multi_key> <Left> <Left>		: "←"	leftarrow	# LEFTWARDS ARROW
 <Multi_key> <Up> <Up>			: "↑"	uparrow		# UPWARDS ARROW
