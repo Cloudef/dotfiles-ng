@@ -28,9 +28,6 @@ local VLESS="$(find /usr/share/vim -name 'less.sh')"
 # bell alias
 alias bell='echo \\007\\c'
 
-# unmount wrapper
-alias um='udevil --umount'
-
 # mpd client aliases
 alias  lm='lolimpd'
 alias   m='lolimpdnu'
