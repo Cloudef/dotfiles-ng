@@ -14,6 +14,10 @@ source "$HOME/lib/anime/envanime"
 unalias scp
 unalias sftp
 
+# show time if command takes longer than 5 seconds
+export REPORTTIME=5
+
+# OpenGL stuff
 export __GL_SYNC_TO_VBLANK=1
 export __GL_SYNC_DISPLAY_DEVICE=DFP-0
 export __GL_THREADED_OPTIMIZATIONS=0
