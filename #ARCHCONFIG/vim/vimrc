@@ -117,7 +117,7 @@ let g:ycm_confirm_extra_conf = 0 " don't ask for confirmation
 " }}}
 " {{{ ListToggle
 let g:lt_location_list_toggle_map = '<C-l>'
-let g:lt_quickfix_list_toggle_map = '<C-q>'
+let g:lt_quickfix_list_toggle_map = '<C-h>'
 let g:lt_height = 5
 " }}}
 " {{{ Syntastic
@@ -155,9 +155,14 @@ let g:airline_symbols.whitespace = 'Ξ'
 
 " }}}
 " {{{ Keybindings
+" Force C-s && C-q to reach terminal
+silent !stty -ixon &> /dev/null
+
 " C-e = cycle tabs, similar to C-w for panes
-nmap <C-e> :tabNext<CR>
+nmap <C-e> :tabnext<CR>
+nmap <C-q> :tabprev<CR>
 imap <C-e> <Esc><C-e>a
+imap <C-q> <Esc><C-q>a
 
 " toggle paste mode (set pastetoggle doesn't refresh)
 map <silent> <F12> :set invpaste<CR>
