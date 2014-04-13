@@ -178,7 +178,7 @@ nnoremap <space> za
 
 " {{{ Bemenu functions
 function! Chomp(str)
-   return substitute(a:str, '\n$', '', '')
+   return escape(substitute(a:str, '\n$', '', ''), '\\/.*$^~[]#')
 endfunction
 
 function! BemenuOpen(cmd)
