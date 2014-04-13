@@ -1,24 +1,38 @@
 #!/bin/bash
-# paste to ixio or vpaste
+# paste to ixio or other paste services
 
-server1="http://ix.io"
-server2="http://vpaste.net"
-server="$server1"
+declare -A servers # Assocative arrays, BASH 4.2 or something
+servers['s1']='http://ix.io f:1'
+servers['s2']='http://sprunge.us sprunge'
+servers['s3']='http://vpaste.net text'
 
-# ix.io
-[[ "$server" == "$server1" ]] && {
-   [[ -f "$1" ]] && out="$(curl -s -n -F "f:1=<$1" "$server")"
-   [[ -f "$1" ]] || out="$(curl -s -n -F 'f:1=<-' "$server")"
-}
+# default server
+s=${1-'s1'}
+[[ "$1" == "$s" ]] && shift 1
 
-# paste failed, try next server
-[[ -n "$out" ]] || server="$server2"
+# check argument for server
+components=(${servers[$s]})
+server="${components[0]}"
+field="${components[1]}"
 
-# vpaste.net
-[[ "$server" == "$server2" ]] && {
-   [[ -f "$1" ]] && out="$(curl -s -F "text=<$1" "$server/?$2")"
-   [[ -f "$1" ]] || out="$(curl -s -F 'text=<-' "$server/?$@")"
-}
+# sanitize
+if [[ ! -n "$server" ]] || [[ ! -n "$field" ]]; then
+   echo "-!- bad server or curl field! ($server : $field)" 1>&2
+   exit 1
+fi
 
-[[ -n "$out" ]] && echo "$out"
-[[ -n "$out" ]] || echo "-!- paste failed!"
+# do the thing
+if [[ -f "$1" ]]; then
+   out="$(curl -s -F "$field=<$1" "$server")" #file
+else
+   out="$(curl -s -F "$field=<-" "$server")" # stdin
+fi
+
+# result
+if [[ -n "$out" ]]; then
+   echo "$out"
+else
+   echo "-!- paste failed!" 1>&2
+fi
+
+# vim: set ts=8 sw=3 tw=0 :
