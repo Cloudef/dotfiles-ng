@@ -23,7 +23,7 @@ fi
 
 # do the thing
 if [[ -f "$1" ]]; then
-   out="$(curl -s -F "$field=<$1" "$server")" #file
+   out="$(curl -s -F "$field=<$1" "$server")" # file
 else
    out="$(curl -s -F "$field=<-" "$server")" # stdin
 fi
