@@ -176,18 +176,21 @@ xnoremap <silent> <C-c> "zy:call system('xcmenu -ci', @z)<cr>
 " toggle folds with space
 nnoremap <space> za
 
-" {{{ Dmenu functions
+" {{{ Bemenu functions
 function! Chomp(str)
    return substitute(a:str, '\n$', '', '')
 endfunction
 
-function! DmenuOpen(cmd)
+function! BemenuOpen(cmd)
    let gtdir = Chomp(system("git rev-parse --show-toplevel 2>/dev/null"))
    if (empty(gtdir))
       return
    endif
-   let fname = Chomp(system("pushd ".gtdir." &>/dev/null; git ls-files 2>/dev/null | dmenu -i -l 20 -p ".a:cmd."; popd &>/dev/null"))
-   let match = gtdir."/".fname
+   let fname = Chomp(system("pushd ".gtdir." &>/dev/null; git ls-files 2>/dev/null | bemenu -i -l 20 -p ".a:cmd."; popd &>/dev/null"))
+   let match = gtdir."/". fname
+   " this seems to cause vim to fix input in clever way after exiting curses program
+   silent !
+   silent redraw!
    echo match
    if empty(fname)
       return
@@ -197,9 +200,9 @@ endfunction
 " }}}
 " use ctrl-t to open file in a new tab
 " use ctrl-f to open file in current buffer
-map <c-t> :call DmenuOpen("tabe")<cr>
-map <c-f> :call DmenuOpen("edit")<cr>
-map <c-g> :call DmenuOpen("split")<cr>
+map <c-t> :call BemenuOpen("tabe")<cr>
+map <c-f> :call BemenuOpen("edit")<cr>
+map <c-g> :call BemenuOpen("split")<cr>
  " }}}
 " {{{ Aliases
 " {{{ Tab change functions
