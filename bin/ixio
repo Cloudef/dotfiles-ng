@@ -7,8 +7,8 @@ servers['s2']='http://sprunge.us sprunge'
 servers['s3']='http://vpaste.net text'
 
 # default server
-s=${1-'s1'}
-[[ -n "${servers[$s]}" ]] || s='s1'
+s=${1-'s2'}
+[[ -n "${servers[$s]}" ]] || s='s2'
 [[ "$1" == "$s" ]] && shift 1
 
 # check argument for server
