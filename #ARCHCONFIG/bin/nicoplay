@@ -1,5 +1,5 @@
 #!/bin/bash
-# Streams the nicovideo to mplayer
+# Streams the nicovideo to mpv
 #
 # Store your credentials in:
 #   $HOME/.passwd/nicovideo
@@ -8,28 +8,146 @@
 # <username>
 # <password>
 #
-# needs: nicovideo-dl, mplayer
+# needs: nicovideo-dl, mpv
 
 source "/arch/passwd/libpasswd-sh"
-err() { echo "$@" 1>&2; exit 1; }
 
-# password stuff
+# automatically inserts passwords to nicovideo-dl
 nicowrap() {
    nicovideo-dl                            \
       -u "$(_passwd_get_user "nicovideo")" \
       -p "$(_passwd_get_pass "nicovideo")" $@
 }
 
-# logic
-main() {
-   [[ -n "$@" ]] || err "usage: $(basename $0) [url]"
-   [[ -p /tmp/nicovideo.fifo ]] && rm /tmp/nicovideo.fifo
-   mkfifo -m 666 /tmp/nicovideo.fifo
-   nicowrap -g "$@" || return 1
-   nicowrap -o /tmp/nicovideo.fifo "$@" &> /dev/null &
-   mpv -really-quiet -loop inf /tmp/nicovideo.fifo
-   test -z "`jobs -p`" || kill -9 `jobs -p` &> /dev/null
-   rm /tmp/nicovideo.fifo &> /dev/null
+# error handler
+err() { echo "$@" 1>&2; exit 1; }
+
+# check arguments
+if [[ ! -n "$@" ]]; then
+   err "usage: $(basename $0) [url]"
+fi
+
+# create temporary directory
+NICOPLAY_DIR="$(mktemp -dt "$(basename $0).XXXXXXXXXX")"
+
+# cleanup
+cleanup()
+{
+   # remove temporary directory
+   if [[ -d "$NICOPLAY_DIR" ]]; then
+      rm -rf "$NICOPLAY_DIR"
+   fi
+
+   # kill all forks
+   if [[ -z "$(jobs -p)" ]]; then
+      kill -9 $(jobs -p) &> /dev/null
+   fi
 }
-main $@
-exit $?
+trap cleanup EXIT
+
+# data for loading screen
+LOADING="""
+R0lGODlh/AF9AbMAAP///+7u7t3d3czMzLu7u6qqqpmZmYiIiHd3d2ZmZv4BAgAAAAAAAAAAAAAA
+AAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCgAKACwAAAAA/AF9AQAE/xDISau9OOvNu/9gKI5k
+aZ5oqq5s675wLM90bd94ru987//AoHBILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0
+es1uu9/wuHxOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6Sl
+pqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e
+3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAMKHEiwoMGDCBMqXMiwocOHECNKnEix
+osWLGDNq3Mixo8ePIP9DihxJsqTJkyhTqlzJsqXLlzBjypxJs6bNmzhz6tzJs6fPn0CDCh1KtKjR
+o0iTKl3KtKnTp1CjSp1KtarVq1izat3KtavXr2DDih1LtqzZs2jTql3Ltq3bt3Djyp1Lt67du3jz
+6t3Lt6/fv4ADCx5MuLDhw4gTK17MuLHjx5AjS55MubLly5gza97MubPnz6CRBhhAekCAAKHjBCiA
+4MABAwUICDid2k2BBLgRtDYwQEDtNgEQ4B6eALbv32sECB/OG7mb4MMPoHbuZnlx6m9u4y6A/Tnz
+7rYT6J4Ofo1uBNzLrwmu+7j6NATOv18T//UJ8vOfsEZvgnZ+KAW4ZkD/f/7910R96ZFwGn4GKjGA
+awcQyGCDSAQAoXsiLEhhExASoGAAs23IBAGvGTBhBwLMdqKIRFhogAEehgBiiiyO+CKMIMwYYo1L
+FHBjjByMliKGPFZ4Y2wcCEAajUUysRpsBRRgmgUgltZbk04EQACUURJgJQFglkYklksMEGVssYGp
+ZmkrkukgAWmqGeaYbj4x45Jt1qnnnnz26eefgAYq6KCEFmoonwXqoKEEix5aQQAv5inDiwNMQKmj
+VEbKw6UScIrpBJCauGlzjEpKaKimwuDppxegGqScGIwGK5UDgOmbp6RNp6RvAqg5oayyAZBrka5q
+sOWNqwJwLLIGYCgA/7PHVtopqVuCyayzzPpIao3FYnCsl8u6N8CLXpp5I6gvSjnujdICwOmy4J7L
+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
+BcbAGgTELAXPz8ckvDfMzi3QrV1wtHEoEQA7"""
+
+# we don't use stdin because we need file for --loop inf to work
+base64 -d <<< "$LOADING" > "$NICOPLAY_DIR/nicovideo.loading"
+mpv --really-quiet --loop inf "$NICOPLAY_DIR/nicovideo.loading" &
+loading_pid=$!
+
+# grab title to make sure this video works and we don't get stuck later
+start=$(date +"%s")
+nicowrap -g "$@" || err "failed to grab title"
+end=$(date +"%s")
+diff=$(($end-$start))
+
+# if danmaku2ass is installed, use it for subtitles
+if hash danmaku2ass &> /dev/null; then
+   if nicowrap -s -c -x --comment-output="$NICOPLAY_DIR/nicovideo.xml" "$@"; then
+      danmaku2ass -o "$NICOPLAY_DIR/nicovideo.ass" -s 640x480 -fs 48 -a 0.8 -l 5 "$NICOPLAY_DIR/nicovideo.xml"
+      rm -f "$NICOPLAY_DIR/nicovideo.xml"
+   fi
+fi
+
+# delete old fifo if exists and create fifo
+if [[ -p "$NICOPLAY_DIR/nicovideo.fifo" ]]; then
+   rm -f "$NICOPLAY_DIR/nicovideo.fifo"
+fi
+mkfifo -m 666 "$NICOPLAY_DIR/nicovideo.fifo"
+
+# start filling fifo with data
+nicowrap -o "$NICOPLAY_DIR/nicovideo.fifo" "$@" &> /dev/null &
+
+# we sleep with the difference of first request for instant playback
+sleep $diff
+
+# stop if user quit the loading screen
+if ! kill -0 $loading_pid &> /dev/null; then
+   exit 0
+fi
+
+# kill loading screen and start playing the video
+kill $loading_pid &> /dev/null
+mpv --really-quiet "$NICOPLAY_DIR/nicovideo.fifo"
+
+# vim: set ts=8 sw=3 tw=0 :
