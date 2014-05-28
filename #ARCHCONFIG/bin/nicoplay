@@ -129,13 +129,8 @@ if hash danmaku2ass &> /dev/null; then
    fi
 fi
 
-# delete old fifo if exists and create fifo
-if [[ -p "$NICOPLAY_DIR/nicovideo.fifo" ]]; then
-   rm -f "$NICOPLAY_DIR/nicovideo.fifo"
-fi
-mkfifo -m 666 "$NICOPLAY_DIR/nicovideo.fifo"
-
 # start filling fifo with data
+mkfifo -m 666 "$NICOPLAY_DIR/nicovideo.fifo"
 nicowrap -o "$NICOPLAY_DIR/nicovideo.fifo" "$@" &> /dev/null &
 
 # we sleep with the difference of first request for instant playback
