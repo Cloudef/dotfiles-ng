@@ -111,8 +111,8 @@ TjoHhTeHLwABCDkFjJQUBJgHizACJY4TMzOhIaMDJRkypwWSGKwkXBqvBywEH0W0JKlFLLksNb8E
 BcbAGgTELAXPz8ckvDfMzi3QrV1wtHEoEQA7"""
 
 # we don't use stdin because we need file for --loop inf to work
-base64 -d <<< "$LOADING" > "$NICOPLAY_DIR/nicovideo.loading"
-mpv --really-quiet --loop inf "$NICOPLAY_DIR/nicovideo.loading" &
+base64 -d <<< "$LOADING" > "$NICOPLAY_DIR/loading.gif"
+mpv --really-quiet --loop inf "$NICOPLAY_DIR/loading.gif" &
 loading_pid=$!
 
 # grab title to make sure this video works and we don't get stuck later
@@ -123,8 +123,8 @@ diff=$(($end-$start))
 
 # if danmaku2ass is installed, use it for subtitles
 if hash danmaku2ass &> /dev/null; then
-   if nicowrap -s -c -x --comment-output="$NICOPLAY_DIR/nicovideo.xml" "$@"; then
-      danmaku2ass -o "$NICOPLAY_DIR/nicovideo.ass" -s 640x480 -fs 48 -a 0.8 -l 5 "$NICOPLAY_DIR/nicovideo.xml"
+   if nicowrap -s -c -x --comment-output="$NICOPLAY_DIR/nicovideo.xml" "$@" &> /dev/null; then
+      danmaku2ass -o "$NICOPLAY_DIR/nicovideo.ass" -r -s 1280x720 -fs 48 -a 0.8 -l 5 "$NICOPLAY_DIR/nicovideo.xml" &> /dev/null
       rm -f "$NICOPLAY_DIR/nicovideo.xml"
    fi
 fi
