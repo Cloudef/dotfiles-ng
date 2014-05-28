@@ -1,0 +1,20 @@
+#!/bin/bash
+# nicovideo-dl wrapper with auto password
+#
+# Store your credentials in:
+#   $HOME/.passwd/nicovideo
+#
+# with format:
+# <username>
+# <password>
+#
+# needs: nicovideo-dl
+
+source "/arch/passwd/libpasswd-sh"
+err() { echo "$@" 1>&2; exit 1; }
+
+nicovideo-dl                            \
+   -u "$(_passwd_get_user "nicovideo")" \
+   -p "$(_passwd_get_pass "nicovideo")" $@
+
+# vim: set ts=8 sw=3 tw=0 :
