@@ -14,22 +14,22 @@ max_peers_seed       = 550
 
 # ram limits
 max_memory_usage = 1800M
-xmlrpc_size_limit = 2M
+network.xmlrpc.size_limit = 2M
 
 # sort views by creation date
-view_sort_new = main,less=d.get_creation_date=
-view_sort_current = main,less=d.get_creation_date=
+view.sort_new = main,less=d.creation_date=
+view.sort_current = main,less=d.creation_date=
 
 # close torrents when disk space below 2,5G
 schedule = low_diskspace,5,60,close_low_diskspace=2500M
 
 # auto torrent directories
-schedule = anime_torrent,10,10,"load_start=/mnt/anime/torrent/*.torrent,d.set_directory=/mnt/anime/seed"
-schedule = anime_torrent2,10,10,"load_start=/mnt/storage/anime/torrent/*.torrent,d.set_directory=/mnt/storage/anime/seed"
-schedule = anime_torrent3,10,10,"load_start=/mnt/東方/anime/torrent/*.torrent,d.set_directory=/mnt/東方/anime/seed"
-schedule = anime_torrent4,10,10,"load_start=/mnt/storage2/anime/torrent/*.torrent,d.set_directory=/mnt/storage2/anime/seed"
-schedule = storage_torrent,10,10,"load_start=/mnt/storage/torrent/*.torrent,d.set_directory=/mnt/storage"
-schedule = storage_torrent2,10,10,"load_start=/mnt/東方/torrent/*.torrent,d.set_directory=/mnt/東方"
+schedule = anime_torrent,10,10,"load.start=/mnt/anime/torrent/*.torrent,d.directory.set=/mnt/anime/seed"
+schedule = anime_torrent2,10,10,"load.start=/mnt/storage/anime/torrent/*.torrent,d.directory.set=/mnt/storage/anime/seed"
+schedule = anime_torrent3,10,10,"load.start=/mnt/東方/anime/torrent/*.torrent,d.directory.set=/mnt/東方/anime/seed"
+schedule = anime_torrent4,10,10,"load.start=/mnt/storage2/anime/torrent/*.torrent,d.directory.set=/mnt/storage2/anime/seed"
+schedule = storage_torrent,10,10,"load.start=/mnt/storage/torrent/*.torrent,d.directory.set=/mnt/storage"
+schedule = storage_torrent2,10,10,"load.start=/mnt/東方/torrent/*.torrent,d.directory.set=/mnt/東方"
 
 #
 # Other settings below
@@ -43,18 +43,18 @@ port_random          = no
 # general protocol
 dht                  = auto
 dht_port             = 6881
-peer_exchange        = yes
-use_udp_trackers     = yes
+protocol.pex.set     = yes
+trackers.use_udp.set = yes
 
 # general other
 encryption           = allow_incoming,try_outgoing,enable_retry
 check_hash           = no
 
 # Preallocate files; reduces defragmentation on filesystems.
-system.file_allocate.set = yes
+system.file.allocate.set = yes
 
 # pyroscope settings
-system.method.insert = pyro.extended, value|const, 1
+method.insert = pyro.extended, value|const, 1
 
 # auto-collapse views
 schedule = bind_collapse,0,0,"ui.bind_key=download_list,c,view.collapsed.toggle="
@@ -77,9 +77,9 @@ method.insert = network.history.auto_scale.ui_toggle, simple|private, "network.h
 branch=pyro.extended=,"schedule = bind_auto_scale,0,0,\"ui.bind_key=download_list,=,network.history.auto_scale.ui_toggle=\""
 
 # VIEW: Use rtcontrol filter (^X s=KEYWORD, ^X t=TRACKER, ^X f="FILTER")
-system.method.insert = s,simple,"execute_nothrow=rtcontrol,--detach,-qV,\"$cat=*,$argument.0=,*\""
-system.method.insert = t,simple,"execute_nothrow=rtcontrol,--detach,-qV,\"$cat=\\\"alias=\\\",$argument.0=\""
-system.method.insert = f,simple,"execute_nothrow=rtcontrol,--detach,-qV,$argument.0="
+method.insert = s,simple,"execute_nothrow=rtcontrol,--detach,-qV,\"$cat=*,$argument.0=,*\""
+method.insert = t,simple,"execute_nothrow=rtcontrol,--detach,-qV,\"$cat=\\\"alias=\\\",$argument.0=\""
+method.insert = f,simple,"execute_nothrow=rtcontrol,--detach,-qV,$argument.0="
 
 # Colors
 ui.color.alarm.set=""
