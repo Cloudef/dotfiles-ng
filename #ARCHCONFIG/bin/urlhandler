@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Common url handler
 # termite uses this, dwb it's binded to ctrl+y
 
@@ -10,14 +10,20 @@ domain() {
 # $@ = URL
 main() {
    case "$(domain "$@")" in
-      *youtube.com)
-         mpv -really-quiet -loop inf "$@" &> /dev/null
-      ;;
       *nicovideo.jp)
          nicoplay "$@" &> /dev/null
       ;;
       *)
-         "$BROWSER" "$@" &> /dev/null &
+         {
+            read -r title
+            read -r url
+         } < <(youtube-dl --default-search "plznosearch:" -eg "$@")
+
+         if [[ -n "$url" ]]; then
+            mpv --really-quiet --loop=inf --title="$title" "$url" &
+         else
+            "$BROWSER" "$@" &> /dev/null &
+         fi
       ;;
    esac
 }
