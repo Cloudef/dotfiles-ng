@@ -1,5 +1,5 @@
 include ~/.newsbeuter/colors/colorshot.theme
-browser open
+browser newsbeuter-open
 auto-reload yes
 reload-time 15
 reload-threads 2
