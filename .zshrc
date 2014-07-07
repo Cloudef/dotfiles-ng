@@ -29,6 +29,7 @@ bindkey "^E" edit-command-line
 export WINEDIR="${XDG_DATA_HOME-$HOME/.local/share}/wine"
 export WINEPREFIX="$WINEDIR/prefixes/default"
 alias winedir="cd $WINEDIR"
+alias vmetal="WINEDEBUG=-all wine $WINEDIR/prefixes/default/drive_c/Program\ Files/Native\ Instruments/Kontakt\ 5/Kontakt\ 5.exe"
 
 # other aliases
 alias mplayer=mpv
@@ -43,6 +44,7 @@ alias pkg="cd /arch/pkg"
 alias pkgb="cd /arch/pkg/pkgbuild"
 alias src="cd /arch/pkg/source"
 alias manime="cd /mnt/anime"
+alias manime2="cd /mnt/anime2"
 alias mstorage="cd /mnt/storage"
 alias mstorage2="cd /mnt/storage2"
 alias mth="cd /mnt/東方"
