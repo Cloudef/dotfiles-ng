@@ -131,6 +131,13 @@ hi link SpecialComment  Special
 hi link Debug           Special
 hi link cTodo           Todo
 
+" Diff
+
+hi! link DiffAdd TabLineSel
+hi! link DiffDelete TabLine
+hi! link DiffChange Pmenu
+hi! link DiffText PmenuSel
+
 " Syntastic
 hi link SyntasticErrorSign    ErrorMsg
 hi link SyntasticWarningSign  WarningMsg
