@@ -28,6 +28,7 @@ schedule = anime_torrent,10,10,"load.start=/mnt/anime/torrent/*.torrent,d.direct
 schedule = anime_torrent2,10,10,"load.start=/mnt/storage/anime/torrent/*.torrent,d.directory.set=/mnt/storage/anime/seed"
 schedule = anime_torrent3,10,10,"load.start=/mnt/東方/anime/torrent/*.torrent,d.directory.set=/mnt/東方/anime/seed"
 schedule = anime_torrent4,10,10,"load.start=/mnt/storage2/anime/torrent/*.torrent,d.directory.set=/mnt/storage2/anime/seed"
+schedule = anime_torrent5,10,10,"load.start=/mnt/anime2/torrent/*.torrent,d.directory.set=/mnt/anime2/seed"
 schedule = storage_torrent,10,10,"load.start=/mnt/storage/torrent/*.torrent,d.directory.set=/mnt/storage"
 schedule = storage_torrent2,10,10,"load.start=/mnt/東方/torrent/*.torrent,d.directory.set=/mnt/東方"
 
@@ -37,12 +38,12 @@ schedule = storage_torrent2,10,10,"load.start=/mnt/東方/torrent/*.torrent,d.di
 
 # general network
 max_uploads          = 84
-port_range           = 49164-49164
+port_range           = 49165-49165
 port_random          = no
 
 # general protocol
 dht                  = auto
-dht_port             = 6881
+dht_port             = 6882
 protocol.pex.set     = yes
 trackers.use_udp.set = yes
 
