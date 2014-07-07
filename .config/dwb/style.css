@@ -126,3 +126,5 @@ select[size]:hover {
   box-shadow: 1px 3px 2px #eeeeee inset, 0 0 0 2px #ffff88;
 }
 
+/** nyaa yellow fix */
+.remake { background-color: #FF9E9E !important; }
