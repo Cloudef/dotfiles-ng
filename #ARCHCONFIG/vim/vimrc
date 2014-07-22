@@ -114,6 +114,7 @@ au BufNewFile,BufRead *.frag,*.vert,*.fp,*.vp,*.glsl setf glsl
 " }}}
 " {{{ YouCompleteMe
 let g:ycm_confirm_extra_conf = 0 " don't ask for confirmation
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py' " Bear (https://github.com/rizsotto/Bear) powered
 " }}}
 " {{{ ListToggle
 let g:lt_location_list_toggle_map = '<C-l>'
