@@ -320,6 +320,11 @@ say() {
    mpv -really-quiet "http://translate.google.com/translate_tts?ie=UTF-8&tl=JA&q=$URL" &> /dev/null
 }
 
+saydl() {
+   local URL="$(echo "$@" | perl -MURI::Escape -ne 'chomp;print uri_escape($_)')"
+   wget --user-agent="Mozilla/5.0" "http://translate.google.com/translate_tts?ie=UTF-8&tl=JA&q=$URL" -O "$@.mp3"
+}
+
 ######################################
 ## Crappy google translate [JA->EN] ##
 ######################################
