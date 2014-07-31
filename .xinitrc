@@ -1,6 +1,9 @@
 #!/bin/sh
 export _XINIT_WM="${@-"monsterwm"}"
 
+# xrandr first for monitor setup
+xrandr --output HDMI-1 --auto --output DVI-D-1 --auto --right-of HDMI-1
+
 # autostart
 autostart() {
    # wait for wm
@@ -74,7 +77,6 @@ xrdb -load $HOME/.Xresources
 xsetroot -cursor_name left_ptr
 setxkbmap -option terminate:ctrl_alt_bksp
 setxkbmap -option compose:rwin
-nvidia-load-settings &> /dev/null
 
 autostart &
 [[ "$_XINIT_WM" == "monsterwm" ]] && monsterwm_init
