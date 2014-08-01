@@ -13,7 +13,7 @@ autostart() {
    # start stalonetray daemon
    stalonetrayd
    # redshift for my eyes
-   redshift -l 62:22 -m vidmode &> /dev/null &
+   redshift -l 62:22 &> /dev/null &
    # start irc, rss, torrent
    irc; rss; torrent;
    # xcmenu clipboard manager
