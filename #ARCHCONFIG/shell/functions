@@ -357,3 +357,10 @@ gcx() {
       rm -f "/tmp/gcx.c" "/tmp/gcx1.c" "/tmp/gcx2.c" &> /dev/null
    fi
 }
+
+############################
+## Check for needed .so's ##
+############################
+soneeded() {
+   readelf -d $1 | awk '/NEEDED/ {gsub(/[\[\]]/, "", $5); print $5}'
+}
