@@ -3,7 +3,7 @@
 #
 
 # coreutils aliases
-alias ls='ls++'
+alias ls='ls++ --potsf'
 alias dir='dir -h --color=auto'
 alias vdir='vdir -h --color=auto'
 alias grep='grep --color=auto'
