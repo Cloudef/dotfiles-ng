@@ -217,7 +217,7 @@ vimo() {
    [[ "$cwd" != "$gtdir" ]] && pushd "$gtdir" &> /dev/null # git root
    [[ -n "$@" ]] && { match="$(git ls-files | grep "$@")"; } ||
                       match="$(git ls-files)"
-   [[ $(echo "$match" | wc -l) -gt 1 ]] && match="$(echo $match | bemenu -i -l 20 -p "vim")"
+   [[ $(echo "$match" | wc -l) -gt 1 ]] && match="$(echo "$match" | bemenu -i -l 20 -p "vim")"
    match="$gtdir/$match" # convert to absolute
    [[ "$cwd" != "$gtdir" ]] && popd &> /dev/null # go back
    [[ -f "$match" ]] || return
@@ -236,7 +236,7 @@ openo() {
    [[ "$cwd" != "$gtdir" ]] && pushd "$gtdir" &> /dev/null # git root
    [[ -n "$@" ]] && { match="$(git ls-files | grep "$@")"; } ||
                       match="$(git ls-files)"
-   [[ $(echo "$match" | wc -l) -gt 1 ]] && match="$(echo $match | bemenu -i -l 20 -p "linopen")"
+   [[ $(echo "$match" | wc -l) -gt 1 ]] && match="$(echo "$match" | bemenu -i -l 20 -p "linopen")"
    match="$gtdir/$match" # convert to absolute
    [[ "$cwd" != "$gtdir" ]] && popd &> /dev/null # go back
    [[ -f "$match" ]] || return

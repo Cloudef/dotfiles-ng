@@ -89,26 +89,6 @@ zstyle ':prezto:module:syntax-highlighting' highlighters \
 
 [[ -d "$ZDOTDIR/.zprezto" ]] && {
 
-[[ "$(whoami)" == "root" ]] || [[ "$TERM" == "linux" ]] && {
-
-# Set the prezto modules to load (browse modules).
-# The order matters.
-zstyle ':prezto:load' pmodule \
-   'environment' \
-   'terminal' \
-   'editor' \
-   'directory' \
-   'archive' \
-   'command-not-found' \
-   'spectrum' \
-   'utility' \
-   'completion' \
-   'ssh' \
-   'git' \
-   'prompt'
-
-} || {
-
 # Set the prezto modules to load (browse modules).
 # The order matters.
 zstyle ':prezto:load' pmodule \
@@ -124,10 +104,7 @@ zstyle ':prezto:load' pmodule \
    'completion' \
    'ssh' \
    'git' \
-   'syntax-highlighting' \
    'prompt'
-
-}
 
 } # load if OK
 
@@ -151,6 +128,9 @@ unfunction make
 autoload -U zcalc
 alias zcalc='noglob zcalc'
 
+# source nicer highlights
+source "/arch/shell/zsh-syntax-highlighting-filetypes.zsh"
+
 # source functions and aliases
 source "/arch/shell/functions"
 source "/arch/shell/alias"
@@ -159,9 +139,7 @@ source "/arch/shell/alias"
 unsetopt correct # I can't see why people like this
                  # stop typing wrong silly people
 bindkey '\e'      send-break           # Cancel completion with ESC
-bindkey "\e[1~"   beginning-of-line    # Home
 bindkey "^A"      beginning-of-line    # CTRL+A
-bindkey "\e[4~"   end-of-line          # End
 bindkey "\e[5~"   beginning-of-history # PageUp
 bindkey "\e[6~"   end-of-history       # PageDown
 bindkey "\e[2~"   quoted-insert        # Ins
