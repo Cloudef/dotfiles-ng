@@ -63,48 +63,6 @@ mkcdr() {
    mkdir -vp "$@" && cd "$_";
 }
 
-##################
-## Start daemon ##
-##################
-sstart() {
-   sudo systemctl start $@
-}
-
-#################
-## Stop daemon ##
-#################
-sstop() {
-   sudo systemctl stop $@
-}
-
-####################
-## Restart daemon ##
-####################
-srestart() {
-   sudo systemctl restart $@
-}
-
-###################
-## Enable daemon ##
-###################
-senable() {
-   sudo systemctl enable $@
-}
-
-####################
-## Disable daemon ##
-####################
-sdisable() {
-   sudo systemctl disable $@
-}
-
-###################
-## Daemon status ##
-###################
-sstatus() {
-   systemctl status $@
-}
-
 ########################
 ## Print window class ##
 ########################
