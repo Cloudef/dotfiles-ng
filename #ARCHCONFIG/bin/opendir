@@ -2,4 +2,4 @@
 # Directory opener called from linopen
 
 [[ -n "$TERMINAL" ]] || TERMINAL="termite"
-sh -c "cd $@ && $TERMINAL &"
+sh -c "cd \"$@\" && $TERMINAL &"
