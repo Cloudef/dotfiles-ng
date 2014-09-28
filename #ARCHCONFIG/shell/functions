@@ -27,6 +27,13 @@ shot() {
    ffcast -x $mon % scrot -g %wx%h+%x+%y "$file"
 }
 
+###################
+## Capture video ##
+###################
+capture() {
+   ffcast -w ffmpeg -f alsa -ac 2 -i hw:0,2 -f x11grab -s %s -i %D+%c -acodec pcm_s16le -vcodec huffyuv $@
+}
+
 ##############################################
 ## Colored Find                             ##
 ## NOTE: Searches current tree recrusively. ##
