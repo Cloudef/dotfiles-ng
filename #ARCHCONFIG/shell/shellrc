@@ -17,7 +17,8 @@
 
 # Default programs
 export EDITOR="vim"
-export BROWSER="dwb"
+export BROWSER="chromium"
+export TERMINAL="termite"
 
 # SDL
 export SDL_AUDIODRIVER="alsa"

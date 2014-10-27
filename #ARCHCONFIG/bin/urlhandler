@@ -1,6 +1,6 @@
 #!/bin/bash
 # Common url handler
-# termite uses this, dwb it's binded to ctrl+y
+# termite uses this
 
 # $@ = Get domain from url
 domain() {
