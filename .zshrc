@@ -5,6 +5,8 @@
 # export prezto directory
 export ZDOTDIR="$HOME"
 
+export XKB_DEFAULT_LAYOUT="fi"
+
 # source system-wide configuration
 source "/arch/shell/zshrc"
 source "$HOME/.private"
