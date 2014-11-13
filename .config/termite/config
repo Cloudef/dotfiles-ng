@@ -14,10 +14,6 @@ scrollback_lines = 8192
 search_wrap = true
 browser = chromium
 
-# 0.0: opaque, 1.0: transparent
-transparency = 0.0
-pseudo_transparency = true
-
 # "system", "on" or "off"
 cursor_blink = off
 
